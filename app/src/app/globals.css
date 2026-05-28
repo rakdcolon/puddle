@@ -70,7 +70,14 @@ body {
   50%       { opacity: 0.55; transform: scale(0.92); }
 }
 
-.animate-shake   { animation: puddle-shake 0.42s var(--ease-puddle) both; }
-.animate-reveal  { animation: puddle-reveal 0.42s var(--ease-puddle) both; }
-.animate-burst   { animation: puddle-burst 0.5s var(--ease-puddle) both; }
+@keyframes puddle-pop {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.07); }
+  100% { transform: scale(1); }
+}
+
+.animate-shake      { animation: puddle-shake 0.42s var(--ease-puddle) both; }
+.animate-reveal     { animation: puddle-reveal 0.42s var(--ease-puddle) both; }
+.animate-burst      { animation: puddle-burst 0.5s var(--ease-puddle) both; }
 .animate-pulse-soft { animation: puddle-pulse 2.2s ease-in-out infinite; }
+.animate-pop        { animation: puddle-pop 0.22s var(--ease-puddle) both; }

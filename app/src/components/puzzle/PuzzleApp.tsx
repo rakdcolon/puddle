@@ -6,25 +6,40 @@ import { getTodayNY } from '@/lib/utils/dates'
 
 // ─── Chime ───────────────────────────────────────────────────────────────────
 const audioCtx: { ctx: AudioContext | null } = { ctx: null }
-function chime(kind: 'correct' | 'wrong' | 'hint' = 'correct') {
+
+type ChimeKind = 'correct' | 'wrong' | 'hint' | 'select' | 'step' | 'give-up' | 'notes'
+
+// [freq, delayOffset, peakGain, duration]
+type NoteSpec = [number, number, number, number]
+
+const CHIME_SPECS: Record<ChimeKind, NoteSpec[]> = {
+  correct:  [[659.25, 0, 0.12, 0.35], [987.77, 0.12, 0.12, 0.35]],
+  wrong:    [[220, 0, 0.10, 0.35], [174.61, 0.10, 0.10, 0.35]],
+  hint:     [[523.25, 0, 0.08, 0.28], [659.25, 0.1, 0.06, 0.22]],
+  select:   [[440, 0, 0.07, 0.10]],
+  step:     [[880, 0, 0.045, 0.07]],
+  'give-up':[[330, 0, 0.08, 0.32], [247, 0.18, 0.07, 0.32]],
+  notes:    [[523.25, 0, 0.06, 0.18], [659.25, 0.09, 0.05, 0.15]],
+}
+
+function chime(kind: ChimeKind = 'correct') {
   try {
     if (!audioCtx.ctx) audioCtx.ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
     const ctx = audioCtx.ctx
     if (ctx.state === 'suspended') ctx.resume()
-    const notes = kind === 'correct' ? [659.25, 987.77] : kind === 'wrong' ? [220, 174.61] : [523.25]
-    notes.forEach((freq, i) => {
+    for (const [freq, delay, peak, dur] of CHIME_SPECS[kind]) {
       const osc = ctx.createOscillator()
       const gain = ctx.createGain()
       osc.type = 'sine'
       osc.frequency.value = freq
-      const t0 = ctx.currentTime + i * 0.12
+      const t0 = ctx.currentTime + delay
       gain.gain.setValueAtTime(0, t0)
-      gain.gain.linearRampToValueAtTime(0.12, t0 + 0.02)
-      gain.gain.exponentialRampToValueAtTime(0.001, t0 + 0.35)
+      gain.gain.linearRampToValueAtTime(peak, t0 + 0.02)
+      gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur)
       osc.connect(gain).connect(ctx.destination)
       osc.start(t0)
-      osc.stop(t0 + 0.4)
-    })
+      osc.stop(t0 + dur + 0.05)
+    }
   } catch {}
 }
 
@@ -153,7 +168,7 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
   const skip = useCallback(async () => {
     if (isFinished) return
     setStatus('revealed')
-    chime('hint')
+    chime('give-up')
     // Persist skip server-side
     fetch(`/api/puzzle/${puzzle.id}/submit`, {
       method: 'POST',
@@ -257,7 +272,7 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
                 <span className="italic text-ink-muted" style={{ fontSize: 12, letterSpacing: '0.5px' }}>hints</span>
                 <div style={{ flex: 1, height: 1, background: 'var(--color-hair-strong)' }} />
               </div>
-              <div className="flex flex-col gap-2 mb-5 max-w-[640px]">
+              <div className="flex flex-col gap-2 mb-8 max-w-[640px]">
                 {visibleHints.map((hint, i) => (
                   <div
                     key={i}
@@ -284,6 +299,14 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
             </>
           )}
 
+          {/* Answer zone header */}
+          <div
+            className="max-w-[640px] mb-4"
+            style={{ borderTop: '1px solid var(--color-hair)', paddingTop: 20 }}
+          >
+            <span className="italic text-ink-muted" style={{ fontSize: 13 }}>Your answer</span>
+          </div>
+
           {/* Input zone */}
           <div
             className="relative max-w-[640px]"
@@ -299,7 +322,8 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
                       <button
                         key={opt}
                         disabled={isFinished}
-                        onClick={() => !isFinished && setAnswer(opt)}
+                        onClick={() => { if (!isFinished) { setAnswer(opt); chime('select') } }}
+                        className="active:scale-[0.96]"
                         style={{
                           background: isCorrect
                             ? 'var(--color-success)'
@@ -315,6 +339,7 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
                           alignItems: 'center',
                           gap: 10,
                           fontFamily: 'inherit',
+                          transform: picked && !isCorrect ? 'scale(1.02)' : 'scale(1)',
                           transition: 'all 0.18s var(--ease-puddle)',
                         }}
                       >
@@ -405,7 +430,7 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
             </GhostButton>
 
             <GhostButton
-              onClick={() => setShowScratch(v => !v)}
+              onClick={() => { setShowScratch(v => !v); chime('notes') }}
               active={showScratch}
             >
               Notes
@@ -426,7 +451,7 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
             <button
               onClick={submit}
               disabled={!answer.toString().trim() || isFinished || submitting}
-              className="transition-all duration-[180ms] font-medium"
+              className="transition-all duration-[180ms] font-medium hover:-translate-y-[2px] active:scale-[0.96] active:translate-y-0"
               style={{
                 background: 'var(--color-ink)',
                 color: 'var(--color-paper)',
@@ -622,7 +647,8 @@ function NumericStepper({
     <div className="flex items-center gap-0" style={{ maxWidth: 200 }}>
       <button
         disabled={locked}
-        onClick={() => set(num - 1)}
+        onClick={() => { set(num - 1); chime('step') }}
+        className="active:scale-[0.93] transition-transform duration-[120ms]"
         style={{ ...btnStyle, borderRadius: '12px 0 0 12px', borderRight: 'none' }}
       >
         −
@@ -651,7 +677,8 @@ function NumericStepper({
       />
       <button
         disabled={locked}
-        onClick={() => set(num + 1)}
+        onClick={() => { set(num + 1); chime('step') }}
+        className="active:scale-[0.93] transition-transform duration-[120ms]"
         style={{ ...btnStyle, borderRadius: '0 12px 12px 0', borderLeft: 'none' }}
       >
         +
@@ -675,7 +702,7 @@ function GhostButton({
     <button
       onClick={onClick}
       disabled={disabled}
-      className="transition-all duration-[180ms]"
+      className="transition-all duration-[180ms] hover:-translate-y-px active:scale-[0.95]"
       style={{
         background: active ? 'var(--color-paper-deep)' : 'transparent',
         border: '1px solid var(--color-hair-strong)',
