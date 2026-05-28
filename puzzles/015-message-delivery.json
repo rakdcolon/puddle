@@ -1,0 +1,29 @@
+{
+  "issue_no": 15,
+  "vol": 1,
+  "date_active": "2026-06-12",
+  "title": "Message delivery",
+  "genre": "lateral",
+  "difficulty": 2,
+  "prompt": [
+    "You need to send a secret document to a colleague in another city using an untrusted messenger service. Any document inside an unlocked box will be stolen in transit — including any loose keys or unlocked padlocks.",
+    "You and your colleague each own one high-security padlock with a single key that only you keep. You cannot share keys through this messenger.",
+    "How many times does the box need to travel to get the document safely delivered?"
+  ],
+  "answer": "3",
+  "answer_display": "3 trips",
+  "hints": [
+    "You can't send the box unlocked. If you lock it, your colleague can't open it — you're the only one with the key. What could your colleague do before sending it back?",
+    "Your colleague can add their own padlock to the box. Now the box has two locks. What do you do when it returns to you?",
+    "After you remove your lock, the box has only your colleague's lock — which only they can open."
+  ],
+  "solution_lede": "The instinct is to find a way to share a key — but that's the wrong frame. The solution keeps both keys private the whole time.\n\nTrip 1: You lock the box with your padlock and send it. Your colleague receives it but cannot open it.\nTrip 2: Your colleague adds their own padlock alongside yours and sends the box back. Now it has two locks.\nTrip 3: You remove only your padlock (you have its key) and send the box back. It now has only your colleague's lock — which only they can open.\n\nThe document never travels in an unlocked box, and neither person ever shares a key.",
+  "solution_steps": [
+    { "body": "Trip 1 (you → colleague): Lock the box with your padlock. Colleague receives it but cannot open it." },
+    { "body": "Trip 2 (colleague → you): Colleague adds their own padlock. Box now has two locks. Sent back to you." },
+    { "body": "Trip 3 (you → colleague): You remove your lock. Box now has only colleague's lock. Send it back." },
+    { "body": "Colleague opens their own lock and retrieves the document. Three trips total." }
+  ],
+  "input_type": "numeric",
+  "input_config": { "min": 1, "max": 10 }
+}
