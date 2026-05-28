@@ -1,0 +1,28 @@
+{
+  "issue_no": 17,
+  "vol": 1,
+  "date_active": "2026-06-19",
+  "title": "Two Trains, One Fly",
+  "genre": "quant",
+  "difficulty": 2,
+  "prompt": [
+    "Two trains start 100 miles apart and travel toward each other, each at 50 miles per hour.",
+    "At the moment they begin moving, a fly sitting on the front of train A takes off and flies toward train B at 75 miles per hour. When it reaches train B, it immediately turns around and flies back toward train A — and continues bouncing back and forth until the trains collide.",
+    "How many miles does the fly travel in total?"
+  ],
+  "answer": "75",
+  "answer_display": "75 miles",
+  "hints": [
+    "The hard way: sum an infinite series of shorter and shorter fly trips. There is a much easier approach.",
+    "Focus not on the fly's path but on the time available. How long until the trains meet?",
+    "Distance = speed × time. You know the fly's speed and the total time it flies."
+  ],
+  "solution_lede": "The trap is trying to calculate the fly's infinite back-and-forth legs and sum them up. When John von Neumann was posed this problem, he gave the answer instantly — then admitted, to laughter, that he had summed the infinite series rather than spotting the shortcut.\n\nThe elegant approach: ignore the fly's path entirely and focus on time. The two trains are 100 miles apart and closing at a combined speed of 100 mph (50 + 50). They meet in exactly 1 hour.\n\nThe fly is in the air for that entire 1 hour, travelling at 75 mph. Distance = 75 × 1 = 75 miles.",
+  "solution_steps": [
+    { "body": "The trains close at 50 + 50 = 100 mph. Starting 100 miles apart, they meet after 1 hour." },
+    { "body": "The fly flies continuously for exactly 1 hour at 75 mph." },
+    { "body": "Total distance = 75 mph × 1 hour = 75 miles." }
+  ],
+  "input_type": "numeric",
+  "input_config": { "min": 1, "max": 200 }
+}

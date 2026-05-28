@@ -1,0 +1,27 @@
+{
+  "issue_no": 21,
+  "vol": 1,
+  "date_active": "2026-06-23",
+  "title": "Number Initials",
+  "genre": "pattern",
+  "difficulty": 2,
+  "prompt": [
+    "What letter comes next in this sequence?",
+    "O, T, T, F, F, S, S, E, N, T, ?"
+  ],
+  "answer": "e",
+  "answer_display": "E",
+  "hints": [
+    "There are 11 letters shown so far. The next would be the 12th.",
+    "Try reading each letter as the initial of a counting word: One, Two, Three…",
+    "One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Eleven — what's next?"
+  ],
+  "solution_lede": "Each letter is the first letter of the counting numbers in sequence: One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Eleven. The next number is Twelve, whose initial is E.",
+  "solution_steps": [
+    { "body": "O=One, T=Two, T=Three, F=Four, F=Five, S=Six, S=Seven, E=Eight, N=Nine, T=Ten, E=Eleven." },
+    { "body": "Wait — there are only 10 letters shown. The 11th is T=Ten and the pattern continues to the 12th." },
+    { "body": "After Ten (T) comes Eleven (E). The answer is E." }
+  ],
+  "input_type": "freetext",
+  "input_config": null
+}

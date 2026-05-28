@@ -1,0 +1,26 @@
+{
+  "issue_no": 15,
+  "vol": 1,
+  "date_active": "2026-06-17",
+  "title": "Gauss's Sum",
+  "genre": "quant",
+  "difficulty": 1,
+  "prompt": [
+    "What is 1 + 2 + 3 + 4 + … + 100?"
+  ],
+  "answer": "5050",
+  "answer_display": "5050",
+  "hints": [
+    "Adding all 100 numbers one by one works but takes a while. Is there a shortcut?",
+    "Try pairing numbers from opposite ends of the sequence: 1 + 100, 2 + 99, 3 + 98…",
+    "How many such pairs are there, and what does each pair sum to?"
+  ],
+  "solution_lede": "The story goes that Carl Friedrich Gauss solved this as a schoolboy in seconds, while his classmates laboriously added each number. His insight: the sum has a beautiful symmetry you can exploit.\n\nPair the first and last terms: 1 + 100 = 101. Then 2 + 99 = 101. Then 3 + 98 = 101. Every pair sums to 101, and there are exactly 50 such pairs.\n\n50 × 101 = 5050.",
+  "solution_steps": [
+    { "body": "Pair each number with its mirror: 1+100, 2+99, 3+98, …, 50+51. Every pair sums to 101." },
+    { "body": "There are 50 such pairs (100 numbers ÷ 2)." },
+    { "body": "Total = 50 × 101 = 5050." }
+  ],
+  "input_type": "numeric",
+  "input_config": { "min": 1, "max": 10000 }
+}

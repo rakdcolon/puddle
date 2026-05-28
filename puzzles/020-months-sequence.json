@@ -1,0 +1,26 @@
+{
+  "issue_no": 20,
+  "vol": 1,
+  "date_active": "2026-06-22",
+  "title": "The Missing Initial",
+  "genre": "pattern",
+  "difficulty": 1,
+  "prompt": [
+    "What letter comes next in this sequence?",
+    "J, F, M, A, M, J, J, A, S, O, N, ?"
+  ],
+  "answer": "d",
+  "answer_display": "D",
+  "hints": [
+    "The sequence has 12 terms once completed. Does that suggest a familiar system?",
+    "Each letter is the initial of something that repeats every year.",
+    "January, February, March…"
+  ],
+  "solution_lede": "Each letter is the first letter of a month of the year, in order: January, February, March, April, May, June, July, August, September, October, November — and the missing one is December.",
+  "solution_steps": [
+    { "body": "J=January, F=February, M=March, A=April, M=May, J=June, J=July, A=August, S=September, O=October, N=November." },
+    { "body": "The next and final month is December. Its initial is D." }
+  ],
+  "input_type": "freetext",
+  "input_config": null
+}

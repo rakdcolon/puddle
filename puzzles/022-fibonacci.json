@@ -1,0 +1,26 @@
+{
+  "issue_no": 22,
+  "vol": 1,
+  "date_active": "2026-06-24",
+  "title": "Fibonacci's Next",
+  "genre": "pattern",
+  "difficulty": 1,
+  "prompt": [
+    "What is the next number in this sequence?",
+    "1, 1, 2, 3, 5, 8, 13, 21, 34, ?"
+  ],
+  "answer": "55",
+  "answer_display": "55",
+  "hints": [
+    "Look at any three consecutive numbers. What is the relationship between the third and the two before it?",
+    "1+1=2, 1+2=3, 2+3=5, 3+5=8… each term is the sum of the two preceding ones.",
+    "34 + 21 = ?"
+  ],
+  "solution_lede": "This is the Fibonacci sequence, where each term is the sum of the two preceding ones. Named after Leonardo of Pisa (Fibonacci), who introduced it to Western mathematics in 1202 to model rabbit population growth.\n\nThe rule: F(n) = F(n−1) + F(n−2). So the next term is 21 + 34 = 55.",
+  "solution_steps": [
+    { "body": "Each term = sum of the previous two: 1+1=2, 1+2=3, 2+3=5, 3+5=8, 5+8=13, 8+13=21, 13+21=34." },
+    { "body": "Next: 21 + 34 = 55." }
+  ],
+  "input_type": "numeric",
+  "input_config": { "min": 1, "max": 200 }
+}

@@ -1,0 +1,28 @@
+{
+  "issue_no": 16,
+  "vol": 1,
+  "date_active": "2026-06-18",
+  "title": "The Blue Eyes Puzzle",
+  "genre": "logic",
+  "difficulty": 5,
+  "prompt": [
+    "Three friends — Alice, Bob, and Carol — live on a small island. Each has blue eyes, but none of them knows their own eye colour. They can see each other perfectly, but there are no mirrors and no one ever discusses eye colour.",
+    "The rule: if you ever deduce your own eye colour, you must leave the island at midnight that same day.",
+    "A visitor arrives and announces to all three: \"At least one of you has blue eyes.\" All three are perfect logicians. On which night do they all leave?"
+  ],
+  "answer": "3",
+  "answer_display": "Night 3",
+  "hints": [
+    "Start with a simpler case: what if there were only one blue-eyed person? They see nobody else with blue eyes, so the announcement tells them immediately — they leave on night 1.",
+    "Now try two blue-eyed people. Each sees one other blue-eyed person. If the other doesn't leave on night 1 (as they would if they were the only one), what does that tell you?",
+    "Extend the logic to three. Each person sees two blue-eyed friends. If neither leaves on night 2 (as two people would), what must be true?"
+  ],
+  "solution_lede": "This is a classic puzzle about common knowledge — the difference between everyone knowing something and everyone knowing that everyone knows it.\n\nThe announcement seems to add no new information (everyone already sees at least two blue-eyed people). But it does something crucial: it makes the fact common knowledge.\n\nBy induction: with 1 blue-eyed person, they leave on night 1. With 2, each sees 1, waits to see if the other leaves on night 1 — when they don't, both realise they must both have blue eyes and leave on night 2. With 3, each sees 2, waits to see if the other two leave on night 2 — when they don't, all three realise they each have blue eyes and leave on night 3.\n\nThe general rule: n blue-eyed people all leave on night n.",
+  "solution_steps": [
+    { "body": "Base case: 1 blue-eyed person sees nobody else with blue eyes. The announcement tells them directly — leave night 1." },
+    { "body": "2 people: each sees 1 blue-eyed person and thinks 'if I have brown eyes, they'll leave night 1.' Night 1 passes, nobody leaves — so each concludes they also have blue eyes. Both leave night 2." },
+    { "body": "3 people: each sees 2 blue-eyed people and thinks 'if I have brown eyes, those two will leave night 2.' Night 2 passes, nobody leaves — so each concludes they also have blue eyes. All three leave night 3." }
+  ],
+  "input_type": "numeric",
+  "input_config": { "min": 1, "max": 10 }
+}
