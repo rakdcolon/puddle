@@ -1,6 +1,11 @@
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/server'
 
-export default function Footer() {
+export default async function Footer() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  const isAdmin = user?.email === process.env.ADMIN_EMAIL
+
   return (
     <footer className="mt-auto">
       <div className="border-t border-hair" />
@@ -15,6 +20,11 @@ export default function Footer() {
           <Link href="/submit" className="text-[14px] text-ink hover:text-accent transition-colors duration-[180ms]">
             Submit a puzzle
           </Link>
+          {isAdmin && (
+            <Link href="/admin" className="text-[14px] text-ink-muted hover:text-accent transition-colors duration-[180ms] italic">
+              Admin
+            </Link>
+          )}
         </nav>
       </div>
     </footer>

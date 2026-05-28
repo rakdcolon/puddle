@@ -70,11 +70,6 @@ export default async function Masthead({ currentPage, issueNo = 1, vol = 1 }: Ma
               Settings
             </NavLink>
           )}
-          {user?.email === process.env.ADMIN_EMAIL && (
-            <NavLink href="/admin">
-              Admin
-            </NavLink>
-          )}
           {user ? (
             <>
               <NavLink href="/profile" active={currentPage === 'profile'}>
