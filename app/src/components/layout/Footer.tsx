@@ -15,9 +15,6 @@ export default function Footer() {
           <Link href="/submit" className="text-[14px] text-ink hover:text-accent transition-colors duration-[180ms]">
             Submit a puzzle
           </Link>
-          <a href="mailto:hello@puddle.day" className="text-[14px] text-ink hover:text-accent transition-colors duration-[180ms]">
-            Contact
-          </a>
         </nav>
       </div>
     </footer>
