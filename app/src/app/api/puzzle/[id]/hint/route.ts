@@ -30,7 +30,7 @@ export async function POST(
   const supabase = await createClient()
   const { data: { user: authUser } } = await supabase.auth.getUser()
   if (authUser) {
-    const user = await getUserBySupabaseId(authUser.id)
+    const user = await getUserBySupabaseId(authUser)
     if (user) {
       await updateSolveHints(user.id, puzzle.id, hintLevel).catch(() => {})
     }

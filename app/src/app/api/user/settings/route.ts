@@ -16,7 +16,7 @@ export async function GET() {
   const { data: { user: authUser } } = await supabase.auth.getUser()
   if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const user = await getUserBySupabaseId(authUser.id)
+  const user = await getUserBySupabaseId(authUser)
   if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
   const db = createServiceClient()
@@ -30,7 +30,7 @@ export async function PATCH(request: NextRequest) {
   const { data: { user: authUser } } = await supabase.auth.getUser()
   if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const user = await getUserBySupabaseId(authUser.id)
+  const user = await getUserBySupabaseId(authUser)
   if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
   const body = await request.json().catch(() => ({}))

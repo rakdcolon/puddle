@@ -28,7 +28,7 @@ export async function GET(
     const { data: { user: authUser } } = await supabase.auth.getUser()
 
     if (authUser) {
-      const user = await getUserBySupabaseId(authUser.id)
+      const user = await getUserBySupabaseId(authUser)
       if (user) {
         const solve = await getSolveForUser(user.id, puzzle.id)
         if (!solve) {

@@ -15,7 +15,7 @@ export default async function SettingsPage() {
   const { data: { user: authUser } } = await supabase.auth.getUser()
   if (!authUser) redirect('/sign-in?returnTo=/settings')
 
-  const user = await getUserBySupabaseId(authUser.id)
+  const user = await getUserBySupabaseId(authUser)
   if (!user) redirect('/sign-in')
 
   const db = createServiceClient()

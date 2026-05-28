@@ -24,7 +24,7 @@ export default async function LandingPage() {
   const supabase = await createClient()
   const { data: { user: authUser } } = await supabase.auth.getUser()
   if (authUser) {
-    const user = await getUserBySupabaseId(authUser.id)
+    const user = await getUserBySupabaseId(authUser)
     if (user) solve = await getSolveForUser(user.id, puzzle.id)
   }
 

@@ -3,14 +3,13 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { totalXpToLevel } from '@/lib/utils/xp'
 import type { User, UserProfile, CalendarEntry } from '@/types'
 
-// Look up our internal user by Supabase auth UID (google_sub)
-export async function getUserBySupabaseId(supabaseUid: string): Promise<User | null> {
+export async function getUserBySupabaseId(supabaseUser: SupabaseUser): Promise<User | null> {
   const db = createServiceClient()
-  // Try by google_sub first (Google OAuth sets sub = supabase user id)
+  const googleSub = supabaseUser.user_metadata?.sub ?? supabaseUser.id
   const { data } = await db
     .from('users')
     .select('*')
-    .eq('google_sub', supabaseUid)
+    .eq('google_sub', googleSub)
     .maybeSingle()
   return data ?? null
 }

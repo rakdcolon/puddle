@@ -16,7 +16,7 @@ export default async function ProfilePage() {
   const { data: { user: authUser } } = await supabase.auth.getUser()
   if (!authUser) redirect('/sign-in?returnTo=/profile')
 
-  const user = await getUserBySupabaseId(authUser.id)
+  const user = await getUserBySupabaseId(authUser)
   if (!user) redirect('/sign-in')
 
   const profile = await getUserProfile(user.id)

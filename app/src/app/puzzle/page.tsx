@@ -23,7 +23,7 @@ export default async function PuzzlePage() {
   const supabase = await createClient()
   const { data: { user: authUser } } = await supabase.auth.getUser()
   if (authUser) {
-    const user = await getUserBySupabaseId(authUser.id)
+    const user = await getUserBySupabaseId(authUser)
     if (user) {
       initialSolve = await getSolveForUser(user.id, puzzle.id)
     }

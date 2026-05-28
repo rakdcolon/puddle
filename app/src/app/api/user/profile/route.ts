@@ -10,7 +10,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const user = await getUserBySupabaseId(authUser.id)
+  const user = await getUserBySupabaseId(authUser)
   if (!user) {
     return NextResponse.json({ error: 'User not found' }, { status: 404 })
   }
