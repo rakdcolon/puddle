@@ -30,13 +30,11 @@ export default async function PuzzlePage() {
   }
 
   return (
-    <div className="h-screen overflow-hidden">
-      <PuzzleApp
-        puzzle={publicPuzzle}
-        initialSolve={initialSolve}
-        issueNo={puzzle.issue_no}
-        vol={puzzle.vol}
-      />
-    </div>
+    <PuzzleApp
+      puzzle={publicPuzzle}
+      initialSolve={initialSolve}
+      issueNo={puzzle.issue_no}
+      vol={puzzle.vol}
+    />
   )
 }

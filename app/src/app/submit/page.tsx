@@ -10,7 +10,7 @@ export default function SubmitPage() {
   return (
     <>
       <Masthead />
-      <main className="flex-1 max-w-[1440px] mx-auto w-full px-14 py-10">
+      <main className="flex-1 max-w-[1440px] mx-auto w-full px-4 py-7 sm:px-14 sm:py-10">
         <div className="max-w-[620px]">
           <p className="italic text-accent mb-2" style={{ fontSize: 13 }}>Submit a puzzle</p>
           <h1 className="font-medium mb-2" style={{ fontSize: 42, letterSpacing: -0.9, lineHeight: 1.02 }}>

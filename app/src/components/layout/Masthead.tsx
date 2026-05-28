@@ -38,17 +38,17 @@ export default async function Masthead({ currentPage, issueNo = 1, vol = 1 }: Ma
   return (
     <header>
       <div
-        className="max-w-[1440px] mx-auto px-14 py-4"
+        className="max-w-[1440px] mx-auto px-4 py-3 sm:px-14 sm:py-4"
         style={{
           display: 'grid',
           gridTemplateColumns: '1fr auto 1fr',
           alignItems: 'center',
-          gap: '24px',
+          gap: '12px',
         }}
       >
         {/* Left: dateline */}
         <div>
-          <span className="text-[13px] italic text-ink-muted tracking-[0.1px]">
+          <span className="hidden sm:block text-[13px] italic text-ink-muted tracking-[0.1px]">
             Vol. {toRoman(vol)}{' '}
             <span className="text-accent">·</span>{' '}
             No. {issueNo}
@@ -61,17 +61,23 @@ export default async function Masthead({ currentPage, issueNo = 1, vol = 1 }: Ma
         </Link>
 
         {/* Right: nav */}
-        <nav className="flex items-center justify-end gap-6">
-          <NavLink href="/about" active={currentPage === 'about'}>
-            About
-          </NavLink>
+        <nav className="flex items-center justify-end gap-4 sm:gap-6 flex-wrap">
+          <span className="hidden sm:flex items-center gap-4 sm:gap-6">
+            <NavLink href="/about" active={currentPage === 'about'}>
+              About
+            </NavLink>
+            {user && (
+              <>
+                <NavLink href="/settings" active={currentPage === 'settings'}>
+                  Settings
+                </NavLink>
+              </>
+            )}
+          </span>
           {user ? (
             <>
               <NavLink href="/profile" active={currentPage === 'profile'}>
                 Profile
-              </NavLink>
-              <NavLink href="/settings" active={currentPage === 'settings'}>
-                Settings
               </NavLink>
               <form action="/api/auth/signout" method="POST">
                 <button

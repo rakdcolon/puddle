@@ -28,7 +28,7 @@ export default async function SettingsPage() {
   return (
     <>
       <Masthead currentPage="settings" />
-      <main className="flex-1 max-w-[720px] mx-auto w-full px-6 py-10">
+      <main className="flex-1 max-w-[720px] mx-auto w-full px-4 py-8 sm:px-6 sm:py-10">
         <h1 className="font-medium mb-8" style={{ fontSize: 38, letterSpacing: -0.8 }}>
           Settings
         </h1>

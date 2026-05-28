@@ -11,7 +11,7 @@ export default function AboutPage() {
   return (
     <>
       <Masthead currentPage="about" />
-      <main className="flex-1 max-w-[1440px] mx-auto w-full px-14 py-16">
+      <main className="flex-1 max-w-[1440px] mx-auto w-full px-4 py-8 sm:px-14 sm:py-16">
         <article className="max-w-[620px] mx-auto">
           <p className="text-[13px] italic text-accent tracking-[0.15px] mb-3">
             About the column

@@ -75,7 +75,7 @@ export default async function SolutionPage({ searchParams }: SolutionPageProps) 
   return (
     <>
       <Masthead issueNo={puzzle.issue_no} vol={puzzle.vol} />
-      <main className="flex-1 max-w-[1440px] mx-auto w-full px-14 py-8">
+      <main className="flex-1 max-w-[1440px] mx-auto w-full px-4 py-6 sm:px-14 sm:py-8">
         {/* Back link */}
         <div className="mb-6">
           <Link
@@ -165,7 +165,7 @@ export default async function SolutionPage({ searchParams }: SolutionPageProps) 
                     <p style={{ fontSize: 17, lineHeight: 1.6 }}>{step.body}</p>
                   </div>
                   <span
-                    className="italic flex-shrink-0"
+                    className="hidden sm:block italic flex-shrink-0"
                     style={{ fontSize: 13, color: 'var(--color-ink-muted)', fontVariantNumeric: 'tabular-nums', marginTop: 2 }}
                   >
                     {step.elapsed_min}

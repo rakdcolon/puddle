@@ -182,7 +182,7 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
 
   return (
     <div
-      className={compact ? 'flex flex-col h-full overflow-hidden' : 'flex flex-col h-full overflow-hidden'}
+      className="flex flex-col"
       style={{ background: 'var(--color-bg)', fontFeatureSettings: '"ss01","cv02"' }}
     >
       {/* ─── Header ─── */}
@@ -194,66 +194,69 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
       />
 
       {/* ─── Body ─── */}
-      <div className="flex flex-1 min-h-0">
+      <div className="flex">
         <div
-          className="flex flex-col flex-1 min-w-0"
-          style={{ padding: compact ? '18px 18px 14px' : '24px 32px 20px' }}
+          className="flex flex-col flex-1 min-w-0 px-4 pt-5 pb-8 md:px-8 md:pt-6"
         >
-          {/* Scrollable middle */}
-          <div className="flex-1 min-h-0 overflow-y-auto flex flex-col" style={{ paddingRight: 4, marginRight: -4 }}>
-            {/* Kicker + title */}
-            <div className="mb-1">
-              <div className="flex items-center gap-3 mb-2">
-                <span
-                  className="italic text-accent tracking-[0.1px]"
-                  style={{ fontSize: compact ? 13 : 14 }}
-                >
-                  {genreLabel(puzzle.genre)}
-                </span>
-                <span className="text-hair-strong">·</span>
-                <DifficultyDots value={puzzle.difficulty} compact={compact} />
-              </div>
-              <h1
-                className="font-medium leading-[1.06] tracking-tight"
-                style={{
-                  fontSize: compact ? 30 : 40,
-                  letterSpacing: compact ? -0.4 : -0.8,
-                  color: 'var(--color-ink)',
-                }}
+          {/* Kicker + title */}
+          <div className="mb-1">
+            <div className="flex items-center gap-3 mb-2">
+              <span
+                className="italic text-accent tracking-[0.1px]"
+                style={{ fontSize: compact ? 13 : 14 }}
               >
-                {puzzle.title}
-              </h1>
+                {genreLabel(puzzle.genre)}
+              </span>
+              <span className="text-hair-strong">·</span>
+              <DifficultyDots value={puzzle.difficulty} compact={compact} />
             </div>
-
-            {/* Prompt */}
-            <div
-              className="my-5 max-w-[640px]"
-              style={{ fontSize: compact ? 16.5 : 19, lineHeight: 1.6, color: 'var(--color-ink)' }}
+            <h1
+              className="font-medium leading-[1.06] tracking-tight"
+              style={{
+                fontSize: compact ? 30 : 40,
+                letterSpacing: compact ? -0.4 : -0.8,
+                color: 'var(--color-ink)',
+              }}
             >
-              {puzzle.prompt.map((para, i) => {
-                const isDataLine = i === 1 && puzzle.input_type !== 'freetext'
-                return (
-                  <p
-                    key={i}
-                    className="mb-3"
-                    style={isDataLine ? {
-                      fontFamily: '"Crimson Pro", Georgia, serif',
-                      fontVariantNumeric: 'tabular-nums',
-                      background: 'var(--color-paper)',
-                      border: '1px solid var(--color-hair)',
-                      borderRadius: 10,
-                      padding: compact ? '12px 16px' : '14px 20px',
-                      fontSize: compact ? 18 : 22,
-                    } : undefined}
-                  >
-                    {para}
-                  </p>
-                )
-              })}
-            </div>
+              {puzzle.title}
+            </h1>
+          </div>
 
-            {/* Hints */}
-            {visibleHints.length > 0 && (
+          {/* Prompt */}
+          <div
+            className="my-5 max-w-[640px]"
+            style={{ fontSize: compact ? 16.5 : 19, lineHeight: 1.6, color: 'var(--color-ink)' }}
+          >
+            {puzzle.prompt.map((para, i) => {
+              const isDataLine = i === 1 && puzzle.input_type !== 'freetext'
+              return (
+                <p
+                  key={i}
+                  className="mb-3"
+                  style={isDataLine ? {
+                    fontFamily: '"Crimson Pro", Georgia, serif',
+                    fontVariantNumeric: 'tabular-nums',
+                    background: 'var(--color-paper)',
+                    border: '1px solid var(--color-hair)',
+                    borderRadius: 10,
+                    padding: compact ? '12px 16px' : '14px 20px',
+                    fontSize: compact ? 18 : 22,
+                  } : undefined}
+                >
+                  {para}
+                </p>
+              )
+            })}
+          </div>
+
+          {/* Hints */}
+          {visibleHints.length > 0 && (
+            <>
+              <div className="flex items-center gap-3 my-4">
+                <div style={{ flex: 1, height: 1, background: 'var(--color-hair-strong)' }} />
+                <span className="italic text-ink-muted" style={{ fontSize: 12, letterSpacing: '0.5px' }}>hints</span>
+                <div style={{ flex: 1, height: 1, background: 'var(--color-hair-strong)' }} />
+              </div>
               <div className="flex flex-col gap-2 mb-5 max-w-[640px]">
                 {visibleHints.map((hint, i) => (
                   <div
@@ -278,226 +281,234 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
                   </div>
                 ))}
               </div>
-            )}
-          </div>
+            </>
+          )}
 
-          {/* ─── Pinned bottom ─── */}
-          <div className="flex-shrink-0 pt-2">
-            {/* Input zone */}
-            <div
-              className="relative max-w-[640px]"
-              style={{ opacity: status === 'revealed' ? 0.7 : 1 }}
-            >
-              <div className={shaking ? 'animate-shake' : ''}>
-                {puzzle.input_type === 'choice' && inputConfig?.options && (
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: `repeat(${compact ? 2 : Math.min(4, inputConfig.options.length)}, 1fr)`,
-                      gap: 10,
-                    }}
-                  >
-                    {inputConfig.options.map((opt: string, i: number) => {
-                      const picked = answer === opt
-                      const isCorrect = isFinished && status === 'correct' && picked
-                      return (
-                        <button
-                          key={opt}
-                          disabled={isFinished}
-                          onClick={() => !isFinished && setAnswer(opt)}
+          {/* Input zone */}
+          <div
+            className="relative max-w-[640px]"
+            style={{ opacity: status === 'revealed' ? 0.7 : 1 }}
+          >
+            <div className={shaking ? 'animate-shake' : ''}>
+              {puzzle.input_type === 'choice' && inputConfig?.options && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-[10px]">
+                  {inputConfig.options.map((opt: string, i: number) => {
+                    const picked = answer === opt
+                    const isCorrect = isFinished && status === 'correct' && picked
+                    return (
+                      <button
+                        key={opt}
+                        disabled={isFinished}
+                        onClick={() => !isFinished && setAnswer(opt)}
+                        style={{
+                          background: isCorrect
+                            ? 'var(--color-success)'
+                            : picked
+                            ? 'var(--color-ink)'
+                            : 'var(--color-paper)',
+                          color: isCorrect || picked ? 'var(--color-paper)' : 'var(--color-ink)',
+                          border: `1px solid ${isCorrect ? 'var(--color-success)' : picked ? 'var(--color-ink)' : 'var(--color-hair-strong)'}`,
+                          borderRadius: compact ? 12 : 14,
+                          padding: compact ? '12px 14px' : '14px 18px',
+                          cursor: isFinished ? 'default' : 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 10,
+                          fontFamily: 'inherit',
+                          transition: 'all 0.18s var(--ease-puddle)',
+                        }}
+                      >
+                        <span
+                          className="font-medium"
                           style={{
-                            background: isCorrect
-                              ? 'var(--color-success)'
-                              : picked
-                              ? 'var(--color-ink)'
-                              : 'var(--color-paper)',
-                            color: isCorrect || picked ? 'var(--color-paper)' : 'var(--color-ink)',
-                            border: `1px solid ${isCorrect ? 'var(--color-success)' : picked ? 'var(--color-ink)' : 'var(--color-hair-strong)'}`,
-                            borderRadius: compact ? 12 : 14,
-                            padding: compact ? '12px 14px' : '14px 18px',
-                            cursor: isFinished ? 'default' : 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 10,
-                            fontFamily: 'inherit',
-                            transition: 'all 0.18s var(--ease-puddle)',
+                            fontSize: 11,
+                            letterSpacing: '0.5px',
+                            opacity: 0.55,
+                            color: isCorrect || picked ? 'inherit' : 'var(--color-ink-muted)',
                           }}
                         >
-                          <span
-                            className="font-medium"
-                            style={{
-                              fontSize: 11,
-                              letterSpacing: '0.5px',
-                              opacity: 0.55,
-                              color: isCorrect || picked ? 'inherit' : 'var(--color-ink-muted)',
-                            }}
-                          >
-                            {String.fromCharCode(65 + i)}
-                          </span>
-                          <span style={{ fontSize: compact ? 19 : 22, fontWeight: 500 }}>{opt}</span>
-                        </button>
-                      )
-                    })}
-                  </div>
-                )}
-
-                {puzzle.input_type === 'numeric' && (
-                  <NumericStepper
-                    value={answer}
-                    onChange={setAnswer}
-                    locked={isFinished}
-                    min={inputConfig?.min ?? 0}
-                    max={inputConfig?.max ?? 999}
-                    compact={compact}
-                  />
-                )}
-
-                {puzzle.input_type === 'freetext' && (
-                  <input
-                    type="text"
-                    value={answer}
-                    disabled={isFinished}
-                    onChange={e => setAnswer(e.target.value)}
-                    onKeyDown={e => { if (e.key === 'Enter') submit() }}
-                    placeholder="Type your answer…"
-                    style={{
-                      width: '100%',
-                      fontSize: compact ? 20 : 24,
-                      padding: compact ? '12px 16px' : '14px 20px',
-                      borderRadius: 12,
-                      border: '1px solid var(--color-hair-strong)',
-                      background: 'var(--color-paper)',
-                      color: 'var(--color-ink)',
-                      fontFamily: 'inherit',
-                      outline: 'none',
-                      boxSizing: 'border-box',
-                      fontVariantNumeric: 'tabular-nums',
-                    }}
-                  />
-                )}
-              </div>
-
-              {/* Status line */}
-              <div
-                className="mt-2"
-                style={{ fontSize: 15, fontStyle: 'italic', minHeight: 22 }}
-              >
-                {status === 'correct' && (
-                  <span className="animate-burst" style={{ color: 'var(--color-success)' }}>
-                    ✓ Nicely done.
-                  </span>
-                )}
-                {status === 'wrong' && (
-                  <span style={{ color: 'var(--color-accent)' }}>Not quite — try again.</span>
-                )}
-                {status === 'revealed' && (
-                  <span className="text-ink-muted">Puzzle revealed.</span>
-                )}
-              </div>
-            </div>
-
-            {/* Actions row */}
-            <div
-              className="flex items-center gap-2 flex-wrap mt-3 pt-3"
-              style={{ borderTop: '1px dashed var(--color-hair-strong)' }}
-            >
-              <GhostButton
-                onClick={revealHint}
-                disabled={hintLevel >= puzzle.hints.length || isFinished}
-              >
-                ◐ Hint {hintLevel}/{puzzle.hints.length}
-                <span className="italic text-ink-muted ml-1" style={{ fontSize: compact ? 12 : 13 }}>· free</span>
-              </GhostButton>
-
-              {!compact && (
-                <GhostButton
-                  onClick={() => setShowScratch(v => !v)}
-                  active={showScratch}
-                >
-                  Notes
-                </GhostButton>
+                          {String.fromCharCode(65 + i)}
+                        </span>
+                        <span style={{ fontSize: compact ? 19 : 22, fontWeight: 500 }}>{opt}</span>
+                      </button>
+                    )
+                  })}
+                </div>
               )}
 
-              <GhostButton onClick={skip} disabled={isFinished}>
-                Give up
-              </GhostButton>
+              {puzzle.input_type === 'numeric' && (
+                <NumericStepper
+                  value={answer}
+                  onChange={setAnswer}
+                  locked={isFinished}
+                  min={inputConfig?.min ?? 0}
+                  max={inputConfig?.max ?? 999}
+                  compact={compact}
+                />
+              )}
 
-              <div className="flex-1" />
+              {puzzle.input_type === 'freetext' && (
+                <input
+                  type="text"
+                  value={answer}
+                  disabled={isFinished}
+                  onChange={e => setAnswer(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') submit() }}
+                  placeholder="Type your answer…"
+                  style={{
+                    width: '100%',
+                    fontSize: compact ? 20 : 24,
+                    padding: compact ? '12px 16px' : '14px 20px',
+                    borderRadius: 12,
+                    border: '1px solid var(--color-hair-strong)',
+                    background: 'var(--color-paper)',
+                    color: 'var(--color-ink)',
+                    fontFamily: 'inherit',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                    fontVariantNumeric: 'tabular-nums',
+                  }}
+                />
+              )}
+            </div>
 
-              {attempts > 0 && !isFinished && (
-                <span className="italic text-ink-muted text-[13px] mr-1">
-                  {attempts} {attempts === 1 ? 'try' : 'tries'}
+            {/* Status line */}
+            <div
+              className="mt-2"
+              style={{ fontSize: 15, fontStyle: 'italic', minHeight: 22 }}
+            >
+              {status === 'correct' && (
+                <span className="animate-burst" style={{ color: 'var(--color-success)' }}>
+                  ✓ Nicely done.
                 </span>
               )}
-
-              <button
-                onClick={submit}
-                disabled={!answer.toString().trim() || isFinished || submitting}
-                className="transition-all duration-[180ms] font-medium"
-                style={{
-                  background: 'var(--color-ink)',
-                  color: 'var(--color-paper)',
-                  borderRadius: 14,
-                  padding: compact ? '10px 18px' : '12px 22px',
-                  fontSize: compact ? 14 : 16,
-                  fontFamily: 'inherit',
-                  opacity: !answer.toString().trim() || isFinished ? 0.4 : 1,
-                  cursor: !answer.toString().trim() || isFinished ? 'default' : 'pointer',
-                  boxShadow: 'var(--shadow-btn)',
-                  border: 'none',
-                }}
-              >
-                {isFinished ? '✓ Done' : submitting ? 'Checking…' : 'Check answer'}
-              </button>
+              {status === 'wrong' && (
+                <span style={{ color: 'var(--color-accent)' }}>Not quite — try again.</span>
+              )}
+              {status === 'revealed' && (
+                <span className="text-ink-muted">Puzzle revealed.</span>
+              )}
             </div>
-
-            {/* Post-solve panel */}
-            {isFinished && (
-              <PostSolvePanel
-                status={status}
-                elapsed={elapsed}
-                hintLevel={hintLevel}
-                attempts={attempts}
-                solutionHref={solutionHref}
-                compact={compact}
-              />
-            )}
           </div>
-        </div>
 
-        {/* Scratchpad */}
-        {!compact && (
+          {/* Actions row */}
           <div
-            style={{
-              width: showScratch ? 260 : 0,
-              flexShrink: 0,
-              borderLeft: showScratch ? '1px solid var(--color-hair)' : 'none',
-              background: 'var(--color-paper)',
-              transition: 'width 0.35s var(--ease-puddle)',
-              overflow: 'hidden',
-            }}
+            className="flex items-center gap-2 flex-wrap mt-3 pt-3"
+            style={{ borderTop: '1px dashed var(--color-hair-strong)' }}
           >
-            <div style={{ width: 260, height: '100%', padding: 18, boxSizing: 'border-box', display: 'flex', flexDirection: 'column' }}>
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-[13px] italic text-ink-muted">Scratch</span>
-                <button
-                  onClick={() => setShowScratch(false)}
-                  className="text-ink-muted hover:text-ink text-lg leading-none"
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
-                >
-                  ×
-                </button>
-              </div>
+            <GhostButton
+              onClick={revealHint}
+              disabled={hintLevel >= puzzle.hints.length || isFinished}
+            >
+              ◐ Hint {hintLevel}/{puzzle.hints.length}
+              <span className="italic text-ink-muted ml-1" style={{ fontSize: compact ? 12 : 13 }}>· free</span>
+            </GhostButton>
+
+            <GhostButton
+              onClick={() => setShowScratch(v => !v)}
+              active={showScratch}
+            >
+              Notes
+            </GhostButton>
+
+            <GhostButton onClick={skip} disabled={isFinished}>
+              Give up
+            </GhostButton>
+
+            <div className="flex-1" />
+
+            {attempts > 0 && !isFinished && (
+              <span className="italic text-ink-muted text-[13px] mr-1">
+                {attempts} {attempts === 1 ? 'try' : 'tries'}
+              </span>
+            )}
+
+            <button
+              onClick={submit}
+              disabled={!answer.toString().trim() || isFinished || submitting}
+              className="transition-all duration-[180ms] font-medium"
+              style={{
+                background: 'var(--color-ink)',
+                color: 'var(--color-paper)',
+                borderRadius: 14,
+                padding: compact ? '10px 18px' : '12px 22px',
+                fontSize: compact ? 14 : 16,
+                fontFamily: 'inherit',
+                opacity: !answer.toString().trim() || isFinished ? 0.4 : 1,
+                cursor: !answer.toString().trim() || isFinished ? 'default' : 'pointer',
+                boxShadow: 'var(--shadow-btn)',
+                border: 'none',
+              }}
+            >
+              {isFinished ? '✓ Done' : submitting ? 'Checking…' : 'Check answer'}
+            </button>
+          </div>
+
+          {/* Mobile scratchpad */}
+          {showScratch && (
+            <div className="md:hidden mt-4" style={{ borderTop: '1px solid var(--color-hair)', paddingTop: 14 }}>
               <textarea
                 value={scratch}
                 onChange={e => setScratch(e.target.value)}
                 placeholder="Think out loud…"
-                className="flex-1 resize-none bg-transparent text-ink outline-none"
-                style={{ fontSize: 13, lineHeight: 1.55, border: 'none', fontFamily: 'inherit', width: '100%', boxSizing: 'border-box' }}
+                style={{
+                  width: '100%', minHeight: 120, resize: 'vertical',
+                  background: 'var(--color-paper)',
+                  border: '1px solid var(--color-hair)',
+                  borderRadius: 12,
+                  padding: '12px 14px',
+                  fontSize: 14,
+                  lineHeight: 1.55,
+                  fontFamily: 'inherit',
+                  color: 'var(--color-ink)',
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                }}
               />
             </div>
+          )}
+
+          {/* Post-solve panel */}
+          {isFinished && (
+            <PostSolvePanel
+              status={status}
+              elapsed={elapsed}
+              hintLevel={hintLevel}
+              attempts={attempts}
+              solutionHref={solutionHref}
+              compact={compact}
+            />
+          )}
+        </div>
+
+        {/* Desktop scratchpad side panel */}
+        <div className="hidden md:block flex-shrink-0" style={{
+          width: showScratch ? 260 : 0,
+          borderLeft: showScratch ? '1px solid var(--color-hair)' : 'none',
+          background: 'var(--color-paper)',
+          transition: 'width 0.35s var(--ease-puddle)',
+          overflow: 'hidden',
+        }}>
+          <div style={{ width: 260, height: '100%', padding: 18, boxSizing: 'border-box', display: 'flex', flexDirection: 'column' }}>
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-[13px] italic text-ink-muted">Scratch</span>
+              <button
+                onClick={() => setShowScratch(false)}
+                className="text-ink-muted hover:text-ink text-lg leading-none"
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+              >
+                ×
+              </button>
+            </div>
+            <textarea
+              value={scratch}
+              onChange={e => setScratch(e.target.value)}
+              placeholder="Think out loud…"
+              className="flex-1 resize-none bg-transparent text-ink outline-none"
+              style={{ fontSize: 13, lineHeight: 1.55, border: 'none', fontFamily: 'inherit', width: '100%', boxSizing: 'border-box' }}
+            />
           </div>
-        )}
+        </div>
       </div>
     </div>
   )

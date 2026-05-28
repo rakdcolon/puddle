@@ -32,9 +32,9 @@ export default async function ProfilePage() {
   return (
     <>
       <Masthead currentPage="profile" />
-      <main className="flex-1 max-w-[720px] mx-auto w-full px-6 py-10">
+      <main className="flex-1 max-w-[720px] mx-auto w-full px-4 py-8 sm:px-6 sm:py-10">
         {/* Identity strip */}
-        <div className="flex items-start justify-between mb-10 gap-6">
+        <div className="flex items-start justify-between mb-10 gap-6 flex-wrap">
           <div className="flex items-center gap-5">
             {/* Avatar */}
             <div
@@ -101,12 +101,11 @@ export default async function ProfilePage() {
             By the numbers
           </h2>
           <div
+            className="grid grid-cols-3 sm:grid-cols-5"
             style={{
               background: 'var(--color-paper)',
               borderRadius: 16,
               border: '1px solid var(--color-hair)',
-              display: 'grid',
-              gridTemplateColumns: 'repeat(5, 1fr)',
             }}
           >
             {[
@@ -122,10 +121,7 @@ export default async function ProfilePage() {
             ].map((tile, i) => (
               <div
                 key={tile.label}
-                className="text-center py-5 px-3"
-                style={{
-                  borderLeft: i > 0 ? '1px solid var(--color-hair)' : 'none',
-                }}
+                className={`text-center py-5 px-3${i > 0 ? ' border-l border-hair' : ''}`}
               >
                 <div className="italic text-ink-muted mb-1" style={{ fontSize: 13 }}>{tile.label}</div>
                 <div
@@ -149,7 +145,7 @@ export default async function ProfilePage() {
         </section>
 
         {/* Lower two-column grid */}
-        <div className="grid gap-8" style={{ gridTemplateColumns: '1.15fr 1fr' }}>
+        <div className="grid grid-cols-1 md:grid-cols-[1.15fr_1fr] gap-8">
           {/* Recent solves */}
           <section>
             <h2 className="italic font-medium mb-4 text-accent" style={{ fontSize: 18, letterSpacing: -0.2 }}>

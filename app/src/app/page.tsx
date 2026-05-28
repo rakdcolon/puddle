@@ -31,16 +31,8 @@ export default async function LandingPage() {
   return (
     <>
       <Masthead issueNo={puzzle.issue_no} vol={puzzle.vol} />
-      <main className="flex-1 max-w-[1440px] mx-auto w-full px-14 py-7 pb-6">
-        <div
-          className="w-full"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1.05fr 0.95fr',
-            gap: '72px',
-            alignItems: 'start',
-          }}
-        >
+      <main className="flex-1 max-w-[1440px] mx-auto w-full px-4 py-6 sm:px-14 sm:py-7 pb-6">
+        <div className="flex flex-col-reverse md:grid w-full" style={{ gridTemplateColumns: '1.05fr 0.95fr', gap: '72px', alignItems: 'start' }}>
           {/* Left: editorial lede */}
           <div>
             <div className="flex items-center gap-3 mb-5">
