@@ -2,7 +2,7 @@
   "issue_no": 17,
   "vol": 1,
   "date_active": "2026-06-14",
-  "title": "Light switches",
+  "title": "Light Switches",
   "genre": "lateral",
   "difficulty": 3,
   "prompt": [
@@ -19,10 +19,19 @@
   ],
   "solution_lede": "A light bulb has two observable properties: whether it is currently on or off, and whether it is warm or cold. Two binary signals give 2 × 2 = 4 distinct combinations — exactly enough for four switches.\n\nThe method: turn on switches 1 and 2. Wait several minutes. Turn off switch 2, turn on switch 3. Then enter the room immediately and observe the bulb:\n\nOn and hot → switch 1 (on for a while)\nOff and hot → switch 2 (was on, now off)\nOn and cold → switch 3 (just turned on)\nOff and cold → switch 4 (never turned on)\n\nOne visit is sufficient.",
   "solution_steps": [
-    { "body": "Turn on switches 1 and 2. Wait several minutes for the bulb (if on) to heat up." },
-    { "body": "Turn off switch 2. Turn on switch 3. Enter the room immediately." },
-    { "body": "Touch the bulb and observe: on+hot=switch 1, off+hot=switch 2, on+cold=switch 3, off+cold=switch 4." }
+    {
+      "body": "Turn on switches 1 and 2. Wait several minutes for the bulb (if on) to heat up."
+    },
+    {
+      "body": "Turn off switch 2. Turn on switch 3. Enter the room immediately."
+    },
+    {
+      "body": "Touch the bulb and observe: on+hot=switch 1, off+hot=switch 2, on+cold=switch 3, off+cold=switch 4."
+    }
   ],
   "input_type": "numeric",
-  "input_config": { "min": 1, "max": 4 }
+  "input_config": {
+    "min": 1,
+    "max": 4
+  }
 }

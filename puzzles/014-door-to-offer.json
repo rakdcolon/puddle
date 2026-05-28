@@ -2,7 +2,7 @@
   "issue_no": 14,
   "vol": 1,
   "date_active": "2026-06-11",
-  "title": "Door to the offer",
+  "title": "Door to the Offer",
   "genre": "lateral",
   "difficulty": 3,
   "prompt": [
@@ -19,11 +19,26 @@
   ],
   "solution_lede": "Direct questions fail here because both guards produce the same answer regardless of which door they're guarding. The key is a self-cancelling double-layer: ask one guard to report what the other would say.\n\nAsk either guard: \"Would the other guard say you're guarding the offer door?\"\n\nIf you ask the truth-teller (who guards the offer door): the liar would say \"no\" (a lie), so the truth-teller reports \"no.\"\nIf you ask the liar (who guards the offer door): the truth-teller would say \"yes,\" so the liar reports \"no\" (lying about the truth-teller's answer).\n\nIn both cases, \"no\" means this guard is at the offer door — choose it. A \"yes\" answer, by the same logic, means the offer is behind the other door. The question works on either guard, in either scenario.",
   "solution_steps": [
-    { "body": "A direct question yields the same answer from both guards regardless of setup — useless." },
-    { "body": "Ask: \"Would the other guard say you're guarding the offer door?\"" },
-    { "body": "Truth-teller at offer door: correctly reports liar's lie → answers \"No.\" Liar at offer door: lies about truth-teller's truth → also answers \"No.\"" },
-    { "body": "Rule: if the answer is \"No,\" the offer is behind this guard's door. If \"Yes,\" take the other door." }
+    {
+      "body": "A direct question yields the same answer from both guards regardless of setup — useless."
+    },
+    {
+      "body": "Ask: \"Would the other guard say you're guarding the offer door?\""
+    },
+    {
+      "body": "Truth-teller at offer door: correctly reports liar's lie → answers \"No.\" Liar at offer door: lies about truth-teller's truth → also answers \"No.\""
+    },
+    {
+      "body": "Rule: if the answer is \"No,\" the offer is behind this guard's door. If \"Yes,\" take the other door."
+    }
   ],
   "input_type": "choice",
-  "input_config": { "options": ["Are you guarding the offer door?", "Would the other guard say you're guarding the offer door?", "Is the other guard a liar?", "Are you telling the truth?"] }
+  "input_config": {
+    "options": [
+      "Are you guarding the offer door?",
+      "Would the other guard say you're guarding the offer door?",
+      "Is the other guard a liar?",
+      "Are you telling the truth?"
+    ]
+  }
 }

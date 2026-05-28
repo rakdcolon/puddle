@@ -7,7 +7,7 @@ VALUES
 (
   1, 1,
   CURRENT_DATE,
-  'The midnight bridge',
+  'The Midnight Bridge',
   'logic',
   3,
   '["Four travelers reach a narrow bridge at night. They share one flashlight, and at most two may cross at a time. Whoever crosses must carry the flashlight, and a pair walks at the slower person''s pace.", "Their individual crossing times are 1, 2, 5, and 10 minutes.", "What is the minimum total time, in minutes, for all four to reach the other side?"]',
@@ -24,7 +24,7 @@ The optimal path hinges on getting the 1-minute walker to the far side first, so
 (
   2, 1,
   CURRENT_DATE + 1,
-  '25 horses, no clock',
+  '25 Horses, No Clock',
   'quant',
   4,
   '["You have 25 horses and a track that holds exactly 5 horses per race. There is no stopwatch — each race only tells you the finishing order of those 5.", "Assume every horse runs at a fixed, distinct speed.", "What is the minimum number of races needed to determine the three fastest horses overall?"]',
@@ -41,7 +41,7 @@ After 5 qualifying races you have the ranking within each group. One championshi
 (
   3, 1,
   CURRENT_DATE + 2,
-  'Read the previous line',
+  'Read the Previous Line',
   'pattern',
   2,
   '["Each term in this sequence is built from the one that precedes it. The rule is consistent and uses no arithmetic.", "1,  11,  21,  1211,  111221,  312211,  ?", "What is the next term?"]',

@@ -2,7 +2,7 @@
   "issue_no": 12,
   "vol": 1,
   "date_active": "2026-06-09",
-  "title": "Box packing",
+  "title": "Box Packing",
   "genre": "logic",
   "difficulty": 4,
   "prompt": [
@@ -18,11 +18,24 @@
   ],
   "solution_lede": "Volume is a necessary condition for packing, not a sufficient one. The key is a 3D colouring argument — the same idea that proves you can't tile a mutilated chessboard.\n\nImagine the 6×6×6 box as 27 smaller 2×2×2 sub-cubes, coloured like a 3D checkerboard: alternating black and white. This gives either 14 black and 13 white, or 13 black and 14 white.\n\nNow consider how a 1×1×4 brick sits in the box. Regardless of orientation, it must occupy exactly two consecutive 2×2×2 sub-cubes — one black and one white. Each 2×2×2 sub-cube can accommodate at most 4 such bricks (one per unit-wide lane through it).\n\nThe colour with only 13 sub-cubes can support at most 13 × 4 = 52 bricks. There is no room for the 53rd. Packing is impossible.",
   "solution_steps": [
-    { "body": "Divide the 6×6×6 box into 27 sub-cubes of size 2×2×2. Colour them like a 3D checkerboard: 14 of one colour, 13 of the other." },
-    { "body": "Every 1×1×4 brick, regardless of orientation, spans exactly two adjacent 2×2×2 sub-cubes — one of each colour." },
-    { "body": "Each 2×2×2 sub-cube can be used by at most 4 bricks (one per unit-wide channel through it)." },
-    { "body": "The minority colour has 13 sub-cubes × 4 bricks = 52 bricks maximum. The 53rd brick cannot be placed." }
+    {
+      "body": "Divide the 6×6×6 box into 27 sub-cubes of size 2×2×2. Colour them like a 3D checkerboard: 14 of one colour, 13 of the other."
+    },
+    {
+      "body": "Every 1×1×4 brick, regardless of orientation, spans exactly two adjacent 2×2×2 sub-cubes — one of each colour."
+    },
+    {
+      "body": "Each 2×2×2 sub-cube can be used by at most 4 bricks (one per unit-wide channel through it)."
+    },
+    {
+      "body": "The minority colour has 13 sub-cubes × 4 bricks = 52 bricks maximum. The 53rd brick cannot be placed."
+    }
   ],
   "input_type": "choice",
-  "input_config": { "options": ["Yes", "No"] }
+  "input_config": {
+    "options": [
+      "Yes",
+      "No"
+    ]
+  }
 }

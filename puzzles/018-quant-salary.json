@@ -2,7 +2,7 @@
   "issue_no": 18,
   "vol": 1,
   "date_active": "2026-06-15",
-  "title": "The quant salary problem",
+  "title": "The Quant Salary Problem",
   "genre": "lateral",
   "difficulty": 2,
   "prompt": [
@@ -19,11 +19,26 @@
   ],
   "solution_lede": "The trick is for the first quant to add a secret random number — known only to them — before sharing anything.\n\nQuant 1 picks a large random number R, adds their salary S₁, and passes R + S₁ to quant 2. Each subsequent quant simply adds their own salary and passes the total along. No one can infer any individual salary from the running total because R is unknown.\n\nAfter quant 8 adds their salary and passes back to quant 1, the total is R + S₁ + S₂ + … + S₈. Quant 1 subtracts R to get the true total, then divides by 8. The average is revealed; no individual salary ever was.",
   "solution_steps": [
-    { "body": "Quant 1 chooses a large secret random number R, adds their salary S₁, and passes R + S₁ to quant 2." },
-    { "body": "Each of quants 2–8 adds their own salary to the running total and passes it on. No one knows R, so no salary is inferable." },
-    { "body": "Quant 8 passes the final total back to quant 1, who subtracts R to obtain S₁ + S₂ + … + S₈." },
-    { "body": "Quant 1 divides by 8 and announces the average. Individual salaries remain private." }
+    {
+      "body": "Quant 1 chooses a large secret random number R, adds their salary S₁, and passes R + S₁ to quant 2."
+    },
+    {
+      "body": "Each of quants 2–8 adds their own salary to the running total and passes it on. No one knows R, so no salary is inferable."
+    },
+    {
+      "body": "Quant 8 passes the final total back to quant 1, who subtracts R to obtain S₁ + S₂ + … + S₈."
+    },
+    {
+      "body": "Quant 1 divides by 8 and announces the average. Individual salaries remain private."
+    }
   ],
   "input_type": "choice",
-  "input_config": { "options": ["A random number", "The number 8", "Zero", "Their salary again"] }
+  "input_config": {
+    "options": [
+      "A random number",
+      "The number 8",
+      "Zero",
+      "Their salary again"
+    ]
+  }
 }
