@@ -1,0 +1,893 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Profile — puddle</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- ━ favicon + social ━ -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="alternate icon" href="favicon.svg" />
+  <meta name="theme-color" content="#f5ecdb" />
+  <meta name="description" content="Your solving record — level, streak, and calendar." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="puddle" />
+  <meta property="og:title" content="Your record · puddle" />
+  <meta property="og:description" content="Your solving record — level, streak, and calendar." />
+  <meta property="og:image" content="og-default.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Your record · puddle" />
+  <meta name="twitter:description" content="Your solving record — level, streak, and calendar." />
+  <meta name="twitter:image" content="og-default.png" />
+  <!-- /social -->
+
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --bg: #f5ecdb;
+    --paper: #fcf7ea;
+    --paper-deep: #efe5cf;
+    --ink: #3a2f22;
+    --ink-muted: #a59581;
+    --ink-soft: #6e5d48;
+    --hair: #ebe0c9;
+    --hair-strong: #d9caa6;
+    --accent: #b85a3e;
+    --success: #6b8a52;
+    --shadow: 0 1px 2px rgba(58,47,34,.04), 0 6px 24px rgba(58,47,34,.05);
+    --shadow-card: 0 1px 2px rgba(58,47,34,.05), 0 10px 36px rgba(58,47,34,.08);
+    --serif: "Crimson Pro", "Iowan Old Style", Georgia, serif;
+    --ease: cubic-bezier(.22,.99,.32,1);
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-feature-settings: "ss01", "cv02";
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  ::selection { background: var(--accent); color: var(--paper); }
+
+  .page {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    padding: 28px 56px 24px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  /* ━━━ masthead — shared chrome (signed-in variant) ━━━ */
+  .masthead {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--hair);
+  }
+  .masthead-left {
+    font-size: 13.5px;
+    font-style: italic;
+    color: var(--ink-muted);
+    letter-spacing: 0.1px;
+  }
+  .masthead-left .dot { color: var(--accent); padding: 0 6px; }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    justify-content: center;
+    text-decoration: none; color: inherit;
+  }
+  .logo-mark {
+    width: 26px; height: 26px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 2px;
+    border-radius: 3px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .logo-mark i { display: block; background: var(--ink); }
+  .logo-mark i:nth-child(2),
+  .logo-mark i:nth-child(3) { background: var(--accent); }
+  .logo-text {
+    font-size: 26px; font-weight: 500; letter-spacing: -0.4px;
+    line-height: 1; color: var(--ink);
+  }
+  .logo-text .pip { color: var(--accent); padding: 0 2px; }
+  .masthead-right {
+    font-size: 13.5px;
+    color: var(--ink-muted);
+    text-align: right;
+    letter-spacing: 0.1px;
+  }
+  .masthead-right a {
+    color: var(--ink);
+    text-decoration: none;
+    margin-left: 22px;
+    position: relative;
+    transition: color .18s var(--ease);
+  }
+  .masthead-right a.current {
+    color: var(--accent);
+    font-style: italic;
+  }
+  .masthead-right a::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -3px;
+    height: 1px; background: var(--accent);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform .25s var(--ease);
+  }
+  .masthead-right a.current::after { transform: scaleX(1); }
+  .masthead-right a:hover { color: var(--accent); }
+  .masthead-right a:hover::after { transform: scaleX(1); }
+  .rule-thin { height: 1px; background: var(--hair); margin-top: 3px; }
+
+  /* ━━━ main ━━━ */
+  .main {
+    flex: 1;
+    padding: 44px 0 40px;
+    display: flex; flex-direction: column;
+    gap: 44px;
+  }
+
+  /* ━━━ identity strip ━━━ */
+  .identity {
+    display: flex; align-items: center; gap: 28px;
+    padding-bottom: 36px;
+    border-bottom: 1px solid var(--hair);
+  }
+  .avatar {
+    width: 84px; height: 84px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1px solid var(--hair);
+    color: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 36px;
+    letter-spacing: -0.4px;
+    box-shadow: var(--shadow);
+    flex-shrink: 0;
+  }
+  .identity-text {
+    flex: 1;
+    min-width: 0;
+  }
+  .identity-kicker {
+    font-size: 13px;
+    font-style: italic;
+    color: var(--accent);
+    margin: 0 0 8px;
+    letter-spacing: 0.2px;
+  }
+  .identity-name {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 46px;
+    line-height: 1.0;
+    letter-spacing: -1.0px;
+    margin: 0 0 8px;
+    color: var(--ink);
+  }
+  .identity-meta {
+    font-size: 15px;
+    font-style: italic;
+    color: var(--ink-muted);
+    margin: 0;
+  }
+  .identity-meta .sep { color: var(--hair-strong); padding: 0 8px; }
+
+  /* level + xp pill on the right of identity */
+  .identity-level {
+    flex-shrink: 0;
+    min-width: 240px;
+    padding: 18px 22px;
+    background: var(--paper);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .identity-level-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 13.5px;
+    color: var(--ink-muted);
+    font-style: italic;
+  }
+  .identity-level-head strong {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-style: normal;
+    color: var(--ink);
+    font-size: 18px;
+    letter-spacing: -0.2px;
+  }
+  .identity-level-bar {
+    height: 6px;
+    background: var(--paper-deep);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .identity-level-bar > div {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+  }
+  .identity-level-foot {
+    font-size: 13px;
+    color: var(--ink-muted);
+    font-style: italic;
+    display: flex; justify-content: space-between;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ━━━ section title ━━━ */
+  .section {
+    display: flex; flex-direction: column;
+  }
+  .section-title {
+    display: flex; align-items: baseline; gap: 14px;
+    margin-bottom: 18px;
+  }
+  .section-title h2 {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 22px;
+    letter-spacing: -0.2px;
+    color: var(--ink);
+    margin: 0;
+  }
+  .section-title .note {
+    font-size: 13.5px;
+    color: var(--ink-muted);
+    font-style: italic;
+  }
+  .section-title .rule {
+    flex: 1;
+    height: 1px;
+    background: var(--hair-strong);
+  }
+
+  /* ━━━ stats grid ━━━ */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    background: var(--paper);
+    border-radius: 16px;
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
+  .stat {
+    padding: 22px 24px;
+    border-right: 1px solid var(--hair);
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .stat:last-child { border-right: none; }
+  .stat-label {
+    font-size: 13px;
+    color: var(--ink-muted);
+    font-style: italic;
+    letter-spacing: 0.1px;
+  }
+  .stat-value {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 34px;
+    letter-spacing: -0.6px;
+    color: var(--ink);
+    line-height: 1.0;
+    font-variant-numeric: tabular-nums oldstyle-nums;
+    display: flex; align-items: baseline; gap: 6px;
+  }
+  .stat-value .unit {
+    font-size: 16px;
+    color: var(--ink-muted);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+  .stat-foot {
+    font-size: 13px;
+    color: var(--ink-muted);
+    font-style: italic;
+  }
+  .stat-foot strong { color: var(--ink); font-style: normal; font-weight: 500; }
+
+  /* ━━━ calendar heatmap ━━━ */
+  .calendar-wrap {
+    background: var(--paper);
+    border-radius: 16px;
+    box-shadow: var(--shadow-card);
+    padding: 24px 28px;
+  }
+  .calendar {
+    display: flex; flex-direction: column;
+    gap: 18px;
+  }
+  .calendar-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 13px;
+    color: var(--ink-muted);
+    font-style: italic;
+    margin-bottom: 4px;
+  }
+  .calendar-frame {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px;
+    align-items: start;
+  }
+  .day-labels {
+    display: grid;
+    grid-template-rows: repeat(7, 14px);
+    gap: 3px;
+    padding-top: 22px; /* matches month-row height + margin */
+    font-size: 10.5px;
+    color: var(--ink-muted);
+    font-style: italic;
+  }
+  .day-labels span {
+    height: 14px;
+    display: flex;
+    align-items: center;
+    line-height: 1;
+  }
+  .calendar-body {
+    min-width: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .month-row {
+    position: relative;
+    height: 18px;
+    margin-bottom: 4px;
+  }
+  .month-label {
+    position: absolute;
+    bottom: 0;
+    font-size: 10.5px;
+    font-style: italic;
+    color: var(--ink-muted);
+    white-space: nowrap;
+    letter-spacing: 0.2px;
+  }
+  .calendar-grid {
+    display: grid;
+    grid-template-rows: repeat(7, 14px);
+    grid-auto-flow: column;
+    grid-auto-columns: 14px;
+    gap: 3px;
+    width: max-content;
+  }
+  .cell {
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+    background: var(--paper-deep);
+    transition: transform .15s var(--ease);
+    cursor: default;
+  }
+  .cell.solved { background: var(--accent); }
+  .cell.solved-with-hint { background: var(--accent); opacity: 0.55; }
+  .cell.gave-up { background: var(--ink-muted); opacity: 0.5; }
+  .cell.future { background: transparent; border: 1px dashed var(--hair-strong); }
+  .cell:hover { transform: scale(1.18); }
+
+  .calendar-legend {
+    display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+    font-size: 12.5px;
+    color: var(--ink-muted);
+    font-style: italic;
+    padding-top: 4px;
+  }
+  .calendar-legend .swatch {
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .calendar-legend .swatch .cell { width: 10px; height: 10px; aspect-ratio: auto; border-radius: 2px; }
+
+  /* ━━━ two-column lower section ━━━ */
+  .lower {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 44px;
+  }
+
+  /* recent puzzles */
+  .recent-list {
+    display: flex; flex-direction: column;
+  }
+  .recent-row {
+    display: grid;
+    grid-template-columns: 80px 1fr auto auto;
+    gap: 18px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--hair);
+    align-items: baseline;
+  }
+  .recent-row:last-child { border-bottom: none; }
+  .recent-date {
+    font-size: 13.5px;
+    color: var(--ink-muted);
+    font-style: italic;
+    font-variant-numeric: tabular-nums;
+  }
+  .recent-title {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.2px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .recent-title .skip-note {
+    color: var(--ink-muted);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 15px;
+  }
+  .recent-time {
+    font-size: 14.5px;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    font-style: italic;
+  }
+  .recent-time.muted { color: var(--ink-muted); }
+  .recent-hints {
+    font-size: 12.5px;
+    color: var(--ink-muted);
+    font-style: italic;
+    white-space: nowrap;
+    min-width: 76px;
+    text-align: right;
+  }
+  .recent-hints .solo { color: var(--success); }
+
+  /* genre breakdown */
+  .genre-list {
+    display: flex; flex-direction: column;
+    gap: 14px;
+  }
+  .genre-row {
+    display: grid;
+    grid-template-columns: 110px 1fr 44px;
+    gap: 14px;
+    align-items: center;
+  }
+  .genre-name {
+    font-size: 15px;
+    color: var(--ink);
+    letter-spacing: 0.1px;
+  }
+  .genre-bar {
+    height: 8px;
+    background: var(--paper-deep);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+  .genre-bar > span {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    border-radius: 4px;
+    transition: width .8s var(--ease);
+  }
+  .genre-count {
+    font-size: 14px;
+    color: var(--ink-muted);
+    font-style: italic;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+  .genre-count strong { color: var(--ink); font-style: normal; font-weight: 500; }
+
+  /* ━━━ footer ━━━ */
+  .footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 16px;
+    border-top: 1px solid var(--hair);
+    font-size: 13px;
+    color: var(--ink-muted);
+    font-style: italic;
+  }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a {
+    color: var(--ink); text-decoration: none; font-style: normal;
+    transition: color .18s var(--ease);
+  }
+  .footer-links a:hover { color: var(--accent); }
+  .footer-cite { font-variant-numeric: oldstyle-nums; }
+
+  @media (max-width: 960px) {
+    .page { padding: 20px 24px; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .stat { border-right: none; border-bottom: 1px solid var(--hair); }
+    .stat:nth-child(odd) { border-right: 1px solid var(--hair); }
+    .lower { grid-template-columns: 1fr; gap: 44px; }
+    .identity { flex-direction: column; align-items: flex-start; gap: 20px; }
+    .identity-level { width: 100%; }
+    .identity-name { font-size: 36px; }
+    .masthead { grid-template-columns: 1fr auto; }
+    .masthead-right { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ━━━━━━━━━━━━━━━━ MASTHEAD ━━━━━━━━━━━━━━━━ -->
+  <header class="masthead">
+    <div class="masthead-left">
+      <span>Vol. III <span class="dot">·</span> No. 147</span>
+    </div>
+
+    <a href="Landing.html" class="logo">
+      <span class="logo-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span class="logo-text">puddle</span>
+    </a>
+
+    <nav class="masthead-right">
+      <a href="About.html">About</a>
+      <a href="Profile.html" class="current">Profile</a>
+      <a href="Settings.html">Settings</a>
+      <a href="Landing.html">Sign out</a>
+    </nav>
+  </header>
+  <div class="rule-thin"></div>
+
+  <!-- ━━━━━━━━━━━━━━━━ MAIN ━━━━━━━━━━━━━━━━ -->
+  <main class="main">
+
+    <!-- ───── identity strip ───── -->
+    <section class="identity">
+      <div class="avatar" aria-hidden="true">rk</div>
+      <div class="identity-text">
+        <h1 class="identity-name">Rohan Karamel</h1>
+        <p class="identity-meta">
+          <span>Solving since <strong style="color:var(--ink); font-style:normal; font-weight:500;">February 2026</strong></span>
+          <span class="sep">·</span>
+          <span>87 puzzles attempted</span>
+          <span class="sep">·</span>
+          <span>71 days active</span>
+        </p>
+      </div>
+      <div class="identity-level">
+        <div class="identity-level-head">
+          <span>Level <strong>5</strong></span>
+          <span style="font-variant-numeric: tabular-nums;">240 / 500</span>
+        </div>
+        <div class="identity-level-bar"><div style="width: 48%;"></div></div>
+        <div class="identity-level-foot">
+          <span>260 to level 6</span>
+          <span>↗ next puzzle: <strong style="color:var(--ink); font-style:normal; font-weight:500;">+40</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───── by the numbers ───── -->
+    <section class="section">
+      <div class="section-title">
+        <h2>By the numbers</h2>
+        <span class="rule"></span>
+        <span class="note">all time</span>
+      </div>
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-label">Solved</span>
+          <span class="stat-value">76</span>
+          <span class="stat-foot">of 87 attempted</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Solve rate</span>
+          <span class="stat-value">87<span class="unit">%</span></span>
+          <span class="stat-foot">— <strong>+4%</strong> this month</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Without hints</span>
+          <span class="stat-value">49</span>
+          <span class="stat-foot">of 76 solves</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Average time</span>
+          <span class="stat-value">4<span class="unit">:</span>38</span>
+          <span class="stat-foot">best: <strong>0:41</strong></span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Current streak</span>
+          <span class="stat-value">23<span class="unit">d</span></span>
+          <span class="stat-foot">longest: <strong>87d</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───── solving calendar ───── -->
+    <section class="section">
+      <div class="section-title">
+        <h2>Solving calendar</h2>
+        <span class="rule"></span>
+        <span class="note">last months</span>
+      </div>
+      <div class="calendar-wrap">
+        <div class="calendar">
+          <div class="calendar-head">
+            <span id="cal-range">—</span>
+            <span id="cal-summary">—</span>
+          </div>
+          <div class="calendar-frame">
+            <div class="day-labels" aria-hidden="true">
+              <span></span>
+              <span>Mon</span>
+              <span></span>
+              <span>Wed</span>
+              <span></span>
+              <span>Fri</span>
+              <span></span>
+            </div>
+            <div class="calendar-body">
+              <div class="month-row" id="months"></div>
+              <div class="calendar-grid" id="cal"></div>
+            </div>
+          </div>
+          <div class="calendar-legend">
+            <span class="swatch"><span class="cell solved"></span>Solved unaided</span>
+            <span class="swatch"><span class="cell solved-with-hint"></span>Solved with hint</span>
+            <span class="swatch"><span class="cell gave-up"></span>Gave up</span>
+            <span class="swatch"><span class="cell"></span>Didn't try</span>
+            <span class="swatch"><span class="cell future"></span>Future</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───── lower two-column ───── -->
+    <div class="lower">
+
+      <!-- recent puzzles -->
+      <section class="section">
+        <div class="section-title">
+          <h2>Recent</h2>
+          <span class="rule"></span>
+          <span class="note">last eight</span>
+        </div>
+        <div class="recent-list">
+          <div class="recent-row">
+            <span class="recent-date">May 27</span>
+            <span class="recent-title">The midnight bridge</span>
+            <span class="recent-time">3:42</span>
+            <span class="recent-hints">1 hint</span>
+          </div>
+          <div class="recent-row">
+            <span class="recent-date">May 26</span>
+            <span class="recent-title">25 horses, no clock</span>
+            <span class="recent-time">2:14</span>
+            <span class="recent-hints"><span class="solo">solo</span></span>
+          </div>
+          <div class="recent-row">
+            <span class="recent-date">May 25</span>
+            <span class="recent-title">Read the previous line</span>
+            <span class="recent-time">4:01</span>
+            <span class="recent-hints">2 hints</span>
+          </div>
+          <div class="recent-row">
+            <span class="recent-date">May 24</span>
+            <span class="recent-title">The two doors</span>
+            <span class="recent-time">1:38</span>
+            <span class="recent-hints"><span class="solo">solo</span></span>
+          </div>
+          <div class="recent-row">
+            <span class="recent-date">May 23</span>
+            <span class="recent-title">Number triplets</span>
+            <span class="recent-time">5:50</span>
+            <span class="recent-hints"><span class="solo">solo</span></span>
+          </div>
+          <div class="recent-row">
+            <span class="recent-date">May 22</span>
+            <span class="recent-title">Coin flip parity</span>
+            <span class="recent-time">6:12</span>
+            <span class="recent-hints">1 hint</span>
+          </div>
+          <div class="recent-row">
+            <span class="recent-date">May 21</span>
+            <span class="recent-title"><span class="skip-note">— didn't play</span></span>
+            <span class="recent-time muted">—</span>
+            <span class="recent-hints">—</span>
+          </div>
+          <div class="recent-row">
+            <span class="recent-date">May 20</span>
+            <span class="recent-title">Letter ladder</span>
+            <span class="recent-time">0:58</span>
+            <span class="recent-hints"><span class="solo">solo</span></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- genre breakdown -->
+      <section class="section">
+        <div class="section-title">
+          <h2>By genre</h2>
+          <span class="rule"></span>
+          <span class="note">solved</span>
+        </div>
+        <div class="genre-list" id="genres">
+          <!-- generated -->
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- ━━━━━━━━━━━━━━━━ FOOTER ━━━━━━━━━━━━━━━━ -->
+  <footer class="footer">
+    <span class="footer-cite">Established 2026.</span>
+    <div class="footer-links">
+      <a href="About.html">About</a>
+      <a href="Submit.html">Submit a puzzle</a>
+      <a href="mailto:rohan.karamel@gmail.com">Contact</a>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  // ━━━ calendar — GitHub-style contribution grid ━━━
+  //
+  // Columns are weeks (Sun at top → Sat at bottom); the rightmost column is
+  // the current week. The number of weeks is computed from the available card
+  // width so the grid fills the card cleanly. Today is fixed at May 27 2026 to
+  // line up with the rest of the editorial fiction; the last 23 cells before
+  // today are all solved (the visible current streak).
+  const CELL = 14, GAP = 3;
+  const today = new Date(2026, 4, 27);
+  const todayDow = today.getDay(); // 0=Sun… 6=Sat (Wed=3 here)
+
+  const MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const MONTH_LONG  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  // Deterministic per-date hash → [0, 1) — keeps the same heatmap on every load.
+  function dateHash(d) {
+    const k = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+    // Knuth multiplicative hash
+    return ((k * 2654435761) >>> 0) / 4294967296;
+  }
+
+  function stateForDate(d) {
+    if (d > today) return 'future';
+    const daysAgo = Math.round((today - d) / 86400000);
+    if (daysAgo === 0) return 'solved';
+    if (daysAgo < 23)  return 'solved';            // current streak
+    const r = dateHash(d);
+    // taper activity going backwards: older days are sparser.
+    const activity = 0.72 - Math.min(0.32, daysAgo / 600);
+    if (r < activity * 0.78) return 'solved';
+    if (r < activity * 0.95) return 'solved-with-hint';
+    if (r < activity * 1.03) return 'gave-up';
+    return '';
+  }
+
+  function render() {
+    const body = document.querySelector('.calendar-body');
+    if (!body) return;
+    const avail = body.clientWidth;
+    let weeks = Math.floor((avail + GAP) / (CELL + GAP));
+    weeks = Math.max(16, Math.min(weeks, 52));
+
+    // The last column is the current week. Sunday of the current week is
+    // (today - todayDow) days back; first column starts (weeks-1) weeks before that.
+    const firstColStart = new Date(today);
+    firstColStart.setDate(firstColStart.getDate() - todayDow - (weeks - 1) * 7);
+
+    function cellDate(col, row) {
+      const d = new Date(firstColStart);
+      d.setDate(d.getDate() + col * 7 + row);
+      return d;
+    }
+
+    // Build cells (column-major: col0row0, col0row1, …)
+    const grid = document.getElementById('cal');
+    grid.innerHTML = '';
+    let solved = 0, hinted = 0, gaveUp = 0;
+    for (let col = 0; col < weeks; col++) {
+      for (let row = 0; row < 7; row++) {
+        const d = cellDate(col, row);
+        const s = stateForDate(d);
+        const div = document.createElement('div');
+        div.className = 'cell' + (s ? ' ' + s : '');
+        div.title = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+        grid.appendChild(div);
+        if (s === 'solved') solved++;
+        else if (s === 'solved-with-hint') hinted++;
+        else if (s === 'gave-up') gaveUp++;
+      }
+    }
+
+    // Month labels — placed above the first column where each new month appears.
+    // We look at the Sunday (row 0) of each column; if its month differs from
+    // the previous, drop a label at that column.
+    const months = document.getElementById('months');
+    months.innerHTML = '';
+    let lastMonth = -1;
+    let lastLabelCol = -10;
+    for (let col = 0; col < weeks; col++) {
+      const d = cellDate(col, 0);
+      const m = d.getMonth();
+      if (m !== lastMonth) {
+        // Skip if too close to the previous label (avoid overlap) or right at the
+        // left edge where the partial month would just be a stub.
+        if (col - lastLabelCol >= 3 || lastMonth === -1) {
+          // For the very first label, only show it if the column is far enough
+          // from the start of the new month — otherwise the next label will land soon.
+          if (lastMonth === -1 && col > 0 && col < 2) {
+            // skip — wait for the next month's label
+          } else {
+            const span = document.createElement('span');
+            span.className = 'month-label';
+            span.textContent = MONTH_SHORT[m];
+            span.style.left = (col * (CELL + GAP)) + 'px';
+            months.appendChild(span);
+            lastLabelCol = col;
+          }
+        }
+        lastMonth = m;
+      }
+    }
+
+    // Header copy — range + summary.
+    const startMonth = MONTH_LONG[firstColStart.getMonth()];
+    const endMonth   = MONTH_LONG[today.getMonth()];
+    const span = (startMonth === endMonth)
+      ? `${startMonth} ${today.getFullYear()}`
+      : `${startMonth} → ${endMonth} ${today.getFullYear()}`;
+    document.getElementById('cal-range').textContent = span;
+    document.getElementById('cal-summary').textContent =
+      `${solved} solved · ${hinted} with hint · ${gaveUp} given up`;
+  }
+
+  render();
+  // Re-render on resize so the grid stays full-width without overflowing.
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(render, 80);
+  });
+
+  // ━━━ genre breakdown ━━━
+  const genres = [
+    { name: 'Logic',           solved: 22, total: 24 },
+    { name: 'Deduction',       solved: 16, total: 18 },
+    { name: 'Quant',           solved: 12, total: 15 },
+    { name: 'Sequences',       solved: 11, total: 13 },
+    { name: 'Lateral riddles', solved:  9, total: 12 },
+    { name: 'Wordplay',        solved:  6, total:  5 + 6 },  // 11 attempted, 6 solved
+  ];
+  const maxSolved = Math.max(...genres.map(g => g.solved));
+  const list = document.getElementById('genres');
+  genres.forEach(g => {
+    const row = document.createElement('div');
+    row.className = 'genre-row';
+    row.innerHTML = `
+      <span class="genre-name">${g.name}</span>
+      <span class="genre-bar"><span style="width: ${Math.round((g.solved / maxSolved) * 100)}%;"></span></span>
+      <span class="genre-count"><strong>${g.solved}</strong>/${g.total}</span>
+    `;
+    list.appendChild(row);
+  });
+})();
+</script>
+
+</body>
+</html>

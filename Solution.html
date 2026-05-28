@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>The midnight bridge · Solution — puddle</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- ━ favicon + social ━ -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="alternate icon" href="favicon.svg" />
+  <meta name="theme-color" content="#f5ecdb" />
+  <meta name="description" content="The path to today's answer, with intuition and the steps." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="puddle" />
+  <meta property="og:title" content="Worked solution · puddle" />
+  <meta property="og:description" content="The path to today's answer, with intuition and the steps." />
+  <meta property="og:image" content="og-default.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Worked solution · puddle" />
+  <meta name="twitter:description" content="The path to today's answer, with intuition and the steps." />
+  <meta name="twitter:image" content="og-default.png" />
+  <!-- /social -->
+
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --bg: #f5ecdb;
+    --paper: #fcf7ea;
+    --paper-deep: #efe5cf;
+    --ink: #3a2f22;
+    --ink-muted: #a59581;
+    --ink-soft: #6e5d48;
+    --hair: #ebe0c9;
+    --hair-strong: #d9caa6;
+    --accent: #b85a3e;
+    --success: #6b8a52;
+    --shadow: 0 1px 2px rgba(58,47,34,.04), 0 6px 24px rgba(58,47,34,.05);
+    --shadow-card: 0 1px 2px rgba(58,47,34,.05), 0 10px 36px rgba(58,47,34,.08);
+    --serif: "Crimson Pro", "Iowan Old Style", Georgia, serif;
+    --ease: cubic-bezier(.22,.99,.32,1);
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-feature-settings: "ss01", "cv02";
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  ::selection { background: var(--accent); color: var(--paper); }
+
+  .page {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    padding: 28px 56px 24px;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  /* ━━━ masthead — shared chrome ━━━ */
+  .masthead {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--hair);
+  }
+  .masthead-left { font-size: 13.5px; font-style: italic; color: var(--ink-muted); letter-spacing: 0.1px; }
+  .masthead-left .dot { color: var(--accent); padding: 0 6px; }
+  .logo {
+    display: flex; align-items: center; gap: 10px; justify-content: center;
+    text-decoration: none; color: inherit;
+  }
+  .logo-mark {
+    width: 26px; height: 26px; display: grid;
+    grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
+    gap: 2px; border-radius: 3px; overflow: hidden; flex-shrink: 0;
+  }
+  .logo-mark i { display: block; background: var(--ink); }
+  .logo-mark i:nth-child(2), .logo-mark i:nth-child(3) { background: var(--accent); }
+  .logo-text { font-size: 26px; font-weight: 500; letter-spacing: -0.4px; line-height: 1; color: var(--ink); }
+  .logo-text .pip { color: var(--accent); padding: 0 2px; }
+  .masthead-right { font-size: 13.5px; color: var(--ink-muted); text-align: right; letter-spacing: 0.1px; }
+  .masthead-right a {
+    color: var(--ink); text-decoration: none; margin-left: 22px;
+    position: relative; transition: color .18s var(--ease);
+  }
+  .masthead-right a::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -3px;
+    height: 1px; background: var(--accent);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform .25s var(--ease);
+  }
+  .masthead-right a:hover { color: var(--accent); }
+  .masthead-right a:hover::after { transform: scaleX(1); }
+  .rule-thin { height: 1px; background: var(--hair); margin-top: 3px; }
+
+  /* ━━━ back link ━━━ */
+  .back-row {
+    margin-top: 28px;
+  }
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13.5px;
+    color: var(--ink-muted);
+    font-style: italic;
+    text-decoration: none;
+    transition: color .18s var(--ease);
+  }
+  .back-link:hover { color: var(--accent); }
+  .back-link .arrow {
+    transition: transform .25s var(--ease);
+  }
+  .back-link:hover .arrow { transform: translateX(-2px); }
+
+  /* ━━━ article ━━━ */
+  .article {
+    flex: 1;
+    padding: 24px 0 48px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .article-head {
+    max-width: 680px; width: 100%; margin-bottom: 44px;
+    text-align: center;
+  }
+  .kicker {
+    font-size: 14px;
+    font-style: italic;
+    color: var(--accent);
+    margin: 0 0 16px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    display: inline-flex; align-items: center; gap: 12px;
+  }
+  .kicker::before, .kicker::after {
+    content: ""; display: inline-block;
+    width: 26px; height: 1px; background: var(--accent); opacity: 0.6;
+  }
+  .puzzle-no {
+    font-size: 13.5px;
+    font-style: italic;
+    color: var(--ink-muted);
+    margin: 0 0 8px;
+    font-variant-numeric: oldstyle-nums;
+  }
+  .title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 64px;
+    line-height: 1.0;
+    letter-spacing: -1.2px;
+    margin: 0 0 22px;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .title em { font-style: italic; font-weight: 400; color: var(--ink-soft); }
+  .title .ink-accent { color: var(--accent); font-style: italic; }
+  .sub {
+    font-size: 19px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    font-style: italic;
+    margin: 0 auto;
+    max-width: 42ch;
+    text-wrap: balance;
+  }
+
+  /* ━━━ outcome banner — varies by ?from= ━━━ */
+  .outcome {
+    margin-bottom: 36px;
+    width: 100%;
+    max-width: 620px;
+    padding: 16px 22px;
+    background: var(--paper);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    display: flex; align-items: center; gap: 14px;
+    font-size: 15.5px;
+    color: var(--ink);
+  }
+  .outcome .badge {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .outcome.correct .badge { background: var(--success); }
+  .outcome.revealed .badge { background: var(--ink-muted); }
+  .outcome strong { font-weight: 500; }
+  .outcome em { font-style: italic; color: var(--ink-soft); }
+
+  /* ━━━ article body ━━━ */
+  .body {
+    max-width: 620px;
+    width: 100%;
+    font-size: 18.5px;
+    line-height: 1.65;
+    color: var(--ink);
+    text-wrap: pretty;
+  }
+  .body p { margin: 0 0 18px; }
+  .body em { font-style: italic; color: var(--ink-soft); }
+  .body strong { font-weight: 500; }
+
+  /* section heading */
+  .h2 {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 22px;
+    color: var(--accent);
+    letter-spacing: 0.1px;
+    margin: 32px 0 14px;
+  }
+
+  /* ━━━ steps ━━━ */
+  .steps {
+    display: flex; flex-direction: column;
+    gap: 14px;
+    margin: 4px 0 22px;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: 40px 1fr auto;
+    gap: 18px;
+    padding: 16px 20px;
+    background: var(--paper);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    align-items: baseline;
+  }
+  .step-no {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 28px;
+    color: var(--accent);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.4px;
+  }
+  .step-text {
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .step-text strong { font-weight: 500; }
+  .step-text em { font-style: italic; color: var(--ink-soft); }
+  .step-time {
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--ink-muted);
+    font-style: italic;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .step-time strong { color: var(--ink); font-style: normal; font-weight: 500; }
+
+  .total {
+    display: flex; align-items: baseline; justify-content: flex-end; gap: 14px;
+    padding: 14px 20px 0;
+    border-top: 1px dashed var(--hair-strong);
+    margin-top: 4px;
+    font-size: 16px;
+    color: var(--ink-muted);
+    font-style: italic;
+  }
+  .total strong {
+    color: var(--accent);
+    font-style: normal;
+    font-weight: 500;
+    font-size: 22px;
+    letter-spacing: -0.2px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ━━━ end CTA ━━━ */
+  .end-cta {
+    margin-top: 40px;
+    padding-top: 28px;
+    border-top: 1px solid var(--hair);
+    display: flex; gap: 14px; flex-wrap: wrap; align-items: center; justify-content: space-between;
+    width: 100%;
+    max-width: 620px;
+  }
+  .end-note {
+    font-size: 14.5px;
+    font-style: italic;
+    color: var(--ink-muted);
+    flex: 1; min-width: 200px;
+  }
+  .primary {
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 13px 22px 12px;
+    font-family: var(--serif);
+    font-size: 15.5px;
+    font-weight: 500;
+    border-radius: 12px;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 2px 6px rgba(58,47,34,.18);
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: transform .18s var(--ease), box-shadow .18s var(--ease), background .18s var(--ease);
+  }
+  .primary:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(58,47,34,.22); background: var(--accent); }
+  .primary .arrow { transition: transform .25s var(--ease); }
+  .primary:hover .arrow { transform: translateX(3px); }
+
+  /* ━━━ footer ━━━ */
+  .footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 16px;
+    border-top: 1px solid var(--hair);
+    font-size: 13px;
+    color: var(--ink-muted);
+    font-style: italic;
+  }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a {
+    color: var(--ink); text-decoration: none; font-style: normal;
+    transition: color .18s var(--ease);
+  }
+  .footer-links a:hover { color: var(--accent); }
+  .footer-cite { font-variant-numeric: oldstyle-nums; }
+
+  @media (max-width: 720px) {
+    .page { padding: 20px 24px; }
+    .title { font-size: 40px; }
+    .step { grid-template-columns: 32px 1fr; padding: 14px 16px; }
+    .step-time { grid-column: 2; padding-top: 2px; }
+    .masthead { grid-template-columns: 1fr auto; }
+    .masthead-right { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ━━━━━━━━━━━━━━━━ MASTHEAD ━━━━━━━━━━━━━━━━ -->
+  <header class="masthead">
+    <div class="masthead-left">
+      <span>Vol. III <span class="dot">·</span> No. 147</span>
+    </div>
+
+    <a href="Landing.html" class="logo">
+      <span class="logo-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span class="logo-text">puddle</span>
+    </a>
+
+    <nav class="masthead-right">
+      <a href="About.html">About</a>
+      <a href="SignIn.html">Sign in</a>
+    </nav>
+  </header>
+  <div class="rule-thin"></div>
+
+  <div class="back-row">
+    <a href="Puzzle.html" class="back-link">
+      <span class="arrow">←</span>
+      <span>back to the puzzle</span>
+    </a>
+  </div>
+
+  <!-- ━━━━━━━━━━━━━━━━ ARTICLE ━━━━━━━━━━━━━━━━ -->
+  <main class="article">
+
+    <header class="article-head">
+      <p class="kicker">Worked solution</p>
+      <p class="puzzle-no">No. 147 · Logic · Deduction</p>
+      <h1 class="title">
+        The midnight <em>bridge.</em>
+      </h1>
+      <p class="sub">
+        Four travelers, one flashlight, a bridge that holds only two. The smallest puzzle with the largest trap.
+      </p>
+    </header>
+
+    <!-- outcome banner — set by ?from= -->
+    <div class="outcome" id="outcome"></div>
+
+    <article class="body">
+
+      <p>
+        The instinct most solvers reach for is to use the fastest walker (1 minute) as a permanent courier — send the slow walker across, then ferry the flashlight back, then escort the next slow walker. <em>It feels efficient.</em> It also gives you a total of 19 minutes, and it's wrong.
+      </p>
+
+      <p>
+        The trick is realizing that the <strong>10-minute walker is your bottleneck no matter what you do</strong>. They'll cost you ten minutes on the bridge whatever happens — so the only question is whether those ten minutes carry one person or two. Pair the two slowest walkers together, and the cost of crossing 10 becomes the same as the cost of crossing 5.
+      </p>
+
+      <h2 class="h2">The path</h2>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-no">1.</div>
+          <div class="step-text">
+            <strong>1 and 2 cross.</strong> The two fastest go first. They serve as couriers for the flashlight. <em>1 walks back alone.</em>
+          </div>
+          <div class="step-time">+ <strong>3 min</strong></div>
+        </div>
+        <div class="step">
+          <div class="step-no">2.</div>
+          <div class="step-text">
+            <strong>5 and 10 cross together.</strong> This is the move that has to be found. The slow pair walks at the slow pair's pace — but they walk <em>once</em>, not twice. <em>2 walks back alone.</em>
+          </div>
+          <div class="step-time">+ <strong>12 min</strong></div>
+        </div>
+        <div class="step">
+          <div class="step-no">3.</div>
+          <div class="step-text">
+            <strong>1 and 2 cross.</strong> The couriers reunite on the far side. All four are across.
+          </div>
+          <div class="step-time">+ <strong>2 min</strong></div>
+        </div>
+        <div class="total">
+          <span>Total elapsed</span>
+          <strong>17 min</strong>
+        </div>
+      </div>
+
+    </article>
+
+    <!-- ━━━ end CTA ━━━ -->
+    <div class="end-cta">
+      <p class="end-note">
+        Tomorrow's puzzle drops at midnight · <strong id="countdown">—</strong> from now.
+      </p>
+      <a href="Landing.html" class="primary">
+        <span>Back to the column</span>
+        <span class="arrow">→</span>
+      </a>
+    </div>
+
+  </main>
+
+  <!-- ━━━━━━━━━━━━━━━━ FOOTER ━━━━━━━━━━━━━━━━ -->
+  <footer class="footer">
+    <span class="footer-cite">Established 2026.</span>
+    <div class="footer-links">
+      <a href="About.html">About</a>
+      <a href="Submit.html">Submit a puzzle</a>
+      <a href="mailto:rohan.karamel@gmail.com">Contact</a>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+// ━━━ countdown to next puzzle (midnight America/New_York) ━━━
+(function () {
+  const el = document.getElementById('countdown');
+  if (!el) return;
+  function msUntilETMidnight() {
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York',
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+    }).formatToParts(new Date());
+    const get = (t) => Number(parts.find(p => p.type === t).value);
+    const h = get('hour') % 24, m = get('minute'), s = get('second');
+    return ((24 * 3600) - (h * 3600 + m * 60 + s)) * 1000;
+  }
+  function fmt(ms) {
+    const t = Math.max(0, Math.floor(ms / 1000));
+    const h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), s = t % 60;
+    if (h > 0) return `${h}h ${m}m`;
+    if (m > 0) return `${m}m ${String(s).padStart(2, '0')}s`;
+    return `${s}s`;
+  }
+  function loop() {
+    const ms = msUntilETMidnight();
+    el.textContent = fmt(ms);
+    setTimeout(loop, ms < 3600000 ? 1000 : 30000);
+  }
+  loop();
+})();
+</script>
+
+<script>
+(function () {
+  // ━━━ outcome banner ━━━
+  //
+  // Reads ?from=solved / ?from=revealed in the URL to tailor the opening
+  // line. If absent (someone arrives directly), shows a neutral framing.
+  const params = new URLSearchParams(window.location.search);
+  const from = params.get('from');
+  const time = params.get('time');   // e.g. "3:42"
+  const hints = params.get('hints'); // e.g. "1"
+
+  const outcome = document.getElementById('outcome');
+  let html = '';
+  if (from === 'solved') {
+    outcome.classList.add('correct');
+    const detail = [
+      time ? `in <strong>${time}</strong>` : null,
+      hints ? `with <strong>${hints} hint${hints === '1' ? '' : 's'}</strong>` : (hints === '0' ? 'unaided' : null),
+    ].filter(Boolean).join(' ');
+    html = `<span class="badge">✓</span><span><strong>Nicely done.</strong> ${detail ? `You solved it ${detail}.` : ''} <em>Here's the canonical path.</em></span>`;
+  } else if (from === 'revealed') {
+    outcome.classList.add('revealed');
+    html = `<span class="badge">·</span><span><strong>The answer was 17.</strong> <em>This is the puzzle whose first guess is almost always wrong — here's why.</em></span>`;
+  } else {
+    // Neutral fallback — direct visit
+    outcome.classList.add('revealed');
+    html = `<span class="badge">·</span><span><strong>The midnight bridge — solution.</strong> <em>Read this before today's puzzle and you'll spoil it.</em></span>`;
+  }
+  outcome.innerHTML = html;
+})();
+</script>
+
+</body>
+</html>

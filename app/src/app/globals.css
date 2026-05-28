@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-bg: #f5ecdb;
+  --color-paper: #fcf7ea;
+  --color-paper-deep: #efe5cf;
+  --color-ink: #3a2f22;
+  --color-ink-soft: #6e5d48;
+  --color-ink-muted: #a59581;
+  --color-hair: #ebe0c9;
+  --color-hair-strong: #d9caa6;
+  --color-accent: #b85a3e;
+  --color-success: #6b8a52;
+
+  /* Font family */
+  --font-serif: "Crimson Pro", "Iowan Old Style", Georgia, serif;
+
+  /* Border radius */
+  --radius-tile: 3px;
+  --radius-cell: 4px;
+  --radius-btn-inner: 10px;
+  --radius-input: 12px;
+  --radius-btn: 14px;
+  --radius-card: 14px;
+  --radius-tile-group: 16px;
+  --radius-card-lg: 18px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(58, 47, 34, 0.04), 0 6px 24px rgba(58, 47, 34, 0.05);
+  --shadow-card: 0 1px 2px rgba(58, 47, 34, 0.05), 0 10px 36px rgba(58, 47, 34, 0.08);
+  --shadow-btn: 0 2px 6px rgba(58, 47, 34, 0.18);
+  --shadow-btn-hover: 0 4px 14px rgba(58, 47, 34, 0.22);
+
+  /* Easing */
+  --ease-puddle: cubic-bezier(0.22, 0.99, 0.32, 1);
+}
+
+/* Base styles */
+html,
+body {
+  font-family: var(--font-serif);
+  font-feature-settings: "ss01", "cv02";
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+}
+
+/* Keyframes */
+@keyframes puddle-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+@keyframes puddle-reveal {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes puddle-burst {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+@keyframes puddle-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.55; transform: scale(0.92); }
+}
+
+.animate-shake   { animation: puddle-shake 0.42s var(--ease-puddle) both; }
+.animate-reveal  { animation: puddle-reveal 0.42s var(--ease-puddle) both; }
+.animate-burst   { animation: puddle-burst 0.5s var(--ease-puddle) both; }
+.animate-pulse-soft { animation: puddle-pulse 2.2s ease-in-out infinite; }
