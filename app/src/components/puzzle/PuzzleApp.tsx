@@ -502,6 +502,8 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
               attempts={attempts}
               solutionHref={solutionHref}
               compact={compact}
+              issueNo={issueNo}
+              title={puzzle.title}
             />
           )}
         </div>
@@ -730,6 +732,8 @@ function PostSolvePanel({
   attempts,
   solutionHref,
   compact,
+  issueNo,
+  title,
 }: {
   status: Status
   elapsed: number
@@ -737,7 +741,25 @@ function PostSolvePanel({
   attempts: number
   solutionHref: string
   compact: boolean
+  issueNo: number
+  title: string
 }) {
+  const [copied, setCopied] = useState(false)
+
+  function handleShare() {
+    const lines = [`Puddle · No. ${issueNo}`, title]
+    if (status === 'correct') {
+      const hintPart = hintLevel > 0 ? ` · ${hintLevel} hint${hintLevel === 1 ? '' : 's'}` : ''
+      lines.push(`✓ Solved in ${fmtTime(elapsed)}${hintPart}`)
+    } else {
+      lines.push('Revealed')
+    }
+    lines.push('solvepuddle.com')
+    navigator.clipboard.writeText(lines.join('\n'))
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
   const params = new URLSearchParams()
   params.set('from', status === 'correct' ? 'solved' : 'revealed')
   if (status === 'correct') {
@@ -778,22 +800,41 @@ function PostSolvePanel({
           }
         </div>
       </div>
-      <a
-        href={href}
-        className="flex items-center gap-2 font-medium no-underline transition-all duration-[180ms] hover:-translate-y-px"
-        style={{
-          background: 'var(--color-ink)',
-          color: 'var(--color-paper)',
-          borderRadius: 14,
-          padding: compact ? '10px 18px' : '12px 20px',
-          fontSize: compact ? 14 : 15,
-          fontFamily: 'inherit',
-          boxShadow: 'var(--shadow-btn)',
-          whiteSpace: 'nowrap' as const,
-        }}
-      >
-        Read the worked solution →
-      </a>
+      <div className="flex items-center gap-3 flex-wrap">
+        <button
+          onClick={handleShare}
+          className="transition-all duration-[180ms] hover:-translate-y-px active:scale-[0.96]"
+          style={{
+            background: copied ? 'var(--color-paper-deep)' : 'transparent',
+            border: '1px solid var(--color-hair-strong)',
+            borderRadius: 12,
+            padding: compact ? '9px 14px' : '11px 16px',
+            fontSize: compact ? 13 : 14,
+            fontFamily: 'inherit',
+            color: copied ? 'var(--color-success)' : 'var(--color-ink)',
+            cursor: 'pointer',
+            whiteSpace: 'nowrap' as const,
+          }}
+        >
+          {copied ? '✓ Copied' : 'Share result'}
+        </button>
+        <a
+          href={href}
+          className="flex items-center gap-2 font-medium no-underline transition-all duration-[180ms] hover:-translate-y-px"
+          style={{
+            background: 'var(--color-ink)',
+            color: 'var(--color-paper)',
+            borderRadius: 14,
+            padding: compact ? '10px 18px' : '12px 20px',
+            fontSize: compact ? 14 : 15,
+            fontFamily: 'inherit',
+            boxShadow: 'var(--shadow-btn)',
+            whiteSpace: 'nowrap' as const,
+          }}
+        >
+          Read the worked solution →
+        </a>
+      </div>
     </div>
   )
 }
