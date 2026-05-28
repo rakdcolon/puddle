@@ -5,7 +5,7 @@ import { getOrCreateUser } from '@/lib/db/users'
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
-  const returnTo = searchParams.get('returnTo') ?? '/puzzle'
+  const returnTo = searchParams.get('returnTo') ?? '/'
 
   if (!code) {
     return NextResponse.redirect(`${origin}/sign-in?error=auth_failed`)
