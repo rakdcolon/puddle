@@ -27,7 +27,6 @@ export default function AboutPage() {
             <p>
               <strong>puddle</strong> is a daily puzzle column. Each morning a new puzzle appears — drawn from
               logic, lateral thinking, pattern recognition, wordplay, or quantitative reasoning.
-              There is no timer pressure, no streak badge, no daily notification asking you to return.
             </p>
             <p>
               The puzzles are chosen for the feeling at the end: that moment when the answer clicks and
@@ -43,7 +42,7 @@ export default function AboutPage() {
           <div style={{ borderTop: '1px solid var(--color-hair)', margin: '40px 0' }} />
 
           <h2 className="text-[22px] font-medium italic text-accent leading-[1.0] tracking-[-0.2px] mb-5">
-            Six genres
+            Different genres
           </h2>
           <ul className="text-[17px] leading-[1.65] space-y-2">
             {[
@@ -67,10 +66,6 @@ export default function AboutPage() {
             To submit a puzzle,{' '}
             <a href="/submit" className="text-accent underline underline-offset-2 hover:opacity-80 transition-opacity">
               use the form
-            </a>
-            . For everything else,{' '}
-            <a href="mailto:hello@puddle.day" className="text-accent underline underline-offset-2 hover:opacity-80 transition-opacity">
-              write us a note
             </a>
             .
           </p>
