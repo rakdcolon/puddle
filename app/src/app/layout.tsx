@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Crimson_Pro } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
 const crimsonPro = Crimson_Pro({
@@ -29,6 +30,7 @@ export default function RootLayout({
     <html lang="en" className={`${crimsonPro.variable} h-full`}>
       <body className="min-h-full flex flex-col bg-bg text-ink antialiased" style={{ fontFamily: 'var(--font-crimson), "Iowan Old Style", Georgia, serif' }}>
         {children}
+        <Analytics />
       </body>
     </html>
   )
