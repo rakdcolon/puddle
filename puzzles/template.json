@@ -1,0 +1,28 @@
+{
+  "issue_no": 4,
+  "vol": 1,
+  "date_active": "2026-06-01",
+  "title": "Puzzle title here",
+  "genre": "logic",
+  "difficulty": 3,
+  "prompt": [
+    "First paragraph of the puzzle prompt.",
+    "Second paragraph (optional — e.g. a data table or extra constraint).",
+    "Third paragraph (optional)."
+  ],
+  "answer": "the answer lowercased",
+  "answer_display": "The Answer",
+  "hints": [
+    "First hint — nudge without giving it away.",
+    "Second hint — a bigger nudge.",
+    "Third hint — nearly a spoiler."
+  ],
+  "solution_lede": "Two or three paragraphs explaining the key insight before the step-by-step breakdown. Use \\n\\n to separate paragraphs.",
+  "solution_steps": [
+    { "body": "Description of step 1.", "elapsed_min": "1 min" },
+    { "body": "Description of step 2.", "elapsed_min": "3 min" },
+    { "body": "Description of step 3.", "elapsed_min": "5 min" }
+  ],
+  "input_type": "freetext",
+  "input_config": null
+}

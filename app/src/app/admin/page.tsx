@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Masthead from '@/components/layout/Masthead'
 import Footer from '@/components/layout/Footer'
+import ImportPanel from './ImportPanel'
 import { createServiceClient } from '@/lib/supabase/server'
 import { getTodayNY } from '@/lib/utils/dates'
 
@@ -95,6 +96,7 @@ export default async function AdminPage() {
             )}
           </tbody>
         </table>
+        <ImportPanel />
       </main>
       <Footer />
     </>
