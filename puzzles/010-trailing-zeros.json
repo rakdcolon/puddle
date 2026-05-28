@@ -1,0 +1,28 @@
+{
+  "issue_no": 10,
+  "vol": 1,
+  "date_active": "2026-06-07",
+  "title": "Trailing zeros in 100!",
+  "genre": "quant",
+  "difficulty": 2,
+  "prompt": [
+    "How many trailing zeros does 100! (one hundred factorial) have?",
+    "A trailing zero is a zero at the end of a number before the decimal point. For example, 7,000 has three trailing zeros."
+  ],
+  "answer": "24",
+  "answer_display": "24",
+  "hints": [
+    "A trailing zero requires a factor of 10 = 2 × 5. How do the counts of factors of 2 and factors of 5 compare in 100!?",
+    "Factors of 2 vastly outnumber factors of 5 in any factorial. So the number of trailing zeros equals the total count of times 5 appears as a factor across all numbers from 1 to 100.",
+    "Count multiples of 5 up to 100 (each contributes one factor of 5), then multiples of 25 (each contributes an extra one). What do you get?"
+  ],
+  "solution_lede": "Every trailing zero comes from a factor of 10 = 2 × 5. In 100!, factors of 2 are plentiful — every even number contributes at least one. Factors of 5 are the bottleneck: they're rarer, so the count of 5s determines the number of trailing zeros.\n\nTo count all factors of 5 in 100!, use Legendre's formula: sum ⌊100/5⌋ + ⌊100/25⌋ + ⌊100/125⌋ + …\n\n⌊100/5⌋ = 20 (numbers divisible by 5)\n⌊100/25⌋ = 4 (numbers divisible by 25, each with an extra factor of 5: 25, 50, 75, 100)\n⌊100/125⌋ = 0\n\nTotal: 20 + 4 = 24 trailing zeros.",
+  "solution_steps": [
+    { "body": "Each trailing zero needs one factor of 2 and one factor of 5. Factors of 2 are abundant; count factors of 5.", "elapsed_min": "30 sec" },
+    { "body": "Multiples of 5 up to 100: 5, 10, 15, …, 100. That's ⌊100/5⌋ = 20, contributing 20 factors of 5.", "elapsed_min": "1 min" },
+    { "body": "Multiples of 25 up to 100: 25, 50, 75, 100. That's ⌊100/25⌋ = 4, each contributing one extra factor of 5.", "elapsed_min": "1.5 min" },
+    { "body": "Total factors of 5: 20 + 4 = 24. Therefore 100! ends in exactly 24 zeros.", "elapsed_min": "2 min" }
+  ],
+  "input_type": "numeric",
+  "input_config": { "min": 1, "max": 50 }
+}

@@ -1,0 +1,29 @@
+{
+  "issue_no": 8,
+  "vol": 1,
+  "date_active": "2026-06-05",
+  "title": "Burning ropes",
+  "genre": "lateral",
+  "difficulty": 2,
+  "prompt": [
+    "You have two ropes. Each takes exactly 60 minutes to burn from one end to the other. However, the ropes are not uniform — they burn at different rates along their length. You cannot use remaining rope length to estimate time.",
+    "You have matches. You may light either end of either rope at any moment.",
+    "What is the correct first action to measure exactly 45 minutes?"
+  ],
+  "answer": "light both ends of rope 1 and one end of rope 2",
+  "answer_display": "Light both ends of rope 1 and one end of rope 2",
+  "hints": [
+    "If you light both ends of a rope simultaneously, how long does it take to finish burning — regardless of how non-uniform it is?",
+    "Once rope 1 is gone, 30 minutes have passed. Rope 2 has 30 minutes of burn time left from one end. How do you make it burn twice as fast?",
+    "Light the second end of rope 2 the moment rope 1 burns out. It will exhaust itself in exactly 15 more minutes."
+  ],
+  "solution_lede": "The key insight: lighting both ends of a rope simultaneously halves its total burn time, regardless of how non-uniform the rope is. A 60-minute rope lit at both ends burns out in exactly 30 minutes.\n\nSo: at t=0, light both ends of rope 1 and one end of rope 2 simultaneously. Rope 1 burns out at t=30 minutes. At that exact moment, light the second end of rope 2. Rope 2 had 30 minutes of burn time remaining from one end — with both ends now burning, it takes exactly 15 more minutes.\n\n30 + 15 = 45 minutes.",
+  "solution_steps": [
+    { "body": "t=0: Light both ends of rope 1, and one end of rope 2.", "elapsed_min": "0 min" },
+    { "body": "t=30 min: Rope 1 burns out. Rope 2 has exactly 30 minutes of burn time remaining from one end.", "elapsed_min": "30 min" },
+    { "body": "Immediately light the other end of rope 2. With both ends burning, it will exhaust in exactly 15 minutes.", "elapsed_min": "30 min" },
+    { "body": "t=45 min: Rope 2 burns out. Exactly 45 minutes have elapsed.", "elapsed_min": "45 min" }
+  ],
+  "input_type": "choice",
+  "input_config": { "options": ["Light one end of each rope", "Light both ends of rope 1 and one end of rope 2", "Light both ends of both ropes", "Light one end of rope 1 only"] }
+}

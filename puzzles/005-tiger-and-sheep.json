@@ -1,0 +1,29 @@
+{
+  "issue_no": 5,
+  "vol": 1,
+  "date_active": "2026-06-02",
+  "title": "Tiger and sheep",
+  "genre": "logic",
+  "difficulty": 3,
+  "prompt": [
+    "One hundred tigers and one sheep are placed on a magic island with unlimited grass. Tigers can eat grass to survive, but they would much rather eat the sheep.",
+    "The rules: only one tiger can eat the sheep at a time, and any tiger that eats the sheep immediately becomes a sheep itself — vulnerable to being eaten by the others. All tigers are perfectly rational and value survival above all else.",
+    "Will the sheep be eaten?"
+  ],
+  "answer": "no — the sheep is safe",
+  "answer_display": "No — the sheep is safe",
+  "hints": [
+    "Start with 1 tiger. It eats the sheep immediately — no risk. Now try 2 tigers.",
+    "With 2 tigers: if tiger A eats the sheep, it becomes a sheep, and tiger B eats it. So neither tiger acts. Work through 3 and 4.",
+    "Look for a pattern in odd vs. even numbers of tigers."
+  ],
+  "solution_lede": "Like most recursive puzzles, this one dissolves once you start small.\n\n1 tiger: eats the sheep — no risk. 2 tigers: eating converts you to a sheep, which the remaining tiger immediately eats. Neither acts; sheep survives. 3 tigers: eating converts you to a sheep in a 2-tiger world, where the sheep is safe — so you survive. The first rational tiger eats. 4 tigers: eating converts you to a sheep in a 3-tiger world, where the sheep gets eaten — you die. Nobody acts.\n\nThe pattern is clear: odd number of tigers → sheep gets eaten; even → sheep is safe. With 100 tigers (even), no tiger will make the first move.",
+  "solution_steps": [
+    { "body": "n=1: tiger eats the sheep freely.", "elapsed_min": "30 sec" },
+    { "body": "n=2: eating converts you to a sheep in a 1-tiger world. You get eaten. Neither tiger acts.", "elapsed_min": "1 min" },
+    { "body": "n=3: eating converts you to a sheep in a 2-tiger world — where the sheep is safe. You survive. First tiger eats.", "elapsed_min": "2 min" },
+    { "body": "Pattern: even → sheep safe, odd → sheep eaten. n=100 is even. The sheep is never eaten.", "elapsed_min": "3 min" }
+  ],
+  "input_type": "choice",
+  "input_config": { "options": ["Yes — the sheep is eaten", "No — the sheep is safe"] }
+}

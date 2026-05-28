@@ -1,0 +1,29 @@
+{
+  "issue_no": 4,
+  "vol": 1,
+  "date_active": "2026-06-01",
+  "title": "Screwy pirates",
+  "genre": "logic",
+  "difficulty": 4,
+  "prompt": [
+    "Five pirates just looted a chest of 100 gold coins and must divide the spoils. Being a surprisingly democratic crew, they agree on this rule: the most senior pirate proposes a distribution, then all five vote. If at least 50% approve (3 or more), the split stands. If not, the proposer walks the plank — and the next most senior pirate starts over.",
+    "Every pirate is perfectly rational: survival comes first, then greed, and — all else equal — fewer rivals on the ship is better.",
+    "The most senior pirate goes first. How many coins does he keep for himself?"
+  ],
+  "answer": "98",
+  "answer_display": "98",
+  "hints": [
+    "Start with just 2 pirates. The senior one always has 50% of the vote — himself. What does pirate 1 get?",
+    "With 3 pirates, the senior pirate knows pirate 1 gets nothing if his plan fails. How cheaply can he buy pirate 1's vote?",
+    "Work up to 4, then 5. In each case, the senior pirate only needs to bribe the pirates who would get nothing if he died."
+  ],
+  "solution_lede": "Game theory puzzles with recursive structure are almost always solved by starting from the simplest case and building up.\n\nWith 2 pirates, the senior pirate proposes 100/0 and wins 1-to-1 (50%). With 3, he knows pirate 1 would get nothing if the plan fails — so pirate 1 accepts any offer of 1 coin. Senior keeps 99.\n\nWith 4, the senior needs just 2 votes. He bribes pirate 2 (who gets nothing in the 3-pirate case) with 1 coin, keeps 99. With 5 pirates, the senior needs 3 votes total. He bribes pirates 1 and 3 — both get nothing under the 4-pirate arrangement — with 1 coin each. He keeps 98.",
+  "solution_steps": [
+    { "body": "2 pirates: senior proposes 100/0. Passes with his own vote (50%). Pirate 1 gets 0.", "elapsed_min": "1 min" },
+    { "body": "3 pirates: senior offers pirate 1 one coin — beats the zero he'd get if the plan fails. Keeps 99. Passes 2-to-1.", "elapsed_min": "2 min" },
+    { "body": "4 pirates: senior offers pirate 2 one coin (pirate 2 gets 0 in the 3-pirate case). Keeps 99. Passes 2-to-2.", "elapsed_min": "3 min" },
+    { "body": "5 pirates: senior offers pirates 1 and 3 one coin each (both get 0 in the 4-pirate case). Keeps 98. Passes 3-to-2.", "elapsed_min": "4 min" }
+  ],
+  "input_type": "choice",
+  "input_config": { "options": ["96", "97", "98", "99"] }
+}

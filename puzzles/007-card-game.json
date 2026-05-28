@@ -1,0 +1,29 @@
+{
+  "issue_no": 7,
+  "vol": 1,
+  "date_active": "2026-06-04",
+  "title": "The rigged card game",
+  "genre": "logic",
+  "difficulty": 3,
+  "prompt": [
+    "A casino offers a card game using a standard 52-card deck. The dealer turns over two cards at a time. If both are black, they go to the dealer's pile. If both are red, they go to your pile. If one of each colour, both cards are discarded. This continues until the deck is exhausted.",
+    "If your pile ends up with more cards than the dealer's, you win $100. Otherwise — including ties — you win nothing.",
+    "How much should you be willing to pay to play this game?"
+  ],
+  "answer": "0",
+  "answer_display": "$0",
+  "hints": [
+    "Think carefully about the discarded pairs. What do they always contain?",
+    "Every discarded pair removes one black and one red card. What does that imply about the cards that remain after all discards?",
+    "The remaining cards get split into your pile (red-red pairs) and the dealer's pile (black-black pairs). Since the remaining deck is perfectly balanced, what can you conclude about the final pile sizes?"
+  ],
+  "solution_lede": "This is a symmetry trap. The game looks random, but the outcome is actually fixed regardless of card order.\n\nEvery discarded pair contains exactly one black card and one red card. Discarding removes equal numbers of each colour. Whatever remains in the deck after all discards must therefore contain equal numbers of red and black cards.\n\nThose remaining cards are split by the game's rules: red-red pairs go to your pile, black-black pairs to the dealer's. Since the remaining cards are perfectly balanced between red and black, your pile (all red) and the dealer's pile (all black) must always be the same size. You always tie. The correct price to pay is $0.",
+  "solution_steps": [
+    { "body": "Every discarded pair: 1 red + 1 black. The red-black balance of the remaining deck is preserved.", "elapsed_min": "1 min" },
+    { "body": "After all discards, the remaining cards are perfectly balanced: equal numbers of red and black.", "elapsed_min": "2 min" },
+    { "body": "Your pile = all remaining red cards. Dealer's pile = all remaining black cards. These counts are always equal.", "elapsed_min": "3 min" },
+    { "body": "You never win — it's always a tie. Pay nothing.", "elapsed_min": "4 min" }
+  ],
+  "input_type": "numeric",
+  "input_config": { "min": 0, "max": 100 }
+}
