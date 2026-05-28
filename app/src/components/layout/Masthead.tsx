@@ -48,7 +48,7 @@ export default async function Masthead({ currentPage, issueNo = 1, vol = 1 }: Ma
       >
         {/* Left: dateline */}
         <div>
-          <span className="hidden sm:block text-[13px] italic text-ink-muted tracking-[0.1px]">
+          <span className="text-[13px] italic text-ink-muted tracking-[0.1px]">
             Vol. {toRoman(vol)}{' '}
             <span className="text-accent">·</span>{' '}
             No. {issueNo}
@@ -62,18 +62,14 @@ export default async function Masthead({ currentPage, issueNo = 1, vol = 1 }: Ma
 
         {/* Right: nav */}
         <nav className="flex items-center justify-end gap-4 sm:gap-6 flex-wrap">
-          <span className="hidden sm:flex items-center gap-4 sm:gap-6">
-            <NavLink href="/about" active={currentPage === 'about'}>
-              About
+          <NavLink href="/about" active={currentPage === 'about'}>
+            About
+          </NavLink>
+          {user && (
+            <NavLink href="/settings" active={currentPage === 'settings'}>
+              Settings
             </NavLink>
-            {user && (
-              <>
-                <NavLink href="/settings" active={currentPage === 'settings'}>
-                  Settings
-                </NavLink>
-              </>
-            )}
-          </span>
+          )}
           {user ? (
             <>
               <NavLink href="/profile" active={currentPage === 'profile'}>
