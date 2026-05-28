@@ -3,6 +3,30 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { totalXpToLevel } from '@/lib/utils/xp'
 import type { User, UserProfile, CalendarEntry } from '@/types'
 
+// Consecutive solved days ending yesterday (does not count today, so +1 on solve shows the new streak).
+export async function getCurrentStreak(userId: string): Promise<number> {
+  const db = createServiceClient()
+  const { data: solves } = await db
+    .from('solves')
+    .select('puzzles(date_active)')
+    .eq('user_id', userId)
+    .eq('status', 'solved')
+
+  const solvedDates = new Set(
+    (solves ?? []).map(s => (s.puzzles as any)?.date_active).filter(Boolean),
+  )
+
+  let streak = 0
+  const today = new Date()
+  for (let i = 1; i <= 365; i++) {
+    const d = new Date(today)
+    d.setUTCDate(d.getUTCDate() - i)
+    if (solvedDates.has(d.toISOString().slice(0, 10))) streak++
+    else break
+  }
+  return streak
+}
+
 export async function getUserBySupabaseId(supabaseUser: SupabaseUser): Promise<User | null> {
   const db = createServiceClient()
   const googleSub = supabaseUser.user_metadata?.sub ?? supabaseUser.id

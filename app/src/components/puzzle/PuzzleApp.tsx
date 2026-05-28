@@ -82,10 +82,11 @@ interface PuzzleAppProps {
   issueNo?: number
   vol?: number
   compact?: boolean
+  streakBeforeToday?: number
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, compact = false }: PuzzleAppProps) {
+export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, compact = false, streakBeforeToday }: PuzzleAppProps) {
   const [answer, setAnswer] = useState('')
   const [status, setStatus] = useState<Status>(() => {
     if (initialSolve?.status === 'solved') return 'correct'
@@ -504,6 +505,7 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
               compact={compact}
               issueNo={issueNo}
               title={puzzle.title}
+              streakBeforeToday={streakBeforeToday}
             />
           )}
         </div>
@@ -734,6 +736,7 @@ function PostSolvePanel({
   compact,
   issueNo,
   title,
+  streakBeforeToday,
 }: {
   status: Status
   elapsed: number
@@ -743,6 +746,7 @@ function PostSolvePanel({
   compact: boolean
   issueNo: number
   title: string
+  streakBeforeToday?: number
 }) {
   const [copied, setCopied] = useState(false)
 
@@ -799,6 +803,14 @@ function PostSolvePanel({
             : <>Puzzle revealed. Read the worked solution below.</>
           }
         </div>
+        {status === 'correct' && streakBeforeToday !== undefined && streakBeforeToday + 1 >= 2 && (
+          <div
+            className="animate-reveal"
+            style={{ fontSize: 13, marginTop: 5, color: 'var(--color-accent)', fontStyle: 'italic' }}
+          >
+            🔥 {streakBeforeToday + 1}-day streak
+          </div>
+        )}
       </div>
       <div className="flex items-center gap-3 flex-wrap">
         <button
