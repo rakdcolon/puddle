@@ -5,7 +5,7 @@ import PuzzleApp from '@/components/puzzle/PuzzleApp'
 import { createClient } from '@/lib/supabase/server'
 import { getPuzzleForDate } from '@/lib/db/puzzles'
 import { getSolveForUser } from '@/lib/db/solves'
-import { getUserBySupabaseId, getCurrentStreak } from '@/lib/db/users'
+import { getUserBySupabaseId, getCurrentStreak, getXPBeforeToday } from '@/lib/db/users'
 import { getTodayNY } from '@/lib/utils/dates'
 import type { Solve } from '@/types'
 
@@ -21,14 +21,16 @@ export default async function PuzzlePage() {
 
   let initialSolve: Solve | null = null
   let streakBeforeToday: number | undefined
+  let xpBeforeToday: { totalXp: number; level: number } | undefined
   const supabase = await createClient()
   const { data: { user: authUser } } = await supabase.auth.getUser()
   if (authUser) {
     const user = await getUserBySupabaseId(authUser)
     if (user) {
-      ;[initialSolve, streakBeforeToday] = await Promise.all([
+      ;[initialSolve, streakBeforeToday, xpBeforeToday] = await Promise.all([
         getSolveForUser(user.id, puzzle.id),
         getCurrentStreak(user.id),
+        getXPBeforeToday(user.id, today),
       ])
     }
   }
@@ -40,6 +42,7 @@ export default async function PuzzlePage() {
       issueNo={puzzle.issue_no}
       vol={puzzle.vol}
       streakBeforeToday={streakBeforeToday}
+      xpBeforeToday={xpBeforeToday}
     />
   )
 }

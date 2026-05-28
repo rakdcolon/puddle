@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import type { PublicPuzzle, Solve } from '@/types'
 import { getTodayNY } from '@/lib/utils/dates'
+import { calcXP, totalXpToLevel } from '@/lib/utils/xp'
 
 // ─── Chime ───────────────────────────────────────────────────────────────────
 const audioCtx: { ctx: AudioContext | null } = { ctx: null }
@@ -83,10 +84,11 @@ interface PuzzleAppProps {
   vol?: number
   compact?: boolean
   streakBeforeToday?: number
+  xpBeforeToday?: { totalXp: number; level: number }
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, compact = false, streakBeforeToday }: PuzzleAppProps) {
+export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, compact = false, streakBeforeToday, xpBeforeToday }: PuzzleAppProps) {
   const [answer, setAnswer] = useState('')
   const [status, setStatus] = useState<Status>(() => {
     if (initialSolve?.status === 'solved') return 'correct'
@@ -100,6 +102,7 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
   const [showScratch, setShowScratch] = useState(false)
   const [scratch, setScratch] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [earnedXp, setEarnedXp] = useState<number | null>(null)
 
   const isFinished = status === 'correct' || status === 'revealed'
   const elapsed = useTimer(!isFinished && status !== 'wrong')
@@ -122,6 +125,7 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
       const data = await res.json()
 
       if (data.correct) {
+        setEarnedXp(calcXP(elapsed, hintLevel, attempts + 1))
         setStatus('correct')
         setBurst(b => b + 1)
         chime('correct')
@@ -506,6 +510,8 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
               issueNo={issueNo}
               title={puzzle.title}
               streakBeforeToday={streakBeforeToday}
+              earnedXp={earnedXp}
+              xpBeforeToday={xpBeforeToday}
             />
           )}
         </div>
@@ -737,6 +743,8 @@ function PostSolvePanel({
   issueNo,
   title,
   streakBeforeToday,
+  earnedXp,
+  xpBeforeToday,
 }: {
   status: Status
   elapsed: number
@@ -747,7 +755,13 @@ function PostSolvePanel({
   issueNo: number
   title: string
   streakBeforeToday?: number
+  earnedXp: number | null
+  xpBeforeToday?: { totalXp: number; level: number }
 }) {
+  const xpInfo = (earnedXp !== null && xpBeforeToday)
+    ? totalXpToLevel(xpBeforeToday.totalXp + earnedXp)
+    : null
+  const leveledUp = xpInfo !== null && xpBeforeToday !== undefined && xpInfo.level > xpBeforeToday.level
   const [copied, setCopied] = useState(false)
 
   function handleShare() {
@@ -809,6 +823,50 @@ function PostSolvePanel({
             style={{ fontSize: 13, marginTop: 5, color: 'var(--color-accent)', fontStyle: 'italic' }}
           >
             🔥 {streakBeforeToday + 1}-day streak
+          </div>
+        )}
+        {status === 'correct' && earnedXp !== null && (
+          <div
+            className="animate-burst"
+            style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}
+          >
+            <span
+              style={{
+                fontSize: 13,
+                fontWeight: 500,
+                color: 'var(--color-success)',
+                fontVariantNumeric: 'tabular-nums',
+              }}
+            >
+              +{earnedXp} XP
+            </span>
+            {xpInfo && (
+              <>
+                <span style={{ fontSize: 11, color: 'var(--color-hair-strong)' }}>·</span>
+                <span
+                  className="italic"
+                  style={{ fontSize: 13, color: leveledUp ? 'var(--color-success)' : 'var(--color-ink-muted)' }}
+                >
+                  {leveledUp ? `✦ Level ${xpInfo.level}` : `Level ${xpInfo.level}`}
+                </span>
+                <div
+                  style={{
+                    width: 60, height: 4,
+                    background: 'var(--color-paper-deep)',
+                    borderRadius: 2, overflow: 'hidden',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: `${(xpInfo.xpInLevel / xpInfo.xpForLevel) * 100}%`,
+                      height: '100%',
+                      background: 'var(--color-success)',
+                      transition: 'width 0.8s var(--ease-puddle)',
+                    }}
+                  />
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>

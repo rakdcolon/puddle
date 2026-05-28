@@ -3,6 +3,29 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { totalXpToLevel } from '@/lib/utils/xp'
 import type { User, UserProfile, CalendarEntry } from '@/types'
 
+// Total XP from all solves EXCLUDING today, so the client can add the just-earned XP on top.
+export async function getXPBeforeToday(userId: string, today: string): Promise<{ totalXp: number; level: number }> {
+  const db = createServiceClient()
+  const { data: solves } = await db
+    .from('solves')
+    .select('elapsed_seconds, hints_used, attempts, puzzles(date_active)')
+    .eq('user_id', userId)
+    .eq('status', 'solved')
+
+  const totalXp = (solves ?? []).reduce((sum, s) => {
+    if ((s.puzzles as any)?.date_active === today) return sum
+    let xp = 100
+    if (s.elapsed_seconds && s.elapsed_seconds < 120) xp += 50
+    else if (s.elapsed_seconds && s.elapsed_seconds < 300) xp += 25
+    xp -= (s.hints_used ?? 0) * 15
+    xp -= Math.max(0, ((s.attempts ?? 1) - 1)) * 10
+    return sum + Math.max(10, xp)
+  }, 0)
+
+  const level = Math.floor(totalXp / 500) + 1
+  return { totalXp, level }
+}
+
 // Consecutive solved days ending yesterday (does not count today, so +1 on solve shows the new streak).
 export async function getCurrentStreak(userId: string): Promise<number> {
   const db = createServiceClient()
