@@ -19,9 +19,15 @@
   ],
   "solution_lede": "Two or three paragraphs explaining the key insight before the step-by-step breakdown. Use \\n\\n to separate paragraphs.",
   "solution_steps": [
-    { "body": "Description of step 1.", "elapsed_min": "1 min" },
-    { "body": "Description of step 2.", "elapsed_min": "3 min" },
-    { "body": "Description of step 3.", "elapsed_min": "5 min" }
+    {
+      "body": "Description of step 1."
+    },
+    {
+      "body": "Description of step 2."
+    },
+    {
+      "body": "Description of step 3."
+    }
   ],
   "input_type": "freetext",
   "input_config": null

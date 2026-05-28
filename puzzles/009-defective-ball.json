@@ -19,11 +19,22 @@
   ],
   "solution_lede": "Each weighing on a balance scale yields exactly three outcomes: left heavy, right heavy, or balanced. With 3 weighings you can distinguish 3³ = 27 outcomes. Each of the 12 balls can be either heavier or lighter, giving 24 possible 'defective states' — comfortably within 27.\n\nThe critical technique: always divide into three groups, not two. A two-group split wastes the information contained in the third group. Split 12 balls into three groups of 4 and weigh group 1 against group 2.\n\nIf they balance, the defective ball is in group 3, and two more weighings (with known-good balls as references) resolve it. If they don't balance, the direction of the tilt tells you which balls could be heavy and which could be light, letting you design a second weighing that cuts the candidates drastically. Three weighings always suffice.",
   "solution_steps": [
-    { "body": "Weighing 1: 1–4 vs 5–8. If balanced, defective is in 9–12 (unknown heavy/light). If unbalanced, defective is in 1–8.", "elapsed_min": "Weighing 1" },
-    { "body": "If balanced: weigh 9, 10 vs 8, 11. Ball 8 is known good — it acts as a reference. This narrows candidates to 2–3 balls.", "elapsed_min": "Weighing 2 (balanced branch)" },
-    { "body": "If unbalanced (say 1–4 lighter): mix groups strategically — e.g. weigh 1, 2, 5 vs 3, 6, 9. The new balance or tilt pins down which ball and whether it's heavy or light.", "elapsed_min": "Weighing 2 (unbalanced branch)" },
-    { "body": "Weighing 3: By now you have 2–3 suspects with known direction. One comparison resolves the last ambiguity.", "elapsed_min": "Weighing 3" }
+    {
+      "body": "Weighing 1: 1–4 vs 5–8. If balanced, defective is in 9–12 (unknown heavy/light). If unbalanced, defective is in 1–8."
+    },
+    {
+      "body": "If balanced: weigh 9, 10 vs 8, 11. Ball 8 is known good — it acts as a reference. This narrows candidates to 2–3 balls."
+    },
+    {
+      "body": "If unbalanced (say 1–4 lighter): mix groups strategically — e.g. weigh 1, 2, 5 vs 3, 6, 9. The new balance or tilt pins down which ball and whether it's heavy or light."
+    },
+    {
+      "body": "Weighing 3: By now you have 2–3 suspects with known direction. One comparison resolves the last ambiguity."
+    }
   ],
   "input_type": "numeric",
-  "input_config": { "min": 1, "max": 10 }
+  "input_config": {
+    "min": 1,
+    "max": 10
+  }
 }

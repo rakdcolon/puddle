@@ -164,12 +164,6 @@ export default async function SolutionPage({ searchParams }: SolutionPageProps) 
                   <div className="flex-1">
                     <p style={{ fontSize: 17, lineHeight: 1.6 }}>{step.body}</p>
                   </div>
-                  <span
-                    className="hidden sm:block italic flex-shrink-0"
-                    style={{ fontSize: 13, color: 'var(--color-ink-muted)', fontVariantNumeric: 'tabular-nums', marginTop: 2 }}
-                  >
-                    {step.elapsed_min}
-                  </span>
                 </div>
               ))}
             </div>

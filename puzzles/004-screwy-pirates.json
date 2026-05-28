@@ -19,11 +19,26 @@
   ],
   "solution_lede": "Game theory puzzles with recursive structure are almost always solved by starting from the simplest case and building up.\n\nWith 2 pirates, the senior pirate proposes 100/0 and wins 1-to-1 (50%). With 3, he knows pirate 1 would get nothing if the plan fails — so pirate 1 accepts any offer of 1 coin. Senior keeps 99.\n\nWith 4, the senior needs just 2 votes. He bribes pirate 2 (who gets nothing in the 3-pirate case) with 1 coin, keeps 99. With 5 pirates, the senior needs 3 votes total. He bribes pirates 1 and 3 — both get nothing under the 4-pirate arrangement — with 1 coin each. He keeps 98.",
   "solution_steps": [
-    { "body": "2 pirates: senior proposes 100/0. Passes with his own vote (50%). Pirate 1 gets 0.", "elapsed_min": "1 min" },
-    { "body": "3 pirates: senior offers pirate 1 one coin — beats the zero he'd get if the plan fails. Keeps 99. Passes 2-to-1.", "elapsed_min": "2 min" },
-    { "body": "4 pirates: senior offers pirate 2 one coin (pirate 2 gets 0 in the 3-pirate case). Keeps 99. Passes 2-to-2.", "elapsed_min": "3 min" },
-    { "body": "5 pirates: senior offers pirates 1 and 3 one coin each (both get 0 in the 4-pirate case). Keeps 98. Passes 3-to-2.", "elapsed_min": "4 min" }
+    {
+      "body": "2 pirates: senior proposes 100/0. Passes with his own vote (50%). Pirate 1 gets 0."
+    },
+    {
+      "body": "3 pirates: senior offers pirate 1 one coin — beats the zero he'd get if the plan fails. Keeps 99. Passes 2-to-1."
+    },
+    {
+      "body": "4 pirates: senior offers pirate 2 one coin (pirate 2 gets 0 in the 3-pirate case). Keeps 99. Passes 2-to-2."
+    },
+    {
+      "body": "5 pirates: senior offers pirates 1 and 3 one coin each (both get 0 in the 4-pirate case). Keeps 98. Passes 3-to-2."
+    }
   ],
   "input_type": "choice",
-  "input_config": { "options": ["96", "97", "98", "99"] }
+  "input_config": {
+    "options": [
+      "96",
+      "97",
+      "98",
+      "99"
+    ]
+  }
 }

@@ -19,11 +19,22 @@
   ],
   "solution_lede": "This is a symmetry trap. The game looks random, but the outcome is actually fixed regardless of card order.\n\nEvery discarded pair contains exactly one black card and one red card. Discarding removes equal numbers of each colour. Whatever remains in the deck after all discards must therefore contain equal numbers of red and black cards.\n\nThose remaining cards are split by the game's rules: red-red pairs go to your pile, black-black pairs to the dealer's. Since the remaining cards are perfectly balanced between red and black, your pile (all red) and the dealer's pile (all black) must always be the same size. You always tie. The correct price to pay is $0.",
   "solution_steps": [
-    { "body": "Every discarded pair: 1 red + 1 black. The red-black balance of the remaining deck is preserved.", "elapsed_min": "1 min" },
-    { "body": "After all discards, the remaining cards are perfectly balanced: equal numbers of red and black.", "elapsed_min": "2 min" },
-    { "body": "Your pile = all remaining red cards. Dealer's pile = all remaining black cards. These counts are always equal.", "elapsed_min": "3 min" },
-    { "body": "You never win — it's always a tie. Pay nothing.", "elapsed_min": "4 min" }
+    {
+      "body": "Every discarded pair: 1 red + 1 black. The red-black balance of the remaining deck is preserved."
+    },
+    {
+      "body": "After all discards, the remaining cards are perfectly balanced: equal numbers of red and black."
+    },
+    {
+      "body": "Your pile = all remaining red cards. Dealer's pile = all remaining black cards. These counts are always equal."
+    },
+    {
+      "body": "You never win — it's always a tie. Pay nothing."
+    }
   ],
   "input_type": "numeric",
-  "input_config": { "min": 0, "max": 100 }
+  "input_config": {
+    "min": 0,
+    "max": 100
+  }
 }

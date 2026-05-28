@@ -9,7 +9,6 @@ export interface ChoiceConfig { options: string[] }
 
 export interface SolutionStep {
   body: string
-  elapsed_min: string
 }
 
 export interface Puzzle {

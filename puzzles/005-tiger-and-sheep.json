@@ -19,11 +19,24 @@
   ],
   "solution_lede": "Like most recursive puzzles, this one dissolves once you start small.\n\n1 tiger: eats the sheep — no risk. 2 tigers: eating converts you to a sheep, which the remaining tiger immediately eats. Neither acts; sheep survives. 3 tigers: eating converts you to a sheep in a 2-tiger world, where the sheep is safe — so you survive. The first rational tiger eats. 4 tigers: eating converts you to a sheep in a 3-tiger world, where the sheep gets eaten — you die. Nobody acts.\n\nThe pattern is clear: odd number of tigers → sheep gets eaten; even → sheep is safe. With 100 tigers (even), no tiger will make the first move.",
   "solution_steps": [
-    { "body": "n=1: tiger eats the sheep freely.", "elapsed_min": "30 sec" },
-    { "body": "n=2: eating converts you to a sheep in a 1-tiger world. You get eaten. Neither tiger acts.", "elapsed_min": "1 min" },
-    { "body": "n=3: eating converts you to a sheep in a 2-tiger world — where the sheep is safe. You survive. First tiger eats.", "elapsed_min": "2 min" },
-    { "body": "Pattern: even → sheep safe, odd → sheep eaten. n=100 is even. The sheep is never eaten.", "elapsed_min": "3 min" }
+    {
+      "body": "n=1: tiger eats the sheep freely."
+    },
+    {
+      "body": "n=2: eating converts you to a sheep in a 1-tiger world. You get eaten. Neither tiger acts."
+    },
+    {
+      "body": "n=3: eating converts you to a sheep in a 2-tiger world — where the sheep is safe. You survive. First tiger eats."
+    },
+    {
+      "body": "Pattern: even → sheep safe, odd → sheep eaten. n=100 is even. The sheep is never eaten."
+    }
   ],
   "input_type": "choice",
-  "input_config": { "options": ["Yes — the sheep is eaten", "No — the sheep is safe"] }
+  "input_config": {
+    "options": [
+      "Yes — the sheep is eaten",
+      "No — the sheep is safe"
+    ]
+  }
 }

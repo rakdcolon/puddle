@@ -19,11 +19,26 @@
   ],
   "solution_lede": "Each statement in the conversation carries a logical constraint — strip away the drama and extract it.\n\nYour confidence that C doesn't know means your month can't contain any day that uniquely identifies a birthday. Days 2 and 7 appear only once across all 10 dates (Dec 2, Jun 7). If your month were December or June, C might have been told 2 or 7 and would already know. So your month must be March or September.\n\nC deduces the same thing from your statement and immediately knows the birthday. That means the day C was told is unique within the March/September subset: Mar 4, Mar 5, Mar 8, Sep 1, Sep 5. Days 4 and 5 each appear twice; day 1 appears once. C was told 1. The only match is Sep 1.\n\nYou, knowing the month is September, confirm it.",
   "solution_steps": [
-    { "body": "Find unique days across all 10 dates: day 2 (Dec 2) and day 7 (Jun 7) each appear only once.", "elapsed_min": "1 min" },
-    { "body": "Your certainty that C doesn't know rules out June and December — those months contain uniquely identifying days.", "elapsed_min": "2 min" },
-    { "body": "Remaining candidates: Mar 4, Mar 5, Mar 8, Sep 1, Sep 5. C now knows → the day must be unique here. Days 4 and 5 appear twice; day 1 appears once.", "elapsed_min": "3 min" },
-    { "body": "C was told day 1. The only match is Sep 1. You, knowing September, confirm.", "elapsed_min": "4 min" }
+    {
+      "body": "Find unique days across all 10 dates: day 2 (Dec 2) and day 7 (Jun 7) each appear only once."
+    },
+    {
+      "body": "Your certainty that C doesn't know rules out June and December — those months contain uniquely identifying days."
+    },
+    {
+      "body": "Remaining candidates: Mar 4, Mar 5, Mar 8, Sep 1, Sep 5. C now knows → the day must be unique here. Days 4 and 5 appear twice; day 1 appears once."
+    },
+    {
+      "body": "C was told day 1. The only match is Sep 1. You, knowing September, confirm."
+    }
   ],
   "input_type": "choice",
-  "input_config": { "options": ["Mar 4", "Mar 8", "Sep 1", "Dec 1"] }
+  "input_config": {
+    "options": [
+      "Mar 4",
+      "Mar 8",
+      "Sep 1",
+      "Dec 1"
+    ]
+  }
 }

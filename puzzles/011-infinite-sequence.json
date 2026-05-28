@@ -18,11 +18,26 @@
   ],
   "solution_lede": "Infinite recursive expressions have a useful self-similarity property: the whole equals a part of itself.\n\nLet the infinite tower equal L. Then L = 2 by assumption. But the tower starting from the second level is identical to the original — it's also an infinite tower of x's. So we can write:\n\nx^L = L, which means x^2 = 2.\n\nSolving: x = √2.\n\nYou can verify: (√2)^(√2)^(√2)^⋯ converges to 2. More formally, the function f(x) = x^(x^(x^⋯)) converges for x ∈ [e^(−e), e^(1/e)] ≈ [0.066, 1.445], and √2 ≈ 1.414 lies within that range.",
   "solution_steps": [
-    { "body": "Let L = x^(x^(x^⋯)) = 2. The inner tower starting at the second level is also an infinite tower of x's, so it also equals L = 2.", "elapsed_min": "1 min" },
-    { "body": "Substitute: x^L = L becomes x^2 = 2.", "elapsed_min": "2 min" },
-    { "body": "Solve: x = √2 ≈ 1.414.", "elapsed_min": "3 min" },
-    { "body": "Verify convergence: √2 lies within [e^(−e), e^(1/e)], the interval where infinite power towers converge.", "elapsed_min": "4 min" }
+    {
+      "body": "Let L = x^(x^(x^⋯)) = 2. The inner tower starting at the second level is also an infinite tower of x's, so it also equals L = 2."
+    },
+    {
+      "body": "Substitute: x^L = L becomes x^2 = 2."
+    },
+    {
+      "body": "Solve: x = √2 ≈ 1.414."
+    },
+    {
+      "body": "Verify convergence: √2 lies within [e^(−e), e^(1/e)], the interval where infinite power towers converge."
+    }
   ],
   "input_type": "choice",
-  "input_config": { "options": ["√2", "2", "√3", "2^(1/4)"] }
+  "input_config": {
+    "options": [
+      "√2",
+      "2",
+      "√3",
+      "2^(1/4)"
+    ]
+  }
 }

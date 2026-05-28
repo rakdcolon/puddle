@@ -42,7 +42,7 @@ export default function PuzzleForm({ initialData }: PuzzleFormProps) {
   const [solutionSteps, setSolutionSteps] = useState<SolutionStep[]>(
     (initialData?.solution_steps as SolutionStep[] | undefined)?.length
       ? (initialData!.solution_steps as SolutionStep[])
-      : [{ body: '', elapsed_min: '' }],
+      : [{ body: '' }],
   )
   const [inputType, setInputType] = useState<InputType>(initialData?.input_type ?? 'freetext')
   const [numericMin, setNumericMin] = useState(
@@ -323,12 +323,6 @@ export default function PuzzleForm({ initialData }: PuzzleFormProps) {
                   />
                 </div>
                 <div className="flex gap-3 items-center">
-                  <input
-                    type="text" value={step.elapsed_min}
-                    onChange={e => setSolutionSteps(s => s.map((v, j) => j === i ? { ...v, elapsed_min: e.target.value } : v))}
-                    placeholder="Elapsed (e.g. 3 min)"
-                    style={{ ...inputStyle, maxWidth: 160, fontSize: 13 }}
-                  />
                   {solutionSteps.length > 1 && (
                     <button
                       type="button"
@@ -343,7 +337,7 @@ export default function PuzzleForm({ initialData }: PuzzleFormProps) {
             ))}
             <button
               type="button"
-              onClick={() => setSolutionSteps(s => [...s, { body: '', elapsed_min: '' }])}
+              onClick={() => setSolutionSteps(s => [...s, { body: '' }])}
               style={addBtnStyle}
             >
               + Add step
