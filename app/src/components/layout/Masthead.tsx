@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import LogoMark from './LogoMark'
-import { createClient } from '@/lib/supabase/server'
+import { getCurrentUser } from '@/lib/auth/current-user'
 
 interface MastheadProps {
   currentPage?: 'about' | 'profile' | 'settings' | 'sign-in'
@@ -32,8 +32,7 @@ function NavLink({
 }
 
 export default async function Masthead({ currentPage, issueNo = 1, vol = 1 }: MastheadProps) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getCurrentUser()
 
   return (
     <header>
