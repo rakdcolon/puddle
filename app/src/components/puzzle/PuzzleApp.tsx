@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import type { PublicPuzzle, Solve } from '@/types'
 import { getTodayNY } from '@/lib/utils/dates'
 import { calcXP, totalXpToLevel } from '@/lib/utils/xp'
+import { setPuddlePresence } from '@/lib/discord/sdk'
 
 // ─── Chime ───────────────────────────────────────────────────────────────────
 const audioCtx: { ctx: AudioContext | null } = { ctx: null }
@@ -154,6 +155,12 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
           issueNo,
           puzzleId: puzzle.id,
         })
+        // Update Discord rich presence (no-op outside the Activity).
+        const newStreak = (streakBeforeToday ?? 0) + 1
+        setPuddlePresence({
+          details: "Solved today's puzzle",
+          state: newStreak >= 2 ? `🔥 ${newStreak}-day streak` : 'Daily brain teaser',
+        })
       } else {
         setStatus('wrong')
         setAttempts(a => a + 1)
@@ -171,7 +178,7 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
     } finally {
       setSubmitting(false)
     }
-  }, [answer, isFinished, submitting, puzzle.id, elapsed, hintLevel, attempts, issueNo, puzzle.title])
+  }, [answer, isFinished, submitting, puzzle.id, elapsed, hintLevel, attempts, issueNo, puzzle.title, streakBeforeToday])
 
   const revealHint = useCallback(async () => {
     if (hintLevel >= puzzle.hints.length || isFinished) return
@@ -190,6 +197,7 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
     if (isFinished) return
     setStatus('revealed')
     chime('give-up')
+    setPuddlePresence({ details: 'Saw the solution', state: 'Daily brain teaser' })
     // Persist skip server-side
     fetch(`/api/puzzle/${puzzle.id}/submit`, {
       method: 'POST',
