@@ -15,12 +15,7 @@ merge. At release time it is renamed to the new version with a date. See
 
 ## [Unreleased]
 
-### Added
-- Production development workflow: trunk-based branching, pull requests, three
-  environments, and SemVer releases ([CONTRIBUTING.md](CONTRIBUTING.md),
-  [docs/ENVIRONMENTS.md](docs/ENVIRONMENTS.md), [docs/RELEASING.md](docs/RELEASING.md)).
-- GitHub Actions CI: typecheck + build on every pull request.
-- `app/.env.local.example` documenting required environment variables.
+_Nothing yet._
 
 ## [1.0.0] - 2026-05-30
 
@@ -35,6 +30,18 @@ Baseline of the production application at `solvepuddle.com`.
 - Discord integration: web Discord login with account merge by verified email,
   Discord Activity (embedded app) authentication, and rich presence.
 - Terms of Service and Privacy Policy pages.
+- Production development workflow: trunk-based branching, pull requests, three
+  environments, and SemVer releases ([CONTRIBUTING.md](CONTRIBUTING.md),
+  [docs/ENVIRONMENTS.md](docs/ENVIRONMENTS.md), [docs/RELEASING.md](docs/RELEASING.md)).
+- GitHub Actions CI: typecheck + build on every pull request.
+- `app/.env.local.example` documenting required environment variables.
+
+### Fixed
+- Masthead dateline showed "Vol. I · No. 1" on pages other than the puzzle
+  view; it now reflects the current issue.
+- Recognize users whose Discord login was linked onto an existing Google
+  account (matched by verified email), so the nav and profile work after
+  signing in with Discord.
 
 [Unreleased]: https://github.com/rakdcolon/puddle/compare/v1.0.0...HEAD
 [1.0.0]: https://github.com/rakdcolon/puddle/releases/tag/v1.0.0
