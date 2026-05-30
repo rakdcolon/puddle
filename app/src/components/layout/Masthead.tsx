@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import LogoMark from './LogoMark'
 import { getCurrentUser } from '@/lib/auth/current-user'
+import { getCurrentIssue } from '@/lib/db/puzzles'
 
 interface MastheadProps {
   currentPage?: 'about' | 'profile' | 'settings' | 'sign-in'
@@ -31,8 +32,16 @@ function NavLink({
   )
 }
 
-export default async function Masthead({ currentPage, issueNo = 1, vol = 1 }: MastheadProps) {
-  const user = await getCurrentUser()
+export default async function Masthead({ currentPage, issueNo, vol }: MastheadProps) {
+  // When a page doesn't pass a specific puzzle's number, fall back to the
+  // current (latest published) issue so the dateline isn't stuck at Vol. I No. 1.
+  const needsIssue = issueNo === undefined || vol === undefined
+  const [user, current] = await Promise.all([
+    getCurrentUser(),
+    needsIssue ? getCurrentIssue() : Promise.resolve(null),
+  ])
+  const displayIssue = issueNo ?? current?.issueNo ?? 1
+  const displayVol = vol ?? current?.vol ?? 1
 
   return (
     <header>
@@ -48,9 +57,9 @@ export default async function Masthead({ currentPage, issueNo = 1, vol = 1 }: Ma
         {/* Left: dateline */}
         <div>
           <span className="text-[13px] italic text-ink-muted tracking-[0.1px]">
-            Vol. {toRoman(vol)}{' '}
+            Vol. {toRoman(displayVol)}{' '}
             <span className="text-accent">·</span>{' '}
-            No. {issueNo}
+            No. {displayIssue}
           </span>
         </div>
 
