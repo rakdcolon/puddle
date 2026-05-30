@@ -81,14 +81,32 @@ export function identityFromSupabaseUser(supabaseUser: SupabaseUser): AuthIdenti
 }
 
 export async function getUserBySupabaseId(supabaseUser: SupabaseUser): Promise<User | null> {
-  const { provider, sub } = identityFromSupabaseUser(supabaseUser)
+  const { sub, email } = identityFromSupabaseUser(supabaseUser)
   const db = createServiceClient()
-  const { data } = await db
+
+  // Email is the canonical merge key. When Supabase links a second identity
+  // (e.g. Discord onto an existing Google account by matching verified email),
+  // app_metadata.provider and user_metadata.sub can disagree — provider stays
+  // the original while sub reflects the latest login — so resolving by a single
+  // provider's sub column misses the row. Resolve by email first.
+  if (email) {
+    const { data: byEmail } = await db
+      .from('users')
+      .select('*')
+      .eq('email', email)
+      .limit(1)
+      .maybeSingle()
+    if (byEmail) return byEmail as User
+  }
+
+  // Fall back to matching either provider sub (covers rows without an email).
+  const { data: bySub } = await db
     .from('users')
     .select('*')
-    .eq(SUB_COLUMN[provider], sub)
+    .or(`google_sub.eq.${sub},discord_sub.eq.${sub}`)
+    .limit(1)
     .maybeSingle()
-  return (data as User) ?? null
+  return (bySub as User) ?? null
 }
 
 // Find-or-create the canonical user for an identity, merging onto an existing
