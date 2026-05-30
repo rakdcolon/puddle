@@ -43,7 +43,8 @@ export async function authenticateDiscordActivity(): Promise<void> {
     client_id: clientId,
     response_type: 'code',
     prompt: 'none',
-    scope: ['identify', 'email'],
+    // rpc.activities.write lets us set the player's rich presence below.
+    scope: ['identify', 'email', 'rpc.activities.write'],
   })
 
   const res = await fetch('/api/discord/token', {
@@ -55,4 +56,31 @@ export async function authenticateDiscordActivity(): Promise<void> {
   const { access_token } = await res.json()
 
   await sdk.commands.authenticate({ access_token })
+}
+
+// Keeps the elapsed timer stable across presence updates within a session.
+let presenceStart: number | null = null
+
+// Sets the "Playing puddle" rich presence shown on the user's Discord profile
+// while they're in the Activity. No-op outside Discord. Requires the
+// rpc.activities.write scope (requested in authorize above). Timestamps are
+// milliseconds since epoch. Safe to call repeatedly to update details/state.
+export async function setPuddlePresence(
+  fields: { details?: string; state?: string } = {},
+): Promise<void> {
+  if (!isInDiscordActivity()) return
+  if (presenceStart === null) presenceStart = Date.now()
+  try {
+    const sdk = await getDiscordSdk()
+    await sdk.commands.setActivity({
+      activity: {
+        type: 0, // Playing
+        details: fields.details ?? "Solving today's puzzle",
+        state: fields.state ?? 'Daily brain teaser',
+        timestamps: { start: presenceStart },
+      },
+    })
+  } catch (err) {
+    console.warn('Discord setActivity failed', err)
+  }
 }

@@ -5,6 +5,7 @@ import {
   isInDiscordActivity,
   patchSupabaseForActivity,
   authenticateDiscordActivity,
+  setPuddlePresence,
 } from '@/lib/discord/sdk'
 
 type Phase = 'pending' | 'ready' | 'error'
@@ -26,7 +27,11 @@ export default function DiscordActivityProvider({ children }: { children: React.
     }
     patchSupabaseForActivity()
     authenticateDiscordActivity()
-      .then(() => setPhase('ready'))
+      .then(() => {
+        setPhase('ready')
+        // Show rich presence on the user's profile (best-effort).
+        setPuddlePresence()
+      })
       .catch((err) => {
         console.error('Discord activity auth failed', err)
         setPhase('error')
