@@ -20,6 +20,12 @@ export default async function Footer() {
           <Link href="/submit" className="text-[14px] text-ink hover:text-accent transition-colors duration-[180ms]">
             Submit a puzzle
           </Link>
+          <Link href="/terms" className="text-[14px] text-ink hover:text-accent transition-colors duration-[180ms]">
+            Terms
+          </Link>
+          <Link href="/privacy" className="text-[14px] text-ink hover:text-accent transition-colors duration-[180ms]">
+            Privacy
+          </Link>
           {isAdmin && (
             <Link href="/admin" className="text-[14px] text-ink-muted hover:text-accent transition-colors duration-[180ms] italic">
               Admin
