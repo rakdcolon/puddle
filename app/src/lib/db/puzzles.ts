@@ -29,6 +29,23 @@ export async function getPuzzleById(id: string): Promise<Puzzle | null> {
   return data as Puzzle
 }
 
+// The current (latest published) issue's number/volume, for the masthead on
+// pages that aren't displaying a specific puzzle.
+export async function getCurrentIssue(): Promise<{ issueNo: number; vol: number } | null> {
+  const db = createServiceClient()
+  const { data, error } = await db
+    .from('puzzles')
+    .select('issue_no, vol')
+    .lte('date_active', new Date().toISOString().slice(0, 10))
+    .is('deleted_at', null)
+    .order('date_active', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (error || !data) return null
+  return { issueNo: data.issue_no, vol: data.vol }
+}
+
 export function stripAnswer(puzzle: Puzzle): PublicPuzzle {
   const { answer: _answer, solution_lede: _lede, solution_steps: _steps, ...pub } = puzzle
   return pub
