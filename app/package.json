@@ -6,9 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "import-puzzle": "node scripts/import-puzzle.mjs"
+    "import-puzzle": "node scripts/import-puzzle.mjs",
+    "sync-puzzles": "node scripts/sync-puzzles.mjs"
   },
   "dependencies": {
+    "@discord/embedded-app-sdk": "^2.5.0",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.106.2",
     "@vercel/analytics": "^2.0.1",

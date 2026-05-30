@@ -12,6 +12,7 @@ export default async function AdminPage() {
   const { data: puzzles } = await db
     .from('puzzles')
     .select('id, issue_no, vol, date_active, title, genre, difficulty')
+    .is('deleted_at', null)
     .order('date_active', { ascending: false })
 
   const today = getTodayNY()

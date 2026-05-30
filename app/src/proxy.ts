@@ -35,8 +35,13 @@ export async function proxy(request: NextRequest) {
   // Refresh session — do not remove this call
   const { data: { user } } = await supabase.auth.getUser()
 
+  // Inside the Discord Activity there's no Supabase session — auth rides on the
+  // activity cookie instead. Presence is enough to pass the edge gate; the cookie
+  // is cryptographically verified server-side in getCurrentUser().
+  const hasActivitySession = request.cookies.has('puddle.activity')
+
   const pathname = request.nextUrl.pathname
-  if (!user && PROTECTED_ROUTES.some(r => pathname.startsWith(r))) {
+  if (!user && !hasActivitySession && PROTECTED_ROUTES.some(r => pathname.startsWith(r))) {
     const url = request.nextUrl.clone()
     url.pathname = '/sign-in'
     url.searchParams.set('returnTo', pathname)

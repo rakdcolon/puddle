@@ -1,7 +1,12 @@
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { createServiceClient } from '@/lib/supabase/server'
 import { totalXpToLevel } from '@/lib/utils/xp'
-import type { User, UserProfile, CalendarEntry } from '@/types'
+import type { User, UserProfile, CalendarEntry, AuthProvider, AuthIdentity } from '@/types'
+
+const SUB_COLUMN: Record<AuthProvider, 'google_sub' | 'discord_sub'> = {
+  google: 'google_sub',
+  discord: 'discord_sub',
+}
 
 // Total XP from all solves EXCLUDING today, so the client can add the just-earned XP on top.
 export async function getXPBeforeToday(userId: string, today: string): Promise<{ totalXp: number; level: number }> {
@@ -50,46 +55,103 @@ export async function getCurrentStreak(userId: string): Promise<number> {
   return streak
 }
 
-export async function getUserBySupabaseId(supabaseUser: SupabaseUser): Promise<User | null> {
+export async function getUserById(id: string): Promise<User | null> {
   const db = createServiceClient()
-  const googleSub = supabaseUser.user_metadata?.sub ?? supabaseUser.id
+  const { data } = await db.from('users').select('*').eq('id', id).maybeSingle()
+  return (data as User) ?? null
+}
+
+// Normalize a Supabase auth user (Google or Discord provider) into an identity.
+export function identityFromSupabaseUser(supabaseUser: SupabaseUser): AuthIdentity {
+  const provider: AuthProvider =
+    supabaseUser.app_metadata?.provider === 'discord' ? 'discord' : 'google'
+  const meta = supabaseUser.user_metadata ?? {}
+  const sub = meta.sub ?? meta.provider_id ?? supabaseUser.id
+  const displayName =
+    meta.full_name ?? meta.name ?? meta.global_name ?? supabaseUser.email?.split('@')[0] ?? 'Puzzler'
+  // Google emails are always verified; Discord exposes an explicit flag.
+  const emailVerified = provider === 'google' ? true : meta.email_verified === true
+  return {
+    provider,
+    sub: String(sub),
+    email: supabaseUser.email ?? meta.email ?? '',
+    emailVerified,
+    displayName,
+  }
+}
+
+export async function getUserBySupabaseId(supabaseUser: SupabaseUser): Promise<User | null> {
+  const { provider, sub } = identityFromSupabaseUser(supabaseUser)
+  const db = createServiceClient()
   const { data } = await db
     .from('users')
     .select('*')
-    .eq('google_sub', googleSub)
+    .eq(SUB_COLUMN[provider], sub)
     .maybeSingle()
-  return data ?? null
+  return (data as User) ?? null
 }
 
-export async function getOrCreateUser(supabaseUser: SupabaseUser) {
+// Find-or-create the canonical user for an identity, merging onto an existing
+// account when the (verified) email already belongs to one.
+//
+// Resolution order:
+//   1. A row already carrying this provider's sub → return it.
+//   2. A row with the same email, but only if this email is VERIFIED — attach
+//      this provider's sub to it (the merge). Verification is required so a
+//      provider account opened with someone else's address can't hijack it.
+//   3. Otherwise create a fresh row.
+export async function getOrCreateUserFromIdentity(identity: AuthIdentity): Promise<User> {
   const db = createServiceClient()
+  const col = SUB_COLUMN[identity.provider]
 
-  const googleSub = supabaseUser.user_metadata?.sub ?? supabaseUser.id
-  const displayName =
-    supabaseUser.user_metadata?.full_name ??
-    supabaseUser.user_metadata?.name ??
-    supabaseUser.email?.split('@')[0] ??
-    'Puzzler'
-  const email = supabaseUser.email ?? ''
+  // 1. Already linked.
+  const { data: bySub } = await db.from('users').select('*').eq(col, identity.sub).maybeSingle()
+  if (bySub) {
+    await ensureSettings(bySub.id)
+    return bySub as User
+  }
 
-  // Upsert user
-  const { data: user, error } = await db
+  // 2. Merge onto an existing account by verified email.
+  if (identity.email && identity.emailVerified) {
+    const { data: byEmail } = await db
+      .from('users')
+      .select('*')
+      .eq('email', identity.email)
+      .maybeSingle()
+    if (byEmail) {
+      // Only fill the sub if this provider isn't already linked to that row.
+      const linked = byEmail[col]
+        ? (byEmail as User)
+        : ((
+            await db.from('users').update({ [col]: identity.sub }).eq('id', byEmail.id).select().single()
+          ).data as User)
+      await ensureSettings(linked.id)
+      return linked
+    }
+  }
+
+  // 3. Brand-new account.
+  const { data: created, error } = await db
     .from('users')
-    .upsert(
-      { google_sub: googleSub, display_name: displayName, email },
-      { onConflict: 'google_sub', ignoreDuplicates: false },
-    )
+    .insert({ [col]: identity.sub, display_name: identity.displayName, email: identity.email })
     .select()
     .single()
-
   if (error) throw error
 
-  // Ensure settings row exists
+  await ensureSettings(created.id)
+  return created as User
+}
+
+// Backwards-compatible wrapper used by the OAuth callback (Supabase sessions).
+export async function getOrCreateUser(supabaseUser: SupabaseUser): Promise<User> {
+  return getOrCreateUserFromIdentity(identityFromSupabaseUser(supabaseUser))
+}
+
+async function ensureSettings(userId: string): Promise<void> {
+  const db = createServiceClient()
   await db
     .from('user_settings')
-    .upsert({ user_id: user.id }, { onConflict: 'user_id', ignoreDuplicates: true })
-
-  return user
+    .upsert({ user_id: userId }, { onConflict: 'user_id', ignoreDuplicates: true })
 }
 
 export async function getUserProfile(userId: string): Promise<UserProfile> {

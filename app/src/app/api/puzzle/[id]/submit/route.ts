@@ -1,8 +1,10 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
 import { getPuzzleById } from '@/lib/db/puzzles'
 import { upsertSolve } from '@/lib/db/solves'
-import { getUserBySupabaseId } from '@/lib/db/users'
+import { upsertAnonSolve } from '@/lib/db/anon-solves'
+import { getCurrentUser } from '@/lib/auth/current-user'
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 // Naive IP-based rate limit (in-memory, resets on cold start — good enough without Redis)
 const attempts = new Map<string, { count: number; windowStart: number }>()
@@ -45,21 +47,30 @@ export async function POST(
   const correct = normalized === puzzle.answer.replace(/[\s,.\-_]/g, '')
 
   if (correct) {
-    // Persist solve for authenticated users
-    const supabase = await createClient()
-    const { data: { user: authUser } } = await supabase.auth.getUser()
-    if (authUser) {
-      const user = await getUserBySupabaseId(authUser)
-      if (user) {
-        await upsertSolve(
-          user.id,
-          puzzle.id,
-          'solved',
-          body.elapsed_seconds ?? null,
-          body.hints_used ?? 0,
-          body.attempts ?? 1,
-        )
-      }
+    // Resolve the canonical user from either a website (Supabase) session or a
+    // Discord Activity session cookie.
+    const user = await getCurrentUser()
+    if (user) {
+      // Persist solve for authenticated users (Google, Discord, or activity)
+      await upsertSolve(
+        user.id,
+        puzzle.id,
+        'solved',
+        body.elapsed_seconds ?? null,
+        body.hints_used ?? 0,
+        body.attempts ?? 1,
+      )
+    } else if (typeof body.client_id === 'string' && UUID_RE.test(body.client_id)) {
+      // Count the anonymous visitor so stats reflect everyone, not just
+      // signed-in users. Fire-and-forget — never fail the correctness check.
+      await upsertAnonSolve(
+        body.client_id,
+        puzzle.id,
+        'solved',
+        body.elapsed_seconds ?? null,
+        body.hints_used ?? 0,
+        body.attempts ?? 1,
+      ).catch(() => {})
     }
   }
 

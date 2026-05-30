@@ -53,6 +53,21 @@ function recordDaily(data: Record<string, unknown>) {
   } catch {}
 }
 
+// Stable per-browser id so anonymous solves are counted once per puzzle.
+// Sent with submissions; signed-in users are tracked by account instead.
+function getClientId(): string {
+  try {
+    let id = localStorage.getItem('puddle.cid')
+    if (!id) {
+      id = crypto.randomUUID()
+      localStorage.setItem('puddle.cid', id)
+    }
+    return id
+  } catch {
+    return ''
+  }
+}
+
 function useTimer(running: boolean) {
   const [t, setT] = useState(0)
   const startRef = useRef(Date.now())
@@ -120,6 +135,7 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
           elapsed_seconds: elapsed,
           hints_used: hintLevel,
           attempts: attempts + 1,
+          client_id: getClientId(),
         }),
       })
       const data = await res.json()
@@ -765,10 +781,17 @@ function PostSolvePanel({
   const [copied, setCopied] = useState(false)
 
   function handleShare() {
-    const lines = [`Puddle · No. ${issueNo}`, title]
+    // 🟫🟧 / 🟧🟫 mirrors the puddle logo: brown ink + terracotta accent squares.
+    const lines = [
+      `🟫🟧 Puddle · No. ${issueNo}`,
+      `🟧🟫 ${title}`,
+      '',
+    ]
     if (status === 'correct') {
       const hintPart = hintLevel > 0 ? ` · ${hintLevel} hint${hintLevel === 1 ? '' : 's'}` : ''
-      lines.push(`✓ Solved in ${fmtTime(elapsed)}${hintPart}`)
+      lines.push(`✅ Solved in ${fmtTime(elapsed)}${hintPart}`)
+      const streak = streakBeforeToday !== undefined ? streakBeforeToday + 1 : 0
+      if (streak >= 2) lines.push(`🔥 ${streak}-day streak`)
     } else {
       lines.push('Revealed')
     }

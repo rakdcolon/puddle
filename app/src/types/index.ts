@@ -44,10 +44,23 @@ export interface Solve {
 
 export interface User {
   id: string
-  google_sub: string
+  google_sub: string | null
+  discord_sub: string | null
   display_name: string
   email: string
   created_at: string
+}
+
+export type AuthProvider = 'google' | 'discord'
+
+// A normalized identity from any OAuth provider, used to find-or-create and
+// merge the canonical `users` row.
+export interface AuthIdentity {
+  provider: AuthProvider
+  sub: string
+  email: string
+  emailVerified: boolean
+  displayName: string
 }
 
 export interface UserSettings {

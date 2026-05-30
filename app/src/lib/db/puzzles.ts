@@ -9,6 +9,7 @@ export async function getPuzzleForDate(dateStr: string): Promise<Puzzle | null> 
     .select('*')
     .eq('date_active', dateStr)
     .lte('date_active', new Date().toISOString().slice(0, 10))
+    .is('deleted_at', null)
     .single()
 
   if (error || !data) return null
@@ -21,6 +22,7 @@ export async function getPuzzleById(id: string): Promise<Puzzle | null> {
     .from('puzzles')
     .select('*')
     .eq('id', id)
+    .is('deleted_at', null)
     .single()
 
   if (error || !data) return null
@@ -38,21 +40,30 @@ export const getPuzzleStats = unstable_cache(
 
     const threeHoursAgo = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString()
 
-    const [{ data: allSolves }, { data: recentSolves }] = await Promise.all([
+    // Stats count both signed-in (solves) and anonymous (anon_solves) visitors.
+    const [
+      { data: allSolves },
+      { data: recentSolves },
+      { data: allAnon },
+      { data: recentAnon },
+    ] = await Promise.all([
       db.from('solves').select('elapsed_seconds, status').eq('puzzle_id', puzzleId),
-      db.from('solves').select('id').eq('puzzle_id', puzzleId).gte('solved_at', threeHoursAgo),
+      db.from('solves').select('puzzle_id').eq('puzzle_id', puzzleId).gte('solved_at', threeHoursAgo),
+      db.from('anon_solves').select('elapsed_seconds, status').eq('puzzle_id', puzzleId),
+      db.from('anon_solves').select('puzzle_id').eq('puzzle_id', puzzleId).gte('solved_at', threeHoursAgo),
     ])
 
-    const solved = (allSolves ?? []).filter(s => s.status === 'solved' && s.elapsed_seconds != null)
+    const all = [...(allSolves ?? []), ...(allAnon ?? [])]
+    const solved = all.filter(s => s.status === 'solved' && s.elapsed_seconds != null)
     const times = solved.map(s => s.elapsed_seconds as number).sort((a, b) => a - b)
 
     return {
-      total_solved: (allSolves ?? []).filter(s => s.status === 'solved').length,
+      total_solved: all.filter(s => s.status === 'solved').length,
       best_time_seconds: times[0] ?? null,
       avg_time_seconds: times.length > 0
         ? Math.round(times.reduce((a, b) => a + b, 0) / times.length)
         : null,
-      active_solvers: (recentSolves ?? []).length,
+      active_solvers: (recentSolves ?? []).length + (recentAnon ?? []).length,
     }
   },
   ['puzzle-stats'],
