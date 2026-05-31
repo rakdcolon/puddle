@@ -75,7 +75,6 @@ export interface PuzzleStats {
   total_solved: number
   best_time_seconds: number | null
   avg_time_seconds: number | null
-  active_solvers: number
 }
 
 export interface CalendarEntry {
