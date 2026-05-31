@@ -71,14 +71,20 @@ export default async function SolutionPage({ searchParams }: SolutionPageProps) 
     <>
       <Masthead issueNo={puzzle.issue_no} vol={puzzle.vol} />
       <main className="flex-1 max-w-[1440px] mx-auto w-full px-4 py-6 sm:px-14 sm:py-8">
-        {/* Back link */}
-        <div className="mb-6">
+        {/* Back link + re-read the puzzle */}
+        <div className="mb-6 flex items-center gap-3" style={{ fontSize: 14 }}>
           <Link
             href="/"
             className="italic text-ink-muted hover:text-ink transition-colors duration-[180ms]"
-            style={{ fontSize: 14 }}
           >
             ← back to the column
+          </Link>
+          <span className="text-hair-strong">·</span>
+          <Link
+            href={`/review?id=${puzzle.id}`}
+            className="italic text-ink-muted hover:text-ink transition-colors duration-[180ms]"
+          >
+            View the puzzle
           </Link>
         </div>
 

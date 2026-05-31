@@ -52,7 +52,7 @@ export default async function LandingPage() {
             </h1>
 
             <p className="leading-relaxed mb-8 max-w-[38ch]" style={{ fontSize: 19.5 }}>
-              One puzzle daily — logic, sequences, lateral riddles, wordplay.{' '}
+              One puzzle daily, from logic to sequences to wordplay and more.{' '}
               <span className="italic" style={{ color: 'var(--color-ink-muted)' }}>
                 No time pressure. No leaderboards.
               </span>
