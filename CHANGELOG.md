@@ -17,6 +17,18 @@ merge. At release time it is renamed to the new version with a date. See
 
 _Nothing yet._
 
+## [1.0.1] - 2026-05-30
+
+### Fixed
+- Signing in through the Discord Activity now works end to end. Previously the
+  Activity recognized you in the masthead but not elsewhere, so opening Profile
+  or Settings bounced you to a sign-in screen, that screen could white-screen,
+  and your solve history, hints, and solutions didn't load. The Activity's
+  Discord session is now honored across the whole app, and the sign-in/sign-out
+  controls that can't work inside Discord are hidden.
+- The browser-tab icon now shows the Puddle mark instead of the placeholder
+  framework default.
+
 ## [1.0.0] - 2026-05-30
 
 Baseline of the production application at `solvepuddle.com`.
@@ -43,5 +55,6 @@ Baseline of the production application at `solvepuddle.com`.
   account (matched by verified email), so the nav and profile work after
   signing in with Discord.
 
-[Unreleased]: https://github.com/rakdcolon/puddle/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/rakdcolon/puddle/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/rakdcolon/puddle/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/rakdcolon/puddle/releases/tag/v1.0.0
