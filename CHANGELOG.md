@@ -17,6 +17,36 @@ merge. At release time it is renamed to the new version with a date. See
 
 _Nothing yet._
 
+## [1.1.0] - 2026-05-31
+
+A feature release: dark mode, a Discord bot, a read-only way to revisit puzzles,
+and a deliberate move away from timing pressure.
+
+### Added
+- **Dark mode.** A warm, lamplit dark theme that keeps Puddle's editorial feel.
+  Choose **Automatic** (follows your device), **Light**, or **Dark** under
+  Settings → Appearance. Applies instantly with no flash; Automatic tracks your
+  OS in real time.
+- **Discord bot.** Slash commands in the community server: `/stats` (a player's
+  level, streak, and solve record), `/leaderboard` (this week's top solvers),
+  and `/today` (the current puzzle with a link to play). Runs as a lightweight
+  HTTP-interactions endpoint.
+- **Revisit a puzzle.** After solving or giving up you can reopen a puzzle —
+  prompt and answer choices, read-only — from a new "View the puzzle" link on
+  the home cards and the solution page.
+- The landing page now shows **how many people have solved today's puzzle**.
+
+### Changed
+- **Timing is gone from the interface.** No in-puzzle timer, post-solve times,
+  fastest/average-time stats, or times in shared results. Solve duration is
+  still recorded, just never shown — Puddle isn't a race.
+- **XP no longer rewards speed.** Every solve earns the same base, adjusted only
+  by hints and wrong attempts.
+
+### Fixed
+- A day with no scheduled puzzle no longer takes the whole site down — the most
+  recent issue stays live until the next one is published.
+
 ## [1.0.1] - 2026-05-30
 
 ### Fixed
@@ -55,6 +85,7 @@ Baseline of the production application at `solvepuddle.com`.
   account (matched by verified email), so the nav and profile work after
   signing in with Discord.
 
-[Unreleased]: https://github.com/rakdcolon/puddle/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/rakdcolon/puddle/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/rakdcolon/puddle/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/rakdcolon/puddle/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/rakdcolon/puddle/releases/tag/v1.0.0
