@@ -68,6 +68,35 @@ export async function getUserByDiscordSub(discordSub: string): Promise<User | nu
   return (data as User) ?? null
 }
 
+// Top solvers by number of puzzles solved in a recent window (default 7 days),
+// for the bot's /leaderboard. Ranks by solve count — not time — in keeping with
+// Puddle's no-speed-pressure direction. Anonymous solves are excluded (no name).
+// Aggregated in JS since volume is low; avoids a SQL view/RPC.
+export async function getLeaderboard(days = 7, limit = 10): Promise<{ display_name: string; solved: number }[]> {
+  const db = createServiceClient()
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString()
+
+  const { data: solves } = await db
+    .from('solves')
+    .select('user_id')
+    .eq('status', 'solved')
+    .gte('solved_at', since)
+
+  const counts = new Map<string, number>()
+  for (const s of solves ?? []) counts.set(s.user_id, (counts.get(s.user_id) ?? 0) + 1)
+
+  const top = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, limit)
+  if (top.length === 0) return []
+
+  const { data: users } = await db
+    .from('users')
+    .select('id, display_name')
+    .in('id', top.map(([id]) => id))
+  const nameById = new Map((users ?? []).map(u => [u.id, u.display_name]))
+
+  return top.map(([id, solved]) => ({ display_name: nameById.get(id) ?? 'Puzzler', solved }))
+}
+
 // Normalize a Supabase auth user (Google or Discord provider) into an identity.
 export function identityFromSupabaseUser(supabaseUser: SupabaseUser): AuthIdentity {
   const provider: AuthProvider =

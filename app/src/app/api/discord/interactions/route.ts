@@ -6,7 +6,9 @@ import {
   MessageFlags,
   PUDDLE_ACCENT,
 } from '@/lib/discord/interactions'
-import { getUserByDiscordSub, getUserProfile } from '@/lib/db/users'
+import { getUserByDiscordSub, getUserProfile, getLeaderboard } from '@/lib/db/users'
+import { getPuzzleForDate } from '@/lib/db/puzzles'
+import { getTodayNY } from '@/lib/utils/dates'
 
 // Ed25519 verification + getUserProfile need Node APIs and the service client,
 // so pin the Node runtime (never Edge) and never cache.
@@ -40,7 +42,10 @@ export async function POST(request: NextRequest) {
   }
 
   if (interaction.type === InteractionType.APPLICATION_COMMAND) {
-    if (interaction.data?.name === 'stats') return handleStats(interaction)
+    const name = interaction.data?.name
+    if (name === 'stats') return handleStats(interaction)
+    if (name === 'leaderboard') return handleLeaderboard()
+    if (name === 'today') return handleToday()
   }
 
   // Unknown interaction — acknowledge without a visible message.
@@ -98,6 +103,63 @@ async function handleStats(interaction: any) {
             { name: 'XP', value: `${stats.xp}`, inline: true },
           ],
           footer: { text: SITE },
+        },
+      ],
+    },
+  })
+}
+
+// /leaderboard — top solvers this week, ranked by puzzles solved (not time).
+async function handleLeaderboard() {
+  const rows = await getLeaderboard(7, 10)
+  if (rows.length === 0) {
+    return reply(`No solves yet this week — be the first to put a name up. https://${SITE}`)
+  }
+  const medals = ['🥇', '🥈', '🥉']
+  const lines = rows.map(
+    (r, i) => `${medals[i] ?? `\`${i + 1}.\``} **${r.display_name}** — ${r.solved} solved`,
+  )
+  return NextResponse.json({
+    type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+    data: {
+      embeds: [
+        {
+          title: 'Puddle · this week',
+          description: lines.join('\n'),
+          color: PUDDLE_ACCENT,
+          footer: { text: `Puzzles solved in the last 7 days · ${SITE}` },
+        },
+      ],
+    },
+  })
+}
+
+const GENRE_LABELS: Record<string, string> = {
+  logic: 'Logic & Deduction',
+  quant: 'Quant & Interview',
+  pattern: 'Pattern & Sequence',
+  lateral: 'Lateral Riddle',
+  wordplay: 'Wordplay',
+  deduction: 'Deduction',
+}
+
+// /today — the current puzzle's title, genre, and difficulty, with a play link.
+// No answer is exposed (same public info as the website's puzzle page).
+async function handleToday() {
+  const puzzle = await getPuzzleForDate(getTodayNY())
+  if (!puzzle) return reply('No puzzle is live right now — check back soon.', true)
+
+  const dots = '●'.repeat(puzzle.difficulty) + '○'.repeat(5 - puzzle.difficulty)
+  return NextResponse.json({
+    type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+    data: {
+      embeds: [
+        {
+          title: puzzle.title,
+          url: `https://${SITE}/puzzle`,
+          description: `${GENRE_LABELS[puzzle.genre] ?? puzzle.genre} · ${dots}\n\n[Play today's puzzle →](https://${SITE}/puzzle)`,
+          color: PUDDLE_ACCENT,
+          footer: { text: `No. ${puzzle.issue_no} · ${SITE}` },
         },
       ],
     },

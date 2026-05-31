@@ -56,6 +56,16 @@ const commands = [
       },
     ],
   },
+  {
+    name: 'leaderboard',
+    description: 'This week’s top solvers',
+    type: 1,
+  },
+  {
+    name: 'today',
+    description: "Today's puzzle — title, genre, and a link to play",
+    type: 1,
+  },
 ]
 
 const base = `https://discord.com/api/v10/applications/${appId}`
