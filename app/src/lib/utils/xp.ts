@@ -1,11 +1,10 @@
 const XP_BASE = 100
 const LEVEL_SCALE = 500  // XP per level (simple linear for now)
 
-export function calcXP(elapsed: number, hintsUsed: number, attempts: number): number {
+// XP is independent of solve time by design — Puddle doesn't reward speed.
+// Flat base, reduced by hints used and wrong attempts.
+export function calcXP(hintsUsed: number, attempts: number): number {
   let xp = XP_BASE
-  // Speed bonus: under 2 min
-  if (elapsed < 120) xp += 50
-  else if (elapsed < 300) xp += 25
   // Hint penalty
   xp -= hintsUsed * 15
   // Wrong attempt penalty

@@ -1,5 +1,5 @@
 import type { PublicPuzzle, Solve, PuzzleStats } from '@/types'
-import { formatDate, formatElapsed } from '@/lib/utils/dates'
+import { formatDate } from '@/lib/utils/dates'
 import Link from 'next/link'
 
 interface PuzzleCardProps {
@@ -124,12 +124,6 @@ function DefaultState({ puzzle, stats, dateLabel, genreLabels }: {
         Begin today's puzzle
         <span className="transition-transform duration-[250ms] group-hover:translate-x-[3px]">→</span>
       </Link>
-
-      {stats.avg_time_seconds && (
-        <p className="italic text-ink-muted mt-3" style={{ fontSize: 13 }}>
-          avg. {formatElapsed(stats.avg_time_seconds)} to solve
-        </p>
-      )}
     </>
   )
 }
@@ -160,12 +154,9 @@ function SolvedState({ puzzle, solve, dateLabel }: {
       </h2>
 
       <p className="italic text-ink-muted mb-6" style={{ fontSize: 15 }}>
-        Solved in{' '}
-        <strong style={{ color: 'var(--color-ink)', fontWeight: 500, fontVariantNumeric: 'tabular-nums' }}>
-          {formatElapsed(solve.elapsed_seconds)}
-        </strong>
+        Solved
         {solve.hints_used > 0 && (
-          <>, with{' '}
+          <>{' '}with{' '}
             <strong style={{ color: 'var(--color-ink)', fontWeight: 500 }}>
               {solve.hints_used}
             </strong>{' '}

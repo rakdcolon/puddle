@@ -7,7 +7,6 @@ import {
   PUDDLE_ACCENT,
 } from '@/lib/discord/interactions'
 import { getUserByDiscordSub, getUserProfile } from '@/lib/db/users'
-import { formatElapsed } from '@/lib/utils/dates'
 
 // Ed25519 verification + getUserProfile need Node APIs and the service client,
 // so pin the Node runtime (never Edge) and never cache.
@@ -96,11 +95,6 @@ async function handleStats(interaction: any) {
             },
             { name: 'Solved', value: `${stats.total_solved}`, inline: true },
             { name: 'Win rate', value: `${stats.win_pct}%`, inline: true },
-            {
-              name: 'Avg solve',
-              value: stats.avg_time_seconds ? formatElapsed(stats.avg_time_seconds) : '—',
-              inline: true,
-            },
             { name: 'XP', value: `${stats.xp}`, inline: true },
           ],
           footer: { text: SITE },

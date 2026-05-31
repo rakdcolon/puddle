@@ -74,17 +74,6 @@ export default async function LandingPage() {
                   <span className="mx-3" style={{ color: 'var(--color-hair-strong)' }}>·</span>
                 </>
               )}
-              {stats.best_time_seconds != null && (
-                <>
-                  <span>
-                    <strong style={{ fontWeight: 500 }}>
-                      best {Math.floor(stats.best_time_seconds / 60)}:{String(stats.best_time_seconds % 60).padStart(2, '0')}
-                    </strong>{' '}
-                    <span className="italic" style={{ color: 'var(--color-ink-muted)' }}>so far</span>
-                  </span>
-                  <span className="mx-3" style={{ color: 'var(--color-hair-strong)' }}>·</span>
-                </>
-              )}
               <span>
                 <Countdown />{' '}
                 <span className="italic" style={{ color: 'var(--color-ink-muted)' }}>to next puzzle</span>

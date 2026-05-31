@@ -7,7 +7,7 @@ import CalendarHeatmap from '@/components/profile/CalendarHeatmap'
 import GenreChart from '@/components/profile/GenreChart'
 import { getCurrentUser } from '@/lib/auth/current-user'
 import { getUserProfile } from '@/lib/db/users'
-import { formatElapsed, formatDate } from '@/lib/utils/dates'
+import { formatDate } from '@/lib/utils/dates'
 
 export const metadata = { title: 'Profile — puddle' }
 
@@ -97,7 +97,7 @@ export default async function ProfilePage() {
             By the numbers
           </h2>
           <div
-            className="grid grid-cols-3 sm:grid-cols-5"
+            className="grid grid-cols-2 sm:grid-cols-4"
             style={{
               background: 'var(--color-paper)',
               borderRadius: 16,
@@ -108,11 +108,6 @@ export default async function ProfilePage() {
               { label: 'level', value: String(stats.level), foot: `${stats.xp} XP total` },
               { label: 'streak', value: String(stats.current_streak), foot: 'days in a row' },
               { label: 'win rate', value: `${stats.win_pct}%`, foot: `${stats.total_solved} solved` },
-              {
-                label: 'avg time',
-                value: stats.avg_time_seconds ? formatElapsed(stats.avg_time_seconds) : '—',
-                foot: 'per solve',
-              },
               { label: 'attempted', value: String(stats.total_attempted), foot: 'all time' },
             ].map((tile, i) => (
               <div
@@ -158,7 +153,7 @@ export default async function ProfilePage() {
                       {s.title}
                     </td>
                     <td className="py-2 pr-2 text-right italic text-ink-muted" style={{ fontVariantNumeric: 'tabular-nums', fontSize: 13, whiteSpace: 'nowrap' }}>
-                      {s.status === 'solved' ? formatElapsed(s.elapsed_seconds) : <span className="text-ink-muted">revealed</span>}
+                      {s.status === 'solved' ? <span style={{ color: 'var(--color-success)' }}>solved</span> : <span className="text-ink-muted">revealed</span>}
                     </td>
                     <td className="py-2 pl-1">
                       {s.hints_used === 0 && s.status === 'solved' && (
