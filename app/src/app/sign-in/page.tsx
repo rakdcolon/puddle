@@ -6,10 +6,21 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import LogoMark from '@/components/layout/LogoMark'
 
+// Inside the Discord Activity iframe, Discord appends ?frame_id=... and the
+// OAuth providers' full-page redirect to discord.com is blocked by the sandbox
+// (it just white-screens). Auth there is handled silently by
+// DiscordActivityProvider, so this page should never run its OAuth flow in
+// that context — detect it and show a benign message instead.
+function isInDiscordActivity(): boolean {
+  if (typeof window === 'undefined') return false
+  return new URLSearchParams(window.location.search).has('frame_id')
+}
+
 export default function SignInPage() {
   const [loading, setLoading] = useState<'google' | 'discord' | null>(null)
 
   async function handleSignIn(provider: 'google' | 'discord') {
+    if (isInDiscordActivity()) return
     setLoading(provider)
     const supabase = createClient()
     await supabase.auth.signInWithOAuth({
@@ -18,6 +29,22 @@ export default function SignInPage() {
         redirectTo: `${window.location.origin}/api/auth/callback`,
       },
     })
+  }
+
+  if (isInDiscordActivity()) {
+    return (
+      <main className="flex flex-col items-center justify-center min-h-screen px-5 pb-16 text-center">
+        <div className="flex justify-center mb-8">
+          <LogoMark />
+        </div>
+        <p className="text-[17px] italic text-ink-soft max-w-[340px]">
+          You&rsquo;re signed in through Discord.
+        </p>
+        <a href="/" className="mt-5 text-[15px] text-accent italic underline underline-offset-[3px]">
+          Back to today&rsquo;s puzzle
+        </a>
+      </main>
+    )
   }
 
   return (

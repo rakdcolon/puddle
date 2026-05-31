@@ -1,7 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/server'
-import { getUserBySupabaseId } from '@/lib/db/users'
+import { getCurrentUser } from '@/lib/auth/current-user'
 import type { UserSettings } from '@/types'
 
 const DEFAULTS: Omit<UserSettings, 'user_id'> = {
@@ -12,12 +11,8 @@ const DEFAULTS: Omit<UserSettings, 'user_id'> = {
 }
 
 export async function GET() {
-  const supabase = await createClient()
-  const { data: { user: authUser } } = await supabase.auth.getUser()
-  if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
-  const user = await getUserBySupabaseId(authUser)
-  if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
+  const user = await getCurrentUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const db = createServiceClient()
   const { data } = await db.from('user_settings').select('*').eq('user_id', user.id).maybeSingle()
@@ -26,12 +21,8 @@ export async function GET() {
 }
 
 export async function PATCH(request: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user: authUser } } = await supabase.auth.getUser()
-  if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
-  const user = await getUserBySupabaseId(authUser)
-  if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
+  const user = await getCurrentUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await request.json().catch(() => ({}))
   const allowed = ['sound', 'show_streak', 'hint_pacing', 'display_name']
