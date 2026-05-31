@@ -60,19 +60,11 @@ export const getPuzzleStats = unstable_cache(
   async (puzzleId: string): Promise<PuzzleStats> => {
     const db = createServiceClient()
 
-    const threeHoursAgo = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString()
-
-    // Stats count both signed-in (solves) and anonymous (anon_solves) visitors.
-    const [
-      { data: allSolves },
-      { data: recentSolves },
-      { data: allAnon },
-      { data: recentAnon },
-    ] = await Promise.all([
+    // Count solvers across both signed-in (solves) and anonymous (anon_solves).
+    // For the daily puzzle this is the number of people who've solved it today.
+    const [{ data: allSolves }, { data: allAnon }] = await Promise.all([
       db.from('solves').select('elapsed_seconds, status').eq('puzzle_id', puzzleId),
-      db.from('solves').select('puzzle_id').eq('puzzle_id', puzzleId).gte('solved_at', threeHoursAgo),
       db.from('anon_solves').select('elapsed_seconds, status').eq('puzzle_id', puzzleId),
-      db.from('anon_solves').select('puzzle_id').eq('puzzle_id', puzzleId).gte('solved_at', threeHoursAgo),
     ])
 
     const all = [...(allSolves ?? []), ...(allAnon ?? [])]
@@ -85,7 +77,6 @@ export const getPuzzleStats = unstable_cache(
       avg_time_seconds: times.length > 0
         ? Math.round(times.reduce((a, b) => a + b, 0) / times.length)
         : null,
-      active_solvers: (recentSolves ?? []).length + (recentAnon ?? []).length,
     }
   },
   ['puzzle-stats'],

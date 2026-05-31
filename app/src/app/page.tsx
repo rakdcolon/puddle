@@ -54,7 +54,7 @@ export default async function LandingPage() {
             <p className="leading-relaxed mb-8 max-w-[38ch]" style={{ fontSize: 19.5 }}>
               One puzzle daily — logic, sequences, lateral riddles, wordplay.{' '}
               <span className="italic" style={{ color: 'var(--color-ink-muted)' }}>
-                No streak pressure. No leaderboards.
+                No time pressure. No leaderboards.
               </span>
             </p>
 
@@ -63,13 +63,13 @@ export default async function LandingPage() {
               className="flex items-center flex-wrap"
               style={{ fontSize: 15, fontVariantNumeric: 'tabular-nums', gap: '0' }}
             >
-              {stats.active_solvers > 0 && (
+              {stats.total_solved > 0 && (
                 <>
                   <span>
                     <strong style={{ fontWeight: 500 }}>
-                      {stats.active_solvers.toLocaleString()}
+                      {stats.total_solved.toLocaleString()}
                     </strong>{' '}
-                    <span className="italic" style={{ color: 'var(--color-ink-muted)' }}>solving today</span>
+                    <span className="italic" style={{ color: 'var(--color-ink-muted)' }}>solved today</span>
                   </span>
                   <span className="mx-3" style={{ color: 'var(--color-hair-strong)' }}>·</span>
                 </>
