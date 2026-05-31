@@ -140,7 +140,7 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
       const data = await res.json()
 
       if (data.correct) {
-        setEarnedXp(calcXP(elapsed, hintLevel, attempts + 1))
+        setEarnedXp(calcXP(hintLevel, attempts + 1))
         setStatus('correct')
         setBurst(b => b + 1)
         chime('correct')

@@ -20,8 +20,6 @@ export async function getXPBeforeToday(userId: string, today: string): Promise<{
   const totalXp = (solves ?? []).reduce((sum, s) => {
     if ((s.puzzles as any)?.date_active === today) return sum
     let xp = 100
-    if (s.elapsed_seconds && s.elapsed_seconds < 120) xp += 50
-    else if (s.elapsed_seconds && s.elapsed_seconds < 300) xp += 25
     xp -= (s.hints_used ?? 0) * 15
     xp -= Math.max(0, ((s.attempts ?? 1) - 1)) * 10
     return sum + Math.max(10, xp)
@@ -211,8 +209,6 @@ export async function getUserProfile(userId: string): Promise<UserProfile> {
   // XP = 100 per solve + bonuses
   const totalXp = solved.reduce((sum, s) => {
     let xp = 100
-    if (s.elapsed_seconds && s.elapsed_seconds < 120) xp += 50
-    else if (s.elapsed_seconds && s.elapsed_seconds < 300) xp += 25
     xp -= (s.hints_used ?? 0) * 15
     xp -= Math.max(0, (s.attempts ?? 1) - 1) * 10
     return sum + Math.max(10, xp)
