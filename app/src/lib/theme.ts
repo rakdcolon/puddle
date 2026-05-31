@@ -25,9 +25,16 @@ export function resolveIsDark(pref: ThemePref): boolean {
   return pref === 'dark' || (pref === 'auto' && systemPrefersDark())
 }
 
+// Browser-chrome colors, kept in sync with the --color-bg of each theme.
+export const THEME_COLOR_LIGHT = '#f5ecdb'
+export const THEME_COLOR_DARK = '#17120d'
+
 export function applyTheme(pref: ThemePref): void {
   if (typeof document === 'undefined') return
-  document.documentElement.classList.toggle('dark', resolveIsDark(pref))
+  const dark = resolveIsDark(pref)
+  document.documentElement.classList.toggle('dark', dark)
+  const meta = document.querySelector('meta[name="theme-color"]')
+  if (meta) meta.setAttribute('content', dark ? THEME_COLOR_DARK : THEME_COLOR_LIGHT)
 }
 
 export function setThemePref(pref: ThemePref): void {
@@ -41,4 +48,5 @@ export function setThemePref(pref: ThemePref): void {
 
 // Minified, dependency-free version of the resolve+apply logic, inlined into a
 // blocking <script> in <head> so the correct theme is on <html> before paint.
-export const THEME_INIT_SCRIPT = `(function(){try{var p=localStorage.getItem('${THEME_KEY}')||'auto';var d=p==='dark'||(p==='auto'&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);}catch(e){}})();`
+// Also syncs the theme-color meta (rendered just before this script).
+export const THEME_INIT_SCRIPT = `(function(){try{var p=localStorage.getItem('${THEME_KEY}')||'auto';var d=p==='dark'||(p==='auto'&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',d?'${THEME_COLOR_DARK}':'${THEME_COLOR_LIGHT}');}catch(e){}})();`

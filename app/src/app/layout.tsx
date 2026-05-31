@@ -33,6 +33,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${crimsonPro.variable} h-full`} suppressHydrationWarning>
       <head>
+        {/* theme-color must precede the init script, which updates it in place. */}
+        <meta name="theme-color" content="#f5ecdb" />
         {/* Set the theme class before paint to avoid a flash of the wrong mode. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>

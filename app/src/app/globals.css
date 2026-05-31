@@ -47,6 +47,7 @@ body {
 
 :root {
   color-scheme: light;
+  --color-scrim: rgba(58, 47, 34, 0.4); /* modal backdrop */
 }
 
 /* ─── Dark mode ───────────────────────────────────────────────────────────────
@@ -57,6 +58,7 @@ body {
    paint by the inline script in the root layout. */
 html.dark {
   color-scheme: dark;
+  --color-scrim: rgba(0, 0, 0, 0.6);
 
   --color-bg: #17120d;          /* espresso base */
   --color-paper: #211b14;       /* raised surfaces: cards, inputs */

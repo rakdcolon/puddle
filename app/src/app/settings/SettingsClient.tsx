@@ -180,7 +180,7 @@ export default function SettingsClient({ user, settings: initial }: Props) {
         <div
           style={{
             position: 'fixed', inset: 0,
-            background: 'rgba(58,47,34,0.4)',
+            background: 'var(--color-scrim)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             zIndex: 100,
           }}
