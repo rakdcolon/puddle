@@ -4,13 +4,18 @@ import { unstable_cache } from 'next/cache'
 
 export async function getPuzzleForDate(dateStr: string): Promise<Puzzle | null> {
   const db = createServiceClient()
+  // The most recent puzzle published on or before the requested date. Using a
+  // "latest on-or-before" lookup (rather than an exact date match) means a gap
+  // in the daily schedule keeps the previous issue live instead of 404-ing the
+  // whole site. Callers pass today (NY), so future-dated puzzles are excluded.
   const { data, error } = await db
     .from('puzzles')
     .select('*')
-    .eq('date_active', dateStr)
-    .lte('date_active', new Date().toISOString().slice(0, 10))
+    .lte('date_active', dateStr)
     .is('deleted_at', null)
-    .single()
+    .order('date_active', { ascending: false })
+    .limit(1)
+    .maybeSingle()
 
   if (error || !data) return null
   return data as Puzzle
