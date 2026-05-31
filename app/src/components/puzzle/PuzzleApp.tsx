@@ -46,8 +46,6 @@ function chime(kind: ChimeKind = 'correct') {
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-const fmtTime = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
-
 function recordDaily(data: Record<string, unknown>) {
   try {
     localStorage.setItem('puddle.daily', JSON.stringify({ date: getTodayNY(), ...data }))
@@ -148,7 +146,6 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
         chime('correct')
         recordDaily({
           state: 'solved',
-          time: fmtTime(elapsed),
           hints: hintLevel,
           attempts: attempts + 1,
           title: puzzle.title,
@@ -233,7 +230,6 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
       <PuzzleHeader
         issueNo={issueNo}
         vol={vol}
-        elapsed={elapsed}
         compact={compact}
       />
 
@@ -526,7 +522,6 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
           {isFinished && (
             <PostSolvePanel
               status={status}
-              elapsed={elapsed}
               hintLevel={hintLevel}
               attempts={attempts}
               solutionHref={solutionHref}
@@ -575,10 +570,10 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
-function PuzzleHeader({ issueNo, vol, elapsed, compact }: { issueNo: number; vol: number; elapsed: number; compact: boolean }) {
+function PuzzleHeader({ issueNo, vol, compact }: { issueNo: number; vol: number; compact: boolean }) {
   return (
     <div
-      className="flex items-center justify-between flex-shrink-0"
+      className="flex items-center flex-shrink-0"
       style={{
         padding: compact ? '12px 18px 10px' : '14px 32px 12px',
         borderBottom: '1px solid var(--color-hair)',
@@ -614,13 +609,6 @@ function PuzzleHeader({ issueNo, vol, elapsed, compact }: { issueNo: number; vol
           </div>
         </div>
       </a>
-
-      <div
-        className="flex items-center gap-3 flex-shrink-0"
-        style={{ fontVariantNumeric: 'tabular-nums', fontSize: compact ? 17 : 18, fontWeight: 500 }}
-      >
-        <span>{fmtTime(elapsed)}</span>
-      </div>
     </div>
   )
 }
@@ -759,7 +747,6 @@ function GhostButton({
 
 function PostSolvePanel({
   status,
-  elapsed,
   hintLevel,
   attempts,
   solutionHref,
@@ -771,7 +758,6 @@ function PostSolvePanel({
   xpBeforeToday,
 }: {
   status: Status
-  elapsed: number
   hintLevel: number
   attempts: number
   solutionHref: string
@@ -797,7 +783,7 @@ function PostSolvePanel({
     ]
     if (status === 'correct') {
       const hintPart = hintLevel > 0 ? ` · ${hintLevel} hint${hintLevel === 1 ? '' : 's'}` : ''
-      lines.push(`✅ Solved in ${fmtTime(elapsed)}${hintPart}`)
+      lines.push(`✅ Solved${hintPart}`)
       const streak = streakBeforeToday !== undefined ? streakBeforeToday + 1 : 0
       if (streak >= 2) lines.push(`🔥 ${streak}-day streak`)
     } else {
@@ -812,7 +798,6 @@ function PostSolvePanel({
   const params = new URLSearchParams()
   params.set('from', status === 'correct' ? 'solved' : 'revealed')
   if (status === 'correct') {
-    params.set('time', fmtTime(elapsed))
     params.set('hints', String(hintLevel))
   }
   const href = `${solutionHref}&${params.toString()}`
@@ -840,11 +825,9 @@ function PostSolvePanel({
         >
           {status === 'correct' ? 'Nicely done.' : 'See you tomorrow.'}
         </div>
-        <div className="italic text-ink-muted" style={{ fontSize: 14.5, fontVariantNumeric: 'tabular-nums' }}>
+        <div className="italic text-ink-muted" style={{ fontSize: 14.5 }}>
           {status === 'correct'
-            ? <>Solved in <strong style={{ color: 'var(--color-ink)', fontWeight: 500 }}>{fmtTime(elapsed)}</strong>
-                {hintLevel > 0 && <>, <strong style={{ color: 'var(--color-ink)', fontWeight: 500 }}>{hintLevel}</strong> hint{hintLevel === 1 ? '' : 's'}</>}
-                {attempts > 0 && <>, <strong style={{ color: 'var(--color-ink)', fontWeight: 500 }}>{attempts}</strong> {attempts === 1 ? 'try' : 'tries'}</>}.</>
+            ? <>Solved{hintLevel > 0 && <> with <strong style={{ color: 'var(--color-ink)', fontWeight: 500 }}>{hintLevel}</strong> hint{hintLevel === 1 ? '' : 's'}</>}{attempts > 0 && <>{hintLevel > 0 ? ',' : ''} after <strong style={{ color: 'var(--color-ink)', fontWeight: 500 }}>{attempts}</strong> {attempts === 1 ? 'try' : 'tries'}</>}.</>
             : <>Puzzle revealed. Read the worked solution below.</>
           }
         </div>

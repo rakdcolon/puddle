@@ -12,11 +12,11 @@ import type { SolutionStep } from '@/types'
 export const dynamic = 'force-dynamic'
 
 interface SolutionPageProps {
-  searchParams: Promise<{ id?: string; from?: string; time?: string; hints?: string }>
+  searchParams: Promise<{ id?: string; from?: string; hints?: string }>
 }
 
 export default async function SolutionPage({ searchParams }: SolutionPageProps) {
-  const { id, from, time, hints } = await searchParams
+  const { id, from, hints } = await searchParams
   if (!id) notFound()
 
   const puzzle = await getPuzzleById(id)
@@ -115,7 +115,7 @@ export default async function SolutionPage({ searchParams }: SolutionPageProps) 
                   </p>
                   <p className="italic text-ink-muted" style={{ fontSize: 14 }}>
                     {isSolved
-                      ? `You solved it${time ? ` in ${time}` : ''}${hints && hints !== '0' ? ` with ${hints} hint${hints === '1' ? '' : 's'}` : ''}. Here's the canonical path.`
+                      ? `You solved it${hints && hints !== '0' ? ` with ${hints} hint${hints === '1' ? '' : 's'}` : ''}. Here's the canonical path.`
                       : "Here's why."
                     }
                   </p>
