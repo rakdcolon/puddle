@@ -181,6 +181,16 @@ function SolvedState({ puzzle, solve, dateLabel }: {
         Read the worked solution
         <span className="transition-transform duration-[250ms] group-hover:translate-x-[3px]">→</span>
       </Link>
+
+      <div className="mt-3">
+        <Link
+          href={`/review?id=${puzzle.id}`}
+          className="italic text-ink-muted hover:text-ink transition-colors duration-[180ms]"
+          style={{ fontSize: 14 }}
+        >
+          View the puzzle
+        </Link>
+      </div>
     </>
   )
 }
@@ -227,6 +237,16 @@ function RevealedState({ puzzle, dateLabel }: {
         Read the worked solution
         <span className="transition-transform duration-[250ms] group-hover:translate-x-[3px]">→</span>
       </Link>
+
+      <div className="mt-3">
+        <Link
+          href={`/review?id=${puzzle.id}`}
+          className="italic text-ink-muted hover:text-ink transition-colors duration-[180ms]"
+          style={{ fontSize: 14 }}
+        >
+          View the puzzle
+        </Link>
+      </div>
     </>
   )
 }
