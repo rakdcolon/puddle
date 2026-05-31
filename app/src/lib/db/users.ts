@@ -61,6 +61,15 @@ export async function getUserById(id: string): Promise<User | null> {
   return (data as User) ?? null
 }
 
+// Resolve the canonical app user from a raw Discord user ID (snowflake). Used by
+// the bot's slash commands, where the only identifier we have is the Discord ID.
+// Returns null when that Discord account has never been linked to a Puddle user.
+export async function getUserByDiscordSub(discordSub: string): Promise<User | null> {
+  const db = createServiceClient()
+  const { data } = await db.from('users').select('*').eq('discord_sub', discordSub).maybeSingle()
+  return (data as User) ?? null
+}
+
 // Normalize a Supabase auth user (Google or Discord provider) into an identity.
 export function identityFromSupabaseUser(supabaseUser: SupabaseUser): AuthIdentity {
   const provider: AuthProvider =
