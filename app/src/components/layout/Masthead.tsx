@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import LogoMark from './LogoMark'
-import { getCurrentUser } from '@/lib/auth/current-user'
+import { getCurrentUser, isActivityRequest } from '@/lib/auth/current-user'
 import { getCurrentIssue } from '@/lib/db/puzzles'
 
 interface MastheadProps {
@@ -36,9 +36,10 @@ export default async function Masthead({ currentPage, issueNo, vol }: MastheadPr
   // When a page doesn't pass a specific puzzle's number, fall back to the
   // current (latest published) issue so the dateline isn't stuck at Vol. I No. 1.
   const needsIssue = issueNo === undefined || vol === undefined
-  const [user, current] = await Promise.all([
+  const [user, current, inActivity] = await Promise.all([
     getCurrentUser(),
     needsIssue ? getCurrentIssue() : Promise.resolve(null),
+    isActivityRequest(),
   ])
   const displayIssue = issueNo ?? current?.issueNo ?? 1
   const displayVol = vol ?? current?.vol ?? 1
@@ -83,19 +84,26 @@ export default async function Masthead({ currentPage, issueNo, vol }: MastheadPr
               <NavLink href="/profile" active={currentPage === 'profile'}>
                 Profile
               </NavLink>
-              <form action="/api/auth/signout" method="POST">
-                <button
-                  type="submit"
-                  className="text-[15px] text-ink-muted hover:text-ink transition-colors duration-[180ms]"
-                >
-                  Sign out
-                </button>
-              </form>
+              {/* Inside the Discord Activity the session is your Discord
+                  identity (re-established silently on every load), so a
+                  sign-out button can't actually sign you out — hide it. */}
+              {!inActivity && (
+                <form action="/api/auth/signout" method="POST">
+                  <button
+                    type="submit"
+                    className="text-[15px] text-ink-muted hover:text-ink transition-colors duration-[180ms]"
+                  >
+                    Sign out
+                  </button>
+                </form>
+              )}
             </>
           ) : (
-            <NavLink href="/sign-in" active={currentPage === 'sign-in'}>
-              Sign in
-            </NavLink>
+            !inActivity && (
+              <NavLink href="/sign-in" active={currentPage === 'sign-in'}>
+                Sign in
+              </NavLink>
+            )
           )}
         </nav>
       </div>

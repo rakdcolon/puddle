@@ -1,18 +1,11 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { getUserBySupabaseId, getUserProfile } from '@/lib/db/users'
+import { getCurrentUser } from '@/lib/auth/current-user'
+import { getUserProfile } from '@/lib/db/users'
 
 export async function GET() {
-  const supabase = await createClient()
-  const { data: { user: authUser } } = await supabase.auth.getUser()
-
-  if (!authUser) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
-  const user = await getUserBySupabaseId(authUser)
+  const user = await getCurrentUser()
   if (!user) {
-    return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   const profile = await getUserProfile(user.id)

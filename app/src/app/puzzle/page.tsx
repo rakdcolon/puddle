@@ -2,10 +2,10 @@ export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
 import PuzzleApp from '@/components/puzzle/PuzzleApp'
-import { createClient } from '@/lib/supabase/server'
 import { getPuzzleForDate } from '@/lib/db/puzzles'
 import { getSolveForUser } from '@/lib/db/solves'
-import { getUserBySupabaseId, getCurrentStreak, getXPBeforeToday } from '@/lib/db/users'
+import { getCurrentStreak, getXPBeforeToday } from '@/lib/db/users'
+import { getCurrentUser } from '@/lib/auth/current-user'
 import { getTodayNY } from '@/lib/utils/dates'
 import type { Solve } from '@/types'
 
@@ -22,17 +22,13 @@ export default async function PuzzlePage() {
   let initialSolve: Solve | null = null
   let streakBeforeToday: number | undefined
   let xpBeforeToday: { totalXp: number; level: number } | undefined
-  const supabase = await createClient()
-  const { data: { user: authUser } } = await supabase.auth.getUser()
-  if (authUser) {
-    const user = await getUserBySupabaseId(authUser)
-    if (user) {
-      ;[initialSolve, streakBeforeToday, xpBeforeToday] = await Promise.all([
-        getSolveForUser(user.id, puzzle.id),
-        getCurrentStreak(user.id),
-        getXPBeforeToday(user.id, today),
-      ])
-    }
+  const user = await getCurrentUser()
+  if (user) {
+    ;[initialSolve, streakBeforeToday, xpBeforeToday] = await Promise.all([
+      getSolveForUser(user.id, puzzle.id),
+      getCurrentStreak(user.id),
+      getXPBeforeToday(user.id, today),
+    ])
   }
 
   return (

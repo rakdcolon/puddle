@@ -1,8 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
 import { getPuzzleById } from '@/lib/db/puzzles'
 import { updateSolveHints } from '@/lib/db/solves'
-import { getUserBySupabaseId } from '@/lib/db/users'
+import { getCurrentUser } from '@/lib/auth/current-user'
 
 export async function POST(
   request: NextRequest,
@@ -27,13 +26,9 @@ export async function POST(
   }
 
   // Update hints_used for authenticated users
-  const supabase = await createClient()
-  const { data: { user: authUser } } = await supabase.auth.getUser()
-  if (authUser) {
-    const user = await getUserBySupabaseId(authUser)
-    if (user) {
-      await updateSolveHints(user.id, puzzle.id, hintLevel).catch(() => {})
-    }
+  const user = await getCurrentUser()
+  if (user) {
+    await updateSolveHints(user.id, puzzle.id, hintLevel).catch(() => {})
   }
 
   return NextResponse.json({ hint })

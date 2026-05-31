@@ -3,10 +3,9 @@ import Masthead from '@/components/layout/Masthead'
 import Footer from '@/components/layout/Footer'
 import PuzzleCard from '@/components/puzzle/PuzzleCard'
 import Countdown from '@/components/puzzle/Countdown'
-import { createClient } from '@/lib/supabase/server'
 import { getPuzzleForDate, stripAnswer, getPuzzleStats } from '@/lib/db/puzzles'
 import { getSolveForUser } from '@/lib/db/solves'
-import { getUserBySupabaseId } from '@/lib/db/users'
+import { getCurrentUser } from '@/lib/auth/current-user'
 import { getTodayNY } from '@/lib/utils/dates'
 import type { Solve } from '@/types'
 
@@ -21,12 +20,8 @@ export default async function LandingPage() {
   const stats = await getPuzzleStats(puzzle.id)
 
   let solve: Solve | null = null
-  const supabase = await createClient()
-  const { data: { user: authUser } } = await supabase.auth.getUser()
-  if (authUser) {
-    const user = await getUserBySupabaseId(authUser)
-    if (user) solve = await getSolveForUser(user.id, puzzle.id)
-  }
+  const user = await getCurrentUser()
+  if (user) solve = await getSolveForUser(user.id, puzzle.id)
 
   return (
     <>

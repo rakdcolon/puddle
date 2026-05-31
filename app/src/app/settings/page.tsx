@@ -4,19 +4,14 @@ import { redirect } from 'next/navigation'
 import Masthead from '@/components/layout/Masthead'
 import Footer from '@/components/layout/Footer'
 import SettingsClient from './SettingsClient'
-import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/server'
-import { getUserBySupabaseId } from '@/lib/db/users'
+import { getCurrentUser } from '@/lib/auth/current-user'
 
 export const metadata = { title: 'Settings — puddle' }
 
 export default async function SettingsPage() {
-  const supabase = await createClient()
-  const { data: { user: authUser } } = await supabase.auth.getUser()
-  if (!authUser) redirect('/sign-in?returnTo=/settings')
-
-  const user = await getUserBySupabaseId(authUser)
-  if (!user) redirect('/sign-in')
+  const user = await getCurrentUser()
+  if (!user) redirect('/sign-in?returnTo=/settings')
 
   const db = createServiceClient()
   const { data: settings } = await db

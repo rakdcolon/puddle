@@ -1,8 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
 import { getPuzzleById } from '@/lib/db/puzzles'
 import { getSolveForUser } from '@/lib/db/solves'
-import { getUserBySupabaseId } from '@/lib/db/users'
+import { getCurrentUser } from '@/lib/auth/current-user'
 import { getTodayNY } from '@/lib/utils/dates'
 
 export async function GET(
@@ -24,16 +23,12 @@ export async function GET(
 
   if (!isPast) {
     // Check auth
-    const supabase = await createClient()
-    const { data: { user: authUser } } = await supabase.auth.getUser()
+    const user = await getCurrentUser()
 
-    if (authUser) {
-      const user = await getUserBySupabaseId(authUser)
-      if (user) {
-        const solve = await getSolveForUser(user.id, puzzle.id)
-        if (!solve) {
-          return NextResponse.json({ error: 'Solve the puzzle first' }, { status: 403 })
-        }
+    if (user) {
+      const solve = await getSolveForUser(user.id, puzzle.id)
+      if (!solve) {
+        return NextResponse.json({ error: 'Solve the puzzle first' }, { status: 403 })
       }
     } else if (!clientState) {
       // Anonymous with no state param: deny

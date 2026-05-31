@@ -5,19 +5,15 @@ import Masthead from '@/components/layout/Masthead'
 import Footer from '@/components/layout/Footer'
 import CalendarHeatmap from '@/components/profile/CalendarHeatmap'
 import GenreChart from '@/components/profile/GenreChart'
-import { createClient } from '@/lib/supabase/server'
-import { getUserBySupabaseId, getUserProfile } from '@/lib/db/users'
+import { getCurrentUser } from '@/lib/auth/current-user'
+import { getUserProfile } from '@/lib/db/users'
 import { formatElapsed, formatDate } from '@/lib/utils/dates'
 
 export const metadata = { title: 'Profile — puddle' }
 
 export default async function ProfilePage() {
-  const supabase = await createClient()
-  const { data: { user: authUser } } = await supabase.auth.getUser()
-  if (!authUser) redirect('/sign-in?returnTo=/profile')
-
-  const user = await getUserBySupabaseId(authUser)
-  if (!user) redirect('/sign-in')
+  const user = await getCurrentUser()
+  if (!user) redirect('/sign-in?returnTo=/profile')
 
   const profile = await getUserProfile(user.id)
   const { stats, calendar, recent, by_genre } = profile

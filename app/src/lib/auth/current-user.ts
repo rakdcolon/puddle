@@ -30,3 +30,15 @@ export async function getCurrentUser(): Promise<User | null> {
 
   return null
 }
+
+// True when the current request originates from inside the Discord Activity
+// iframe (i.e. it carries a valid activity session cookie). The cookie is
+// SameSite=None + Partitioned, so it is only ever sent within the
+// discordsays.com partition — its presence reliably signals the Activity
+// context. Used to hide website-only affordances (OAuth sign-in/out) that
+// can't work inside the sandboxed iframe.
+export async function isActivityRequest(): Promise<boolean> {
+  const jar = await cookies()
+  const token = jar.get(ACTIVITY_COOKIE)?.value
+  return !!token && !!verifyActivitySession(token)
+}

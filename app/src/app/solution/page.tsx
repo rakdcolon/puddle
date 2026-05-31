@@ -3,10 +3,9 @@ import Link from 'next/link'
 import Masthead from '@/components/layout/Masthead'
 import Footer from '@/components/layout/Footer'
 import Countdown from '@/components/puzzle/Countdown'
-import { createClient } from '@/lib/supabase/server'
 import { getPuzzleById } from '@/lib/db/puzzles'
 import { getSolveForUser } from '@/lib/db/solves'
-import { getUserBySupabaseId } from '@/lib/db/users'
+import { getCurrentUser } from '@/lib/auth/current-user'
 import { getTodayNY } from '@/lib/utils/dates'
 import type { SolutionStep } from '@/types'
 
@@ -29,14 +28,10 @@ export default async function SolutionPage({ searchParams }: SolutionPageProps) 
   let unlocked = isPast || !!from  // anonymous: honor ?from param as trust signal
 
   if (!unlocked) {
-    const supabase = await createClient()
-    const { data: { user: authUser } } = await supabase.auth.getUser()
-    if (authUser) {
-      const user = await getUserBySupabaseId(authUser)
-      if (user) {
-        const solve = await getSolveForUser(user.id, puzzle.id)
-        if (solve) unlocked = true
-      }
+    const user = await getCurrentUser()
+    if (user) {
+      const solve = await getSolveForUser(user.id, puzzle.id)
+      if (solve) unlocked = true
     }
   }
 
