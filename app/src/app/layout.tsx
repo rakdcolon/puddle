@@ -3,6 +3,8 @@ import { Crimson_Pro } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import DiscordActivityProvider from '@/components/discord/DiscordActivityProvider'
+import ThemeWatcher from '@/components/theme/ThemeWatcher'
+import { THEME_INIT_SCRIPT } from '@/lib/theme'
 import './globals.css'
 
 const crimsonPro = Crimson_Pro({
@@ -29,8 +31,15 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${crimsonPro.variable} h-full`}>
+    <html lang="en" className={`${crimsonPro.variable} h-full`} suppressHydrationWarning>
+      <head>
+        {/* theme-color must precede the init script, which updates it in place. */}
+        <meta name="theme-color" content="#f5ecdb" />
+        {/* Set the theme class before paint to avoid a flash of the wrong mode. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body className="min-h-full flex flex-col bg-bg text-ink antialiased" style={{ fontFamily: 'var(--font-crimson), "Iowan Old Style", Georgia, serif' }}>
+        <ThemeWatcher />
         <DiscordActivityProvider>{children}</DiscordActivityProvider>
         <Analytics />
         <SpeedInsights />
