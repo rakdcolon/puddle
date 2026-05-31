@@ -45,6 +45,37 @@ body {
   color: var(--color-ink);
 }
 
+:root {
+  color-scheme: light;
+}
+
+/* ─── Dark mode ───────────────────────────────────────────────────────────────
+   Puddle by lamplight: the same warm, editorial palette inverted into deep
+   espresso paper with cream ink. The whole app reads its colors from these
+   variables (Tailwind utilities + inline `var(--color-*)`), so overriding them
+   under `html.dark` themes everything at once. The theme class is set before
+   paint by the inline script in the root layout. */
+html.dark {
+  color-scheme: dark;
+
+  --color-bg: #17120d;          /* espresso base */
+  --color-paper: #211b14;       /* raised surfaces: cards, inputs */
+  --color-paper-deep: #2c2620;  /* wells: watermarks, tracks, segmented bg */
+  --color-ink: #ece3d2;         /* warm cream — primary text */
+  --color-ink-soft: #cabb9f;    /* softened ink */
+  --color-ink-muted: #998a72;   /* muted captions / secondary */
+  --color-hair: #2b251e;        /* faint hairline rules */
+  --color-hair-strong: #3c3429; /* stronger borders */
+  --color-accent: #cf7152;      /* terracotta, warmed for glow on dark */
+  --color-success: #8aa86a;     /* sage, lifted for contrast */
+
+  /* Brown shadows vanish on dark; lean on darker, softer ambient shadow. */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 24px rgba(0, 0, 0, 0.35);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.35), 0 12px 36px rgba(0, 0, 0, 0.5);
+  --shadow-btn: 0 2px 6px rgba(0, 0, 0, 0.5);
+  --shadow-btn-hover: 0 4px 14px rgba(0, 0, 0, 0.6);
+}
+
 /* Keyframes */
 @keyframes puddle-shake {
   0%, 100% { transform: translateX(0); }

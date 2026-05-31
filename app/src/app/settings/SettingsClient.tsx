@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import type { User, UserSettings, HintPacing } from '@/types'
+import { getStoredPref, setThemePref, type ThemePref } from '@/lib/theme'
 
 interface Props {
   user: User
@@ -17,6 +18,14 @@ export default function SettingsClient({ user, settings: initial }: Props) {
   const [deleting, setDeleting] = useState(false)
   const router = useRouter()
   const saveTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
+
+  // Theme lives in localStorage (per-device), not the account settings, so it
+  // can apply before paint. Read the stored value after mount to avoid a
+  // hydration mismatch (server has no localStorage).
+  const [themePref, setThemePrefState] = useState<ThemePref>('auto')
+  useEffect(() => {
+    setThemePrefState(getStoredPref())
+  }, [])
 
   const showToast = () => {
     setToast(true)
@@ -74,6 +83,24 @@ export default function SettingsClient({ user, settings: initial }: Props) {
           <span className="italic text-ink-muted" style={{ fontSize: 15 }}>
             {new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
           </span>
+        </Field>
+      </Section>
+
+      {/* Appearance */}
+      <Section label="appearance">
+        <Field label="Theme">
+          <SegmentedControl
+            value={themePref}
+            options={[
+              { value: 'auto', label: 'Automatic' },
+              { value: 'light', label: 'Light' },
+              { value: 'dark', label: 'Dark' },
+            ]}
+            onChange={v => {
+              setThemePref(v as ThemePref)
+              setThemePrefState(v as ThemePref)
+            }}
+          />
         </Field>
       </Section>
 
