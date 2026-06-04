@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/server'
+import { getCurrentUser } from '@/lib/auth/current-user'
 
 async function checkAdmin() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  return user?.email === process.env.ADMIN_EMAIL ? user : null
+  const user = await getCurrentUser()
+  return user?.is_admin ? user : null
 }
 
 export async function PUT(

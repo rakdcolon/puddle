@@ -1,10 +1,9 @@
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
+import { getCurrentUser } from '@/lib/auth/current-user'
 
 export default async function Footer() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  const isAdmin = user?.email === process.env.ADMIN_EMAIL
+  const user = await getCurrentUser()
+  const isAdmin = user?.is_admin === true
 
   return (
     <footer className="mt-auto">

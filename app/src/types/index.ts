@@ -48,6 +48,7 @@ export interface User {
   discord_sub: string | null
   display_name: string
   email: string
+  is_admin: boolean
   created_at: string
 }
 
