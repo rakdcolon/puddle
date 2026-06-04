@@ -13,7 +13,7 @@ interface Props {
 export default function SettingsClient({ user, settings: initial }: Props) {
   const [settings, setSettings] = useState(initial)
   const [displayName, setDisplayName] = useState(initial.display_name ?? user.display_name)
-  const [toast, setToast] = useState(false)
+  const [toast, setToast] = useState<'saved' | 'error' | false>(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const router = useRouter()
@@ -27,20 +27,26 @@ export default function SettingsClient({ user, settings: initial }: Props) {
     setThemePrefState(getStoredPref())
   }, [])
 
-  const showToast = () => {
-    setToast(true)
-    setTimeout(() => setToast(false), 1400)
+  const showToast = (kind: 'saved' | 'error') => {
+    setToast(kind)
+    setTimeout(() => setToast(false), 1800)
   }
 
   const patchSetting = useCallback(async (patch: Partial<UserSettings>) => {
+    const prev = settings
     setSettings(s => ({ ...s, ...patch }))
-    showToast()
-    await fetch('/api/user/settings', {
+    const res = await fetch('/api/user/settings', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(patch),
     })
-  }, [])
+    if (res.ok) {
+      showToast('saved')
+    } else {
+      setSettings(prev)
+      showToast('error')
+    }
+  }, [settings])
 
   const handleNameChange = (name: string) => {
     setDisplayName(name)
@@ -166,13 +172,14 @@ export default function SettingsClient({ user, settings: initial }: Props) {
           position: 'fixed', bottom: 24, left: '50%', transform: `translateX(-50%) translateY(${toast ? 0 : 12}px)`,
           opacity: toast ? 1 : 0,
           transition: 'all 0.22s var(--ease-puddle)',
-          background: 'var(--color-ink)', color: 'var(--color-paper)',
+          background: toast === 'error' ? 'var(--color-accent)' : 'var(--color-ink)',
+          color: 'var(--color-paper)',
           borderRadius: 10, padding: '8px 18px',
           fontSize: 14, fontStyle: 'italic',
           pointerEvents: 'none', zIndex: 50,
         }}
       >
-        ● Saved.
+        {toast === 'error' ? '● Could not save — try again.' : '● Saved.'}
       </div>
 
       {/* Delete dialog */}

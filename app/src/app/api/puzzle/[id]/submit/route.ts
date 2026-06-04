@@ -51,7 +51,8 @@ export async function POST(
     // Discord Activity session cookie.
     const user = await getCurrentUser()
     if (user) {
-      // Persist solve for authenticated users (Google, Discord, or activity)
+      // Persist solve for authenticated users. DB errors must never cause a
+      // correct answer to appear wrong — catch and swallow.
       await upsertSolve(
         user.id,
         puzzle.id,
@@ -59,7 +60,7 @@ export async function POST(
         body.elapsed_seconds ?? null,
         body.hints_used ?? 0,
         body.attempts ?? 1,
-      )
+      ).catch(() => {})
     } else if (typeof body.client_id === 'string' && UUID_RE.test(body.client_id)) {
       // Count the anonymous visitor so stats reflect everyone, not just
       // signed-in users. Fire-and-forget — never fail the correctness check.

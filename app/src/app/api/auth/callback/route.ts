@@ -34,7 +34,13 @@ export async function GET(request: NextRequest) {
 
   if (!error) {
     const { data: { user } } = await supabase.auth.getUser()
-    if (user) await getOrCreateUser(user)
+    if (user) {
+      try {
+        await getOrCreateUser(user)
+      } catch {
+        return NextResponse.redirect(`${origin}/sign-in?error=auth_failed`)
+      }
+    }
     return response
   }
 

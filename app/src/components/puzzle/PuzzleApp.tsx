@@ -137,6 +137,7 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
           client_id: getClientId(),
         }),
       })
+      if (!res.ok) throw Object.assign(new Error('server'), { status: res.status })
       const data = await res.json()
 
       if (data.correct) {
@@ -166,12 +167,17 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
         setTimeout(() => setShaking(false), 440)
         setTimeout(() => setStatus(s => s === 'wrong' ? 'idle' : s), 1200)
       }
-    } catch {
-      // Network error — show wrong state
-      setStatus('wrong')
-      setShaking(true)
-      setTimeout(() => setShaking(false), 440)
-      setTimeout(() => setStatus(s => s === 'wrong' ? 'idle' : s), 1200)
+    } catch (err) {
+      // Server/network error — reset silently so the attempt doesn't count against the user
+      if ((err as { status?: number }).status) {
+        setStatus('idle')
+      } else {
+        // True network failure — shake so they know something went wrong
+        setStatus('wrong')
+        setShaking(true)
+        setTimeout(() => setShaking(false), 440)
+        setTimeout(() => setStatus(s => s === 'wrong' ? 'idle' : s), 1200)
+      }
     } finally {
       setSubmitting(false)
     }

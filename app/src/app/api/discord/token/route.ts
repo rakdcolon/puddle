@@ -40,7 +40,11 @@ export async function POST(request: NextRequest) {
   if (!tokenRes.ok) {
     return NextResponse.json({ error: 'Token exchange failed' }, { status: 401 })
   }
-  const { access_token } = await tokenRes.json()
+  const tokenData = await tokenRes.json().catch(() => null)
+  if (!tokenData?.access_token) {
+    return NextResponse.json({ error: 'Malformed token response' }, { status: 401 })
+  }
+  const { access_token } = tokenData
 
   // 2. Fetch the Discord user behind the token.
   const meRes = await fetch(`${DISCORD_API}/users/@me`, {
@@ -49,7 +53,10 @@ export async function POST(request: NextRequest) {
   if (!meRes.ok) {
     return NextResponse.json({ error: 'Could not load Discord user' }, { status: 401 })
   }
-  const me = await meRes.json()
+  const me = await meRes.json().catch(() => null)
+  if (!me?.id) {
+    return NextResponse.json({ error: 'Malformed user response' }, { status: 401 })
+  }
 
   // 3. Resolve / merge the canonical app user.
   const identity: AuthIdentity = {

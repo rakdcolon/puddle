@@ -211,7 +211,11 @@ async function ensureSettings(userId: string): Promise<void> {
 export async function getUserProfile(userId: string): Promise<UserProfile> {
   const db = createServiceClient()
 
-  const [{ data: user }, { data: settings }, { data: solves }] = await Promise.all([
+  const [
+    { data: user, error: userError },
+    { data: settings },
+    { data: solves },
+  ] = await Promise.all([
     db.from('users').select('*').eq('id', userId).single(),
     db.from('user_settings').select('*').eq('user_id', userId).maybeSingle(),
     db
@@ -221,6 +225,7 @@ export async function getUserProfile(userId: string): Promise<UserProfile> {
       .order('solved_at', { ascending: false }),
   ])
 
+  if (userError) throw userError
   if (!user) throw new Error('User not found')
 
   const allSolves = solves ?? []
