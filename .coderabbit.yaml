@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# CodeRabbit config — https://docs.coderabbit.ai/guides/configure-coderabbit
+# Free for public repositories. Tuned to Puddle's conventions (see path_instructions).
+language: en-US
+
+tone_instructions: >-
+  Be concise. Focus on correctness, security, and the Puddle conventions below.
+  Skip style nitpicks already covered by the typecheck/build in CI.
+
+reviews:
+  profile: chill            # less noisy for a solo maintainer; switch to "assertive" for more
+  request_changes_workflow: false   # comment, don't block merges
+  high_level_summary: true
+  review_status: true
+  poem: false
+  collapse_walkthrough: true
+  auto_review:
+    enabled: true
+    drafts: false           # skip draft PRs
+    base_branches:
+      - main
+  # Don't waste review on generated / data / binary content.
+  path_filters:
+    - "!**/package-lock.json"
+    - "!app/node_modules/**"
+    - "!puzzles/**"
+    - "!discord-assets/**"
+    - "!**/*.png"
+    - "!**/*.svg"
+  path_instructions:
+    - path: "app/src/**/*.{ts,tsx,css}"
+      instructions: >-
+        Colors must come from CSS variables (var(--color-*)) defined in
+        src/app/globals.css. Flag hardcoded hex/rgb/hsl color literals in
+        components and inline styles: dark mode and the accessibility settings
+        (html.dark, html.contrast-high, html.font-readable, html.reduce-motion)
+        all work by overriding those variables, so a new inline color silently
+        breaks one of the themes.
+    - path: "app/src/**/*.{ts,tsx}"
+      instructions: >-
+        All authenticated user lookups must go through getCurrentUser()
+        (src/lib/auth/current-user.ts). Flag direct supabase.auth.getUser()
+        calls made outside that helper.
+    - path: "app/src/**/*.{ts,tsx}"
+      instructions: >-
+        Product rule: Puddle never displays solve time, and XP is
+        speed-independent. Flag anything introducing timing pressure, countdowns
+        tied to scoring, speed-based XP, or competitive leaderboards.
+    - path: "app/src/app/api/**/route.ts"
+      instructions: >-
+        API route handlers must reject unauthenticated requests (getCurrentUser()
+        -> 401) and whitelist/validate incoming fields before writing to the
+        database — see the allowed-list pattern in
+        src/app/api/user/settings/route.ts. Flag mass-assignment of req.body.
+    - path: "app/supabase/migrations/*.sql"
+      instructions: >-
+        Migrations are applied by hand via the Supabase SQL editor. New tables
+        must enable Row Level Security with an owner policy; flag any table added
+        without RLS.
+
+chat:
+  auto_reply: true
