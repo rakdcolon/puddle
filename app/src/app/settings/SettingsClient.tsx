@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import type { User, UserSettings, HintPacing } from '@/types'
 import { getStoredPref, setThemePref, type ThemePref } from '@/lib/theme'
+import { getA11y, setA11y, type A11yKey, type A11yPref } from '@/lib/a11y'
 
 interface Props {
   user: User
@@ -26,6 +27,17 @@ export default function SettingsClient({ user, settings: initial }: Props) {
   useEffect(() => {
     setThemePrefState(getStoredPref())
   }, [])
+
+  // Accessibility prefs are also per-device (localStorage), read after mount to avoid
+  // a hydration mismatch. See @/lib/a11y.
+  const [a11y, setA11yState] = useState<A11yPref>({ contrast: false, font: false, motion: false })
+  useEffect(() => {
+    setA11yState(getA11y())
+  }, [])
+  const toggleA11y = (key: A11yKey, value: boolean) => {
+    setA11y(key, value)
+    setA11yState(s => ({ ...s, [key]: value }))
+  }
 
   const showToast = (kind: 'saved' | 'error') => {
     setToast(kind)
@@ -107,6 +119,19 @@ export default function SettingsClient({ user, settings: initial }: Props) {
               setThemePrefState(v as ThemePref)
             }}
           />
+        </Field>
+      </Section>
+
+      {/* Accessibility */}
+      <Section label="accessibility">
+        <Field label="High contrast">
+          <Toggle checked={a11y.contrast} onChange={v => toggleA11y('contrast', v)} />
+        </Field>
+        <Field label="Cleaner text">
+          <Toggle checked={a11y.font} onChange={v => toggleA11y('font', v)} />
+        </Field>
+        <Field label="Reduce motion">
+          <Toggle checked={a11y.motion} onChange={v => toggleA11y('motion', v)} />
         </Field>
       </Section>
 

@@ -4,7 +4,9 @@ import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import DiscordActivityProvider from '@/components/discord/DiscordActivityProvider'
 import ThemeWatcher from '@/components/theme/ThemeWatcher'
+import A11yWatcher from '@/components/a11y/A11yWatcher'
 import { THEME_INIT_SCRIPT } from '@/lib/theme'
+import { A11Y_INIT_SCRIPT } from '@/lib/a11y'
 import './globals.css'
 
 const crimsonPro = Crimson_Pro({
@@ -37,9 +39,12 @@ export default function RootLayout({
         <meta name="theme-color" content="#f5ecdb" />
         {/* Set the theme class before paint to avoid a flash of the wrong mode. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        {/* Likewise set accessibility classes before paint (no flash of serif / low contrast). */}
+        <script dangerouslySetInnerHTML={{ __html: A11Y_INIT_SCRIPT }} />
       </head>
-      <body className="min-h-full flex flex-col bg-bg text-ink antialiased" style={{ fontFamily: 'var(--font-crimson), "Iowan Old Style", Georgia, serif' }}>
+      <body className="min-h-full flex flex-col bg-bg text-ink antialiased" style={{ fontFamily: 'var(--font-app)' }}>
         <ThemeWatcher />
+        <A11yWatcher />
         <DiscordActivityProvider>{children}</DiscordActivityProvider>
         <Analytics />
         <SpeedInsights />
