@@ -39,8 +39,8 @@
 /* Base styles */
 html,
 body {
-  font-family: var(--font-serif);
-  font-feature-settings: "ss01", "cv02";
+  font-family: var(--font-app);
+  font-feature-settings: var(--font-features);
   background-color: var(--color-bg);
   color: var(--color-ink);
 }
@@ -48,6 +48,12 @@ body {
 :root {
   color-scheme: light;
   --color-scrim: rgba(58, 47, 34, 0.4); /* modal backdrop */
+
+  /* App font, indirected through a variable so the "Cleaner text" accessibility
+     setting (html.font-readable) can swap the editorial serif for a legible sans. */
+  --font-app: var(--font-crimson, "Crimson Pro"), "Iowan Old Style", Georgia, serif;
+  --font-readable: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-features: "ss01", "cv02"; /* Crimson Pro stylistic sets; off under readable */
 }
 
 /* ─── Dark mode ───────────────────────────────────────────────────────────────
@@ -76,6 +82,62 @@ html.dark {
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.35), 0 12px 36px rgba(0, 0, 0, 0.5);
   --shadow-btn: 0 2px 6px rgba(0, 0, 0, 0.5);
   --shadow-btn-hover: 0 4px 14px rgba(0, 0, 0, 0.6);
+}
+
+/* ─── Accessibility: High contrast ────────────────────────────────────────────
+   Opt-in stronger contrast. Re-tunes the same color variables — chiefly the muted
+   inks and faint hairlines, the lowest-contrast tokens — so the whole app firms up
+   at once. Layered after dark mode: the compound `html.dark.contrast-high` selector
+   has higher specificity, so it wins for the dark+contrast combination. */
+html.contrast-high {
+  --color-ink: #241c12;
+  --color-ink-soft: #463a28;
+  --color-ink-muted: #5f5036;
+  --color-hair: #cdbf9f;
+  --color-hair-strong: #a48f63;
+  --color-accent: #9a3f24;
+}
+
+html.dark.contrast-high {
+  --color-ink: #fbf7ee;
+  --color-ink-soft: #e3d7bf;
+  --color-ink-muted: #c2b394;
+  --color-hair: #4a4236;
+  --color-hair-strong: #6a5e49;
+  --color-accent: #e8895f;
+}
+
+/* ─── Accessibility: Cleaner text ─────────────────────────────────────────────
+   Swap the editorial serif for a legible system sans and drop the Crimson-specific
+   stylistic sets. Both base styles and the inline <body> font read --font-app. */
+html.font-readable {
+  --font-app: var(--font-readable);
+  --font-features: normal;
+}
+
+/* ─── Accessibility: Reduce motion ────────────────────────────────────────────
+   Honor the OS "reduce motion" setting for everyone, and let the in-app toggle
+   (html.reduce-motion) force the same regardless of OS. Stylesheet !important also
+   overrides the app's many inline `transition:` styles; near-zero (not 0) durations
+   still fire any transitionend/animationend handlers. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html.reduce-motion *,
+html.reduce-motion *::before,
+html.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }
 
 /* Keyframes */
