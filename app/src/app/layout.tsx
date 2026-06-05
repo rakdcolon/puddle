@@ -18,11 +18,24 @@ const crimsonPro = Crimson_Pro({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://solvepuddle.com'),
   title: 'puddle — a daily puzzle column',
-  description: 'One puzzle a day. Logic, deduction, wordplay, and more.',
+  description:
+    'A new daily puzzle every morning — logic, wordplay, lateral thinking, quant, and more. Free, no signup needed.',
+  alternates: { canonical: '/' },
   openGraph: {
+    type: 'website',
+    siteName: 'puddle',
     title: 'puddle — a daily puzzle column',
-    description: 'One puzzle a day. Logic, deduction, wordplay, and more.',
+    description:
+      'A new daily puzzle every morning — logic, wordplay, lateral thinking, quant, and more.',
+    images: ['/og-default.png'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'puddle — a daily puzzle column',
+    description:
+      'A new daily puzzle every morning — logic, wordplay, lateral thinking, quant, and more.',
     images: ['/og-default.png'],
   },
 }

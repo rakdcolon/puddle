@@ -23,8 +23,25 @@ export default async function LandingPage() {
   const user = await getCurrentUser()
   if (user) solve = await getSolveForUser(user.id, puzzle.id)
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'puddle',
+    url: 'https://solvepuddle.com',
+    description:
+      'A new daily puzzle every morning — logic, wordplay, lateral thinking, quant, and more.',
+    applicationCategory: 'GameApplication',
+    operatingSystem: 'Web',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    genre: ['Logic puzzle', 'Wordplay', 'Lateral thinking', 'Pattern recognition', 'Quantitative reasoning'],
+  }
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Masthead issueNo={puzzle.issue_no} vol={puzzle.vol} />
       <main className="flex-1 max-w-[1440px] mx-auto w-full px-4 py-6 sm:px-14 sm:py-7 pb-6">
         <div className="flex flex-col md:grid w-full" style={{ gridTemplateColumns: '1.05fr 0.95fr', gap: '72px', alignItems: 'start' }}>
