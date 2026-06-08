@@ -4,7 +4,7 @@ import Masthead from '@/components/layout/Masthead'
 import Footer from '@/components/layout/Footer'
 
 export const metadata = {
-  title: 'About — puddle',
+  title: 'About puddle',
   description:
     'puddle is a hand-edited daily puzzle column. Each morning a new logic, wordplay, lateral, pattern, or quant puzzle, with a worked solution.',
   alternates: { canonical: '/about' },

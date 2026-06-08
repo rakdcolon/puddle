@@ -29,7 +29,7 @@ export default async function LandingPage() {
     name: 'puddle',
     url: 'https://solvepuddle.com',
     description:
-      'A new daily puzzle every morning — logic, wordplay, lateral thinking, quant, and more.',
+      'A new daily puzzle every morning. Logic, wordplay, lateral thinking, quant, and more.',
     applicationCategory: 'GameApplication',
     operatingSystem: 'Web',
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
