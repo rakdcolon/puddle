@@ -3,6 +3,7 @@ import { getPuzzleForDate } from '@/lib/db/puzzles'
 import { getTodayNY } from '@/lib/utils/dates'
 import { dailyPuzzleEmbed } from '@/lib/discord/embeds'
 import { postChannelMessage } from '@/lib/discord/rest'
+import { checkRunwayAndAlert } from '@/lib/puzzles/runway'
 
 // Posting via the bot REST client needs the Node runtime; never cache.
 export const runtime = 'nodejs'
@@ -21,10 +22,21 @@ export async function GET(request: NextRequest) {
     return new NextResponse('Unauthorized', { status: 401 })
   }
 
+  // Forward-looking runway tripwire: warns the ops channel before the schedule
+  // runs dry (the site never errors when it does — it just serves the last
+  // issue forever). Runs every day regardless of today's post, and is wrapped
+  // so a check failure can never break the daily post.
+  let runway = null
+  try {
+    runway = await checkRunwayAndAlert()
+  } catch (err) {
+    console.error('runway check failed:', err)
+  }
+
   const channelId = process.env.DISCORD_ANNOUNCE_CHANNEL_ID
   if (!channelId) {
     return NextResponse.json(
-      { ok: false, error: 'DISCORD_ANNOUNCE_CHANNEL_ID is not set' },
+      { ok: false, error: 'DISCORD_ANNOUNCE_CHANNEL_ID is not set', runway },
       { status: 500 },
     )
   }
@@ -32,7 +44,7 @@ export async function GET(request: NextRequest) {
   const puzzle = await getPuzzleForDate(getTodayNY())
   if (!puzzle) {
     // No puzzle scheduled for today — skip quietly rather than post a broken card.
-    return NextResponse.json({ ok: true, skipped: 'no puzzle for today' })
+    return NextResponse.json({ ok: true, skipped: 'no puzzle for today', runway })
   }
 
   const roleId = process.env.DISCORD_DAILY_ROLE_ID
@@ -49,10 +61,10 @@ export async function GET(request: NextRequest) {
     })
   } catch (err) {
     return NextResponse.json(
-      { ok: false, error: err instanceof Error ? err.message : 'post failed' },
+      { ok: false, error: err instanceof Error ? err.message : 'post failed', runway },
       { status: 502 },
     )
   }
 
-  return NextResponse.json({ ok: true, issue_no: puzzle.issue_no })
+  return NextResponse.json({ ok: true, issue_no: puzzle.issue_no, runway })
 }
