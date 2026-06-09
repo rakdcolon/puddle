@@ -8,7 +8,8 @@
     "start": "next start",
     "import-puzzle": "node scripts/import-puzzle.mjs",
     "sync-puzzles": "node scripts/sync-puzzles.mjs",
-    "register-commands": "node scripts/register-commands.mjs"
+    "register-commands": "node scripts/register-commands.mjs",
+    "setup-daily-optin": "node scripts/setup-daily-optin.mjs"
   },
   "dependencies": {
     "@discord/embedded-app-sdk": "^2.5.0",

@@ -15,7 +15,11 @@ merge. At release time it is renamed to the new version with a date. See
 
 ## [Unreleased]
 
-_Nothing yet._
+### Added
+- **Daily puzzle in Discord.** Each morning the bot posts the day's puzzle to
+  the community server automatically. Members can opt in to a gentle ping when
+  it drops by tapping a button on a pinned message — it's off by default, and
+  one more tap turns it back off.
 
 ## [1.1.0] - 2026-05-31
 
