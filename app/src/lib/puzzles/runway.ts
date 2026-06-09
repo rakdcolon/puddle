@@ -70,7 +70,8 @@ export async function checkRunwayAndAlert(): Promise<{
 
   const runway = await getRunway(createServiceClient())
 
-  const parsed = Number(process.env.RUNWAY_ALERT_DAYS)
+  const rawThreshold = process.env.RUNWAY_ALERT_DAYS?.trim()
+  const parsed = rawThreshold ? Number(rawThreshold) : NaN
   const threshold = Number.isFinite(parsed) && parsed >= 0 ? parsed : 5
   const low = runway.daysLeft === null || runway.daysLeft <= threshold
 
