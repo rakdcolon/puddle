@@ -24,7 +24,18 @@ const DAILY_PING_BUTTON = 'toggle-daily-ping'
 // The bot's HTTP interactions endpoint. Discord POSTs every slash command (and
 // a PING handshake when you save the endpoint URL) here. We verify the
 // signature against the raw body, then dispatch by command name. No gateway /
-// always-on process required — this is a plain serverless route.
+/**
+ * Handle incoming Discord interaction webhooks for this route.
+ *
+ * Verifies the Ed25519 signature on the raw request body, dispatches by interaction
+ * type (PING, APPLICATION_COMMAND, MESSAGE_COMPONENT) to the appropriate handlers,
+ * and returns the corresponding Discord interaction response.
+ *
+ * @returns A NextResponse representing the interaction response: a 401 response with
+ * "invalid request signature" when verification fails; a PONG for endpoint verification;
+ * or the response produced by the dispatched command/component handler (or an ephemeral
+ * "Unknown command." acknowledgement for unrecognized interactions).
+ */
 export async function POST(request: NextRequest) {
   const rawBody = await request.text()
 
@@ -119,7 +130,15 @@ async function handleStats(interaction: any) {
   })
 }
 
-// /leaderboard — top solvers this week, ranked by puzzles solved (not time).
+/**
+ * Build and return the weekly leaderboard interaction response listing top solvers.
+ *
+ * Fetches the top solvers for the last 7 days (up to 10) and returns a Discord
+ * interaction response: a plain message if no solves exist, or an embed titled
+ * "Puddle · this week" containing ranked display names and solved counts.
+ *
+ * @returns The interaction response JSON: a simple message when there are no solves, otherwise an embed with the top solvers and their solved counts.
+ */
 async function handleLeaderboard() {
   const rows = await getLeaderboard(7, 10)
   if (rows.length === 0) {
@@ -145,7 +164,11 @@ async function handleLeaderboard() {
 }
 
 // /today — the current puzzle's title, genre, and difficulty, with a play link.
-// No answer is exposed (same public info as the website's puzzle page).
+/**
+ * Responds to a `/today` interaction with today's puzzle embed or an ephemeral notice if no puzzle is live.
+ *
+ * @returns A Discord interaction response object: when a puzzle exists, includes an embed for today's puzzle; otherwise an ephemeral message stating no puzzle is live.
+ */
 async function handleToday() {
   const puzzle = await getPuzzleForDate(getTodayNY())
   if (!puzzle) return reply('No puzzle is live right now — check back soon.', true)
@@ -159,7 +182,14 @@ async function handleToday() {
 // The opt-in button on the pinned reminder message. Toggles a self-assignable
 // role: members who hold it get @-mentioned in the daily auto-post. No role is
 // the default, so reminders are strictly opt-in. We reply privately (ephemeral)
-// so the channel isn't spammed with confirmations.
+/**
+ * Toggle the server's daily-ping role for the invoking user and return an ephemeral confirmation message.
+ *
+ * Reads the guild, member, and configured role ID from the interaction and environment. If the invoking member currently has the daily role, it removes the role; otherwise it adds the role. Returns an ephemeral reply for success, missing configuration, or error conditions.
+ *
+ * @param interaction - The Discord interaction payload (expects `guild_id`, `member.user.id`, and `member.roles`)
+ * @returns The Discord interaction response payload containing a confirmation or error message; responses are sent as ephemeral messages
+ */
 async function handleToggleDailyPing(interaction: any) {
   const roleId = process.env.DISCORD_DAILY_ROLE_ID
   const guildId = interaction.guild_id

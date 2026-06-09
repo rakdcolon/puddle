@@ -14,7 +14,21 @@ export const dynamic = 'force-dynamic'
 //
 // Vercel signs cron invocations with `Authorization: Bearer ${CRON_SECRET}`
 // when CRON_SECRET is set — we reject anything that doesn't match, so the route
-// can't be triggered by the public.
+/**
+ * Endpoint handler for the daily cron that posts the day's puzzle to a Discord channel.
+ *
+ * Validates the request using `Authorization: Bearer ${CRON_SECRET}`, looks up the announce
+ * channel from `DISCORD_ANNOUNCE_CHANNEL_ID`, fetches today's puzzle, and posts an embed
+ * (optionally mentioning `DISCORD_DAILY_ROLE_ID`). Returns a JSON response describing the outcome.
+ *
+ * @param request - Incoming Next.js request; must include `Authorization: Bearer ${CRON_SECRET}` header.
+ * @returns A NextResponse whose JSON body indicates the result:
+ * - 401 response with plain "Unauthorized" when the cron secret is missing or invalid.
+ * - 500 JSON `{ ok: false, error }` when `DISCORD_ANNOUNCE_CHANNEL_ID` is not set.
+ * - 200 JSON `{ ok: true, skipped: 'no puzzle for today' }` when no puzzle exists for today.
+ * - 502 JSON `{ ok: false, error }` when posting to Discord fails (error message included if available).
+ * - 200 JSON `{ ok: true, issue_no }` on successful post (contains the puzzle's `issue_no`).
+ */
 export async function GET(request: NextRequest) {
   const secret = process.env.CRON_SECRET
   if (!secret || request.headers.get('authorization') !== `Bearer ${secret}`) {

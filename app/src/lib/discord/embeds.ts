@@ -14,7 +14,15 @@ const GENRE_LABELS: Record<string, string> = {
 
 // The public puzzle card — title, genre, difficulty, and a play link. Never
 // includes the answer (same info the website's puzzle page shows). Shared by
-// the `/today` slash command and the daily auto-post so they stay identical.
+/**
+ * Build a Discord embed payload for a daily puzzle card.
+ *
+ * Constructs an embed-like object containing the puzzle title, a play URL,
+ * a description with genre label and difficulty dots, a highlight color, and a footer with issue number and site.
+ *
+ * @param puzzle - Puzzle data (expects `title`, `genre`, `difficulty` 0–5, and `issue_no`) used to populate the embed
+ * @returns The embed object with `title`, `url`, `description`, `color`, and `footer.text`
+ */
 export function dailyPuzzleEmbed(puzzle: Puzzle) {
   const dots = '●'.repeat(puzzle.difficulty) + '○'.repeat(5 - puzzle.difficulty)
   return {
