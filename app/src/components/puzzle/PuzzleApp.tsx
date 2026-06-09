@@ -214,15 +214,21 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
     else revealNow(hintLevel + 1)
   }, [hintLevel, puzzle.hints.length, isFinished, hintCountdown, settings.hint_pacing, revealNow])
 
+  // If the puzzle finishes mid-countdown (solved or given up), cancel the pending
+  // paced-hint reveal so it can't bump hints or post /hint after completion.
+  useEffect(() => {
+    if (isFinished && hintCountdown > 0) setHintCountdown(0)
+  }, [isFinished, hintCountdown])
+
   // Drive the paced-hint countdown one second at a time, revealing at zero.
   useEffect(() => {
-    if (hintCountdown <= 0) return
+    if (hintCountdown <= 0 || isFinished) return
     const id = setTimeout(() => {
       if (hintCountdown <= 1) { revealNow(hintLevel + 1); setHintCountdown(0) }
       else setHintCountdown(c => c - 1)
     }, 1000)
     return () => clearTimeout(id)
-  }, [hintCountdown, hintLevel, revealNow])
+  }, [hintCountdown, hintLevel, revealNow, isFinished])
 
   const skip = useCallback(async () => {
     if (isFinished) return
