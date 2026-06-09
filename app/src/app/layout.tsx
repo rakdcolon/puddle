@@ -5,6 +5,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import DiscordActivityProvider from '@/components/discord/DiscordActivityProvider'
 import ThemeWatcher from '@/components/theme/ThemeWatcher'
 import A11yWatcher from '@/components/a11y/A11yWatcher'
+import AnnouncementBanner from '@/components/announcements/AnnouncementBanner'
 import { THEME_INIT_SCRIPT } from '@/lib/theme'
 import { A11Y_INIT_SCRIPT } from '@/lib/a11y'
 import './globals.css'
@@ -58,6 +59,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-bg text-ink antialiased" style={{ fontFamily: 'var(--font-app)' }}>
         <ThemeWatcher />
         <A11yWatcher />
+        <AnnouncementBanner />
         <DiscordActivityProvider>{children}</DiscordActivityProvider>
         <Analytics />
         <SpeedInsights />
