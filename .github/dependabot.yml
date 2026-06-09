@@ -1,0 +1,20 @@
+# Dependabot configuration.
+# The Next.js app (and its lockfile) lives in /app.
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/app"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      # Stay on a stable Next.js line. Dependabot security updates will jump to a
+      # prerelease when it's the only version that resolves an advisory — that's
+      # how #34 proposed next 16.3.0-preview.0, which breaks `npm ci` (ERESOLVE),
+      # strips the @next/swc-* binaries, and fails the Vercel preview deploy.
+      # We patch such transitive advisories via package.json "overrides" instead
+      # (see the postcss override). This blocks the 16.3.0 preview/canary line;
+      # stable 16.3.0+ still comes through. Extend the range for new prerelease
+      # lines as the stable version advances.
+      - dependency-name: "next"
+        versions: [">= 16.3.0-0 < 16.3.0"]
