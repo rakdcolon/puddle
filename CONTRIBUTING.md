@@ -80,3 +80,23 @@ database. In practice:
    that needs it merges to `main`.
 
 See [docs/ENVIRONMENTS.md](docs/ENVIRONMENTS.md) for the per-environment detail.
+
+## Adding puzzles
+
+Puzzles are JSON files in the repo-root `puzzles/` directory (one per issue;
+`template.json` shows the shape). They are the source of truth — the database is
+synced *from* them, never edited directly.
+
+To add or change a puzzle, commit the JSON on a branch and merge as usual. The
+files reach the database two ways:
+
+- **Automatically:** a daily Vercel cron (`/api/cron/sync-puzzles`) pulls
+  `puzzles/*.json` from `main` and upserts them (and soft-deletes any issue no
+  longer present). Since puzzles are scheduled by `date_active` ahead of time,
+  this daily cadence is plenty.
+- **Immediately:** run `cd app && npm run sync-puzzles` locally (add `-- --dry-run`
+  to preview), or hit the cron route with the `CRON_SECRET` bearer token for an
+  instant sync.
+
+The sync validates every file first and refuses to touch the DB if any is
+malformed, so a bad puzzle can't go live.
