@@ -15,11 +15,39 @@ merge. At release time it is renamed to the new version with a date. See
 
 ## [Unreleased]
 
+_Nothing yet._
+
+## [1.3.0] - 2026-06-08
+
+A polish-and-reach release: the day's puzzle now goes out to Discord on its
+own, the site is far more legible to search engines and social cards, and
+there are new accessibility controls.
+
 ### Added
-- **Daily puzzle in Discord.** Each morning the bot posts the day's puzzle to
-  the community server automatically. Members can opt in to a gentle ping when
-  it drops by tapping a button on a pinned message — it's off by default, and
-  one more tap turns it back off.
+- **Daily puzzle in Discord.** Each morning the bot posts the day's puzzle —
+  prompt, genre, and a play link — to the community server automatically.
+  Members can opt in to a gentle morning ping by tapping a button (the
+  "puddler" role); it's off by default and one more tap turns it back off.
+- **Accessibility settings.** New Settings → Accessibility controls: high
+  contrast, cleaner text, and reduce motion. Each is per-device and applies
+  instantly.
+- **Search-engine & social metadata.** Real page titles and descriptions,
+  Open Graph / Twitter cards for nicer link previews, a robots file, a sitemap,
+  and JSON-LD — so Puddle shows up properly when shared or searched.
+
+### Fixed
+- The browser-tab icon now reliably shows the Puddle mark, and the site's
+  shared/social metadata reads cleanly.
+
+## [1.2.0] - 2026-06-04
+
+### Changed
+- Admin access is now gated by an `is_admin` database column instead of an
+  email set in an environment variable — cleaner to grant and revoke.
+
+### Fixed
+- Hardened error handling across the auth, puzzle, and settings flows, so
+  transient failures surface gracefully instead of breaking the page.
 
 ## [1.1.0] - 2026-05-31
 
@@ -89,7 +117,9 @@ Baseline of the production application at `solvepuddle.com`.
   account (matched by verified email), so the nav and profile work after
   signing in with Discord.
 
-[Unreleased]: https://github.com/rakdcolon/puddle/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/rakdcolon/puddle/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/rakdcolon/puddle/compare/v1.2.0...v1.3.0
+[1.2.0]: https://github.com/rakdcolon/puddle/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/rakdcolon/puddle/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/rakdcolon/puddle/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/rakdcolon/puddle/releases/tag/v1.0.0
