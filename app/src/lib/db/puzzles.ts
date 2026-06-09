@@ -1,5 +1,6 @@
 import { createServiceClient } from '@/lib/supabase/server'
 import type { Puzzle, PublicPuzzle, PuzzleStats } from '@/types'
+import { getTodayNY } from '@/lib/utils/dates'
 import { unstable_cache } from 'next/cache'
 
 export async function getPuzzleForDate(dateStr: string): Promise<Puzzle | null> {
@@ -41,7 +42,7 @@ export async function getCurrentIssue(): Promise<{ issueNo: number; vol: number 
   const { data, error } = await db
     .from('puzzles')
     .select('issue_no, vol')
-    .lte('date_active', new Date().toISOString().slice(0, 10))
+    .lte('date_active', getTodayNY())
     .is('deleted_at', null)
     .order('date_active', { ascending: false })
     .limit(1)
