@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import type { PublicPuzzle, Solve } from '@/types'
+import type { PublicPuzzle, Solve, HintPacing } from '@/types'
 import { getTodayNY } from '@/lib/utils/dates'
 import { calcXP, totalXpToLevel } from '@/lib/utils/xp'
 import { setPuddlePresence } from '@/lib/discord/sdk'
@@ -24,7 +24,13 @@ const CHIME_SPECS: Record<ChimeKind, NoteSpec[]> = {
   notes:    [[523.25, 0, 0.06, 0.18], [659.25, 0.09, 0.05, 0.15]],
 }
 
+// Sound on/off mirrors the player's setting into this module flag, since chime()
+// is called from several nested components.
+let soundOn = true
+function setSoundOn(v: boolean) { soundOn = v }
+
 function chime(kind: ChimeKind = 'correct') {
+  if (!soundOn) return
   try {
     if (!audioCtx.ctx) audioCtx.ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
     const ctx = audioCtx.ctx
@@ -91,6 +97,9 @@ function useTimer(running: boolean) {
 // ─── Types ────────────────────────────────────────────────────────────────────
 type Status = 'idle' | 'correct' | 'wrong' | 'revealed'
 
+export type PuzzleSettings = { sound: boolean; show_streak: boolean; hint_pacing: HintPacing }
+const DEFAULT_SETTINGS: PuzzleSettings = { sound: true, show_streak: true, hint_pacing: 'instant' }
+
 interface PuzzleAppProps {
   puzzle: PublicPuzzle
   initialSolve?: Solve | null
@@ -99,10 +108,11 @@ interface PuzzleAppProps {
   compact?: boolean
   streakBeforeToday?: number
   xpBeforeToday?: { totalXp: number; level: number }
+  settings?: PuzzleSettings
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, compact = false, streakBeforeToday, xpBeforeToday }: PuzzleAppProps) {
+export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, compact = false, streakBeforeToday, xpBeforeToday, settings = DEFAULT_SETTINGS }: PuzzleAppProps) {
   const [answer, setAnswer] = useState('')
   const [status, setStatus] = useState<Status>(() => {
     if (initialSolve?.status === 'solved') return 'correct'
@@ -117,9 +127,13 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
   const [scratch, setScratch] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [earnedXp, setEarnedXp] = useState<number | null>(null)
+  const [hintCountdown, setHintCountdown] = useState(0) // seconds left before a paced hint reveals; 0 = idle
 
   const isFinished = status === 'correct' || status === 'revealed'
   const elapsed = useTimer(!isFinished && status !== 'wrong')
+
+  // Mirror the sound setting into the module-level chime gate.
+  useEffect(() => { setSoundOn(settings.sound) }, [settings.sound])
 
   const submit = useCallback(async () => {
     if (!answer.toString().trim() || isFinished || submitting) return
@@ -183,9 +197,8 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
     }
   }, [answer, isFinished, submitting, puzzle.id, elapsed, hintLevel, attempts, issueNo, puzzle.title, streakBeforeToday])
 
-  const revealHint = useCallback(async () => {
-    if (hintLevel >= puzzle.hints.length || isFinished) return
-    const next = hintLevel + 1
+  // Apply a hint reveal immediately: bump the level, chime, and track it.
+  const revealNow = useCallback((next: number) => {
     setHintLevel(next)
     chime('hint')
     // Track server-side for authenticated users (fire-and-forget)
@@ -194,7 +207,24 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ hint_level: next }),
     }).catch(() => {})
-  }, [hintLevel, puzzle.hints.length, puzzle.id, isFinished])
+  }, [puzzle.id])
+
+  const revealHint = useCallback(() => {
+    if (hintLevel >= puzzle.hints.length || isFinished || hintCountdown > 0) return
+    // '5s-pause' adds a deliberate beat before the hint appears; 'instant' reveals now.
+    if (settings.hint_pacing === '5s-pause') setHintCountdown(5)
+    else revealNow(hintLevel + 1)
+  }, [hintLevel, puzzle.hints.length, isFinished, hintCountdown, settings.hint_pacing, revealNow])
+
+  // Drive the paced-hint countdown one second at a time, revealing at zero.
+  useEffect(() => {
+    if (hintCountdown <= 0) return
+    const id = setTimeout(() => {
+      if (hintCountdown <= 1) { revealNow(hintLevel + 1); setHintCountdown(0) }
+      else setHintCountdown(c => c - 1)
+    }, 1000)
+    return () => clearTimeout(id)
+  }, [hintCountdown, hintLevel, revealNow])
 
   const skip = useCallback(async () => {
     if (isFinished) return
@@ -454,10 +484,16 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
           >
             <GhostButton
               onClick={revealHint}
-              disabled={hintLevel >= puzzle.hints.length || isFinished}
+              disabled={hintLevel >= puzzle.hints.length || isFinished || hintCountdown > 0}
             >
-              ◐ Hint {hintLevel}/{puzzle.hints.length}
-              <span className="italic text-ink-muted ml-1" style={{ fontSize: compact ? 12 : 13 }}>· free</span>
+              {hintCountdown > 0 ? (
+                <>◐ Revealing in {hintCountdown}…</>
+              ) : (
+                <>
+                  ◐ Hint {hintLevel}/{puzzle.hints.length}
+                  <span className="italic text-ink-muted ml-1" style={{ fontSize: compact ? 12 : 13 }}>· free</span>
+                </>
+              )}
             </GhostButton>
 
             <GhostButton
@@ -535,6 +571,7 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
               issueNo={issueNo}
               title={puzzle.title}
               streakBeforeToday={streakBeforeToday}
+              showStreak={settings.show_streak}
               earnedXp={earnedXp}
               xpBeforeToday={xpBeforeToday}
             />
@@ -760,6 +797,7 @@ function PostSolvePanel({
   issueNo,
   title,
   streakBeforeToday,
+  showStreak,
   earnedXp,
   xpBeforeToday,
 }: {
@@ -771,6 +809,7 @@ function PostSolvePanel({
   issueNo: number
   title: string
   streakBeforeToday?: number
+  showStreak: boolean
   earnedXp: number | null
   xpBeforeToday?: { totalXp: number; level: number }
 }) {
@@ -791,7 +830,7 @@ function PostSolvePanel({
       const hintPart = hintLevel > 0 ? ` · ${hintLevel} hint${hintLevel === 1 ? '' : 's'}` : ''
       lines.push(`✅ Solved${hintPart}`)
       const streak = streakBeforeToday !== undefined ? streakBeforeToday + 1 : 0
-      if (streak >= 2) lines.push(`🔥 ${streak}-day streak`)
+      if (showStreak && streak >= 2) lines.push(`🔥 ${streak}-day streak`)
     } else {
       lines.push('Revealed')
     }
@@ -837,7 +876,7 @@ function PostSolvePanel({
             : <>Puzzle revealed. Read the worked solution below.</>
           }
         </div>
-        {status === 'correct' && streakBeforeToday !== undefined && streakBeforeToday + 1 >= 2 && (
+        {status === 'correct' && showStreak && streakBeforeToday !== undefined && streakBeforeToday + 1 >= 2 && (
           <div
             className="animate-reveal"
             style={{ fontSize: 13, marginTop: 5, color: 'var(--color-accent)', fontStyle: 'italic' }}
