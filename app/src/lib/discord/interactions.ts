@@ -46,6 +46,7 @@ export function verifyInteractionSignature(
 export const InteractionType = {
   PING: 1,
   APPLICATION_COMMAND: 2,
+  MESSAGE_COMPONENT: 3, // a button / select on one of our messages
 } as const
 
 export const InteractionResponseType = {

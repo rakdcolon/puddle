@@ -54,6 +54,41 @@ See `.env.local.example`. New keys:
 5. Run it from a Discord voice channel's Activity launcher (App Directory) once approved,
    or via the developer "Launch Activity" flow.
 
+## Daily auto-post & opt-in reminders
+
+Each morning a [Vercel Cron](https://vercel.com/docs/cron-jobs) (`vercel.json`,
+`0 13 * * *` UTC ≈ 8–9am ET) hits `/api/cron/daily-post`. The route posts the
+day's puzzle card to a channel as the bot and `@`-mentions a **self-assignable
+reminder role**, so only members who asked get pinged — reminders are strictly
+opt-in (no role = no ping). The card is identical to the `/today` command; both
+render `dailyPuzzleEmbed()` from `src/lib/discord/embeds.ts`.
+
+Members opt in/out by tapping a button on a pinned message (posted once with
+`npm run setup-daily-optin`). The button is a `MESSAGE_COMPONENT` interaction
+handled in `src/app/api/discord/interactions/route.ts` (`toggle-daily-ping`),
+which grants or revokes the role via `addMemberRole`/`removeMemberRole` in
+`src/lib/discord/rest.ts` and replies privately (ephemeral).
+
+### One-time setup
+
+1. **Create the reminder role** (e.g. "Daily Puddle") in the server. No
+   permissions needed — it's just a ping target.
+2. **Bot permissions**: give the bot **Manage Roles**, and in
+   Server Settings → Roles drag the **bot's** role *above* the reminder role
+   (a bot can only assign roles beneath its own). To pin the opt-in message it
+   also needs **Manage Messages** in that channel.
+3. **Env** (local `.env.local` *and* Vercel project):
+   `DISCORD_ANNOUNCE_CHANNEL_ID`, `DISCORD_DAILY_ROLE_ID`, and `CRON_SECRET`
+   (any random string; Vercel sends it as the cron's bearer token — set the
+   same value in Vercel so the route accepts the call).
+4. From `app/`, run `npm run setup-daily-optin` once to post + pin the opt-in
+   button. The cron starts posting on the next deploy with `vercel.json`.
+
+> **Note:** `vercel.json` must sit at the Vercel project's **root directory**.
+> If the project root is `app/` (where `package.json` lives), it belongs there.
+> The Hobby plan runs crons once daily and may fire up to ~1h late — fine for a
+> morning post.
+
 ## How the pieces connect (code)
 
 - `src/lib/discord/sdk.ts` — `isInDiscordActivity()`, lazy SDK init, `patchSupabaseForActivity()`,

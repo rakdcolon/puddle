@@ -9,13 +9,17 @@ import {
 import { getUserByDiscordSub, getUserProfile, getLeaderboard } from '@/lib/db/users'
 import { getPuzzleForDate } from '@/lib/db/puzzles'
 import { getTodayNY } from '@/lib/utils/dates'
+import { dailyPuzzleEmbed, SITE } from '@/lib/discord/embeds'
+import { addMemberRole, removeMemberRole } from '@/lib/discord/rest'
 
 // Ed25519 verification + getUserProfile need Node APIs and the service client,
 // so pin the Node runtime (never Edge) and never cache.
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const SITE = 'solvepuddle.com'
+// custom_id of the opt-in button posted by scripts/setup-daily-optin.mjs —
+// keep this string in sync with that script.
+const DAILY_PING_BUTTON = 'toggle-daily-ping'
 
 // The bot's HTTP interactions endpoint. Discord POSTs every slash command (and
 // a PING handshake when you save the endpoint URL) here. We verify the
@@ -46,6 +50,12 @@ export async function POST(request: NextRequest) {
     if (name === 'stats') return handleStats(interaction)
     if (name === 'leaderboard') return handleLeaderboard()
     if (name === 'today') return handleToday()
+  }
+
+  if (interaction.type === InteractionType.MESSAGE_COMPONENT) {
+    if (interaction.data?.custom_id === DAILY_PING_BUTTON) {
+      return handleToggleDailyPing(interaction)
+    }
   }
 
   // Unknown interaction — acknowledge without a visible message.
@@ -134,34 +144,41 @@ async function handleLeaderboard() {
   })
 }
 
-const GENRE_LABELS: Record<string, string> = {
-  logic: 'Logic & Deduction',
-  quant: 'Quant & Interview',
-  pattern: 'Pattern & Sequence',
-  lateral: 'Lateral Riddle',
-  wordplay: 'Wordplay',
-  deduction: 'Deduction',
-}
-
 // /today — the current puzzle's title, genre, and difficulty, with a play link.
 // No answer is exposed (same public info as the website's puzzle page).
 async function handleToday() {
   const puzzle = await getPuzzleForDate(getTodayNY())
   if (!puzzle) return reply('No puzzle is live right now — check back soon.', true)
 
-  const dots = '●'.repeat(puzzle.difficulty) + '○'.repeat(5 - puzzle.difficulty)
   return NextResponse.json({
     type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-    data: {
-      embeds: [
-        {
-          title: puzzle.title,
-          url: `https://${SITE}/puzzle`,
-          description: `${GENRE_LABELS[puzzle.genre] ?? puzzle.genre} · ${dots}\n\n[Play today's puzzle →](https://${SITE}/puzzle)`,
-          color: PUDDLE_ACCENT,
-          footer: { text: `No. ${puzzle.issue_no} · ${SITE}` },
-        },
-      ],
-    },
+    data: { embeds: [dailyPuzzleEmbed(puzzle)] },
   })
+}
+
+// The opt-in button on the pinned reminder message. Toggles a self-assignable
+// role: members who hold it get @-mentioned in the daily auto-post. No role is
+// the default, so reminders are strictly opt-in. We reply privately (ephemeral)
+// so the channel isn't spammed with confirmations.
+async function handleToggleDailyPing(interaction: any) {
+  const roleId = process.env.DISCORD_DAILY_ROLE_ID
+  const guildId = interaction.guild_id
+  const member = interaction.member
+  const userId = member?.user?.id
+
+  if (!roleId || !guildId || !userId) {
+    return reply("Daily reminders aren't set up yet — check back soon.", true)
+  }
+
+  const hasRole = Array.isArray(member.roles) && member.roles.includes(roleId)
+  try {
+    if (hasRole) {
+      await removeMemberRole(guildId, userId, roleId)
+      return reply("Done — you're off the list and won't be pinged when the next puddle drops.", true)
+    }
+    await addMemberRole(guildId, userId, roleId)
+    return reply("You're on the list — I'll ping you here each morning when the new puddle goes live. Tap again any time to stop.", true)
+  } catch {
+    return reply("Couldn't update your reminder just now — give it another tap in a moment.", true)
+  }
 }
