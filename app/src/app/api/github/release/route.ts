@@ -27,13 +27,31 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true, ignored: 'not a release event' })
   }
 
-  const payload = JSON.parse(rawBody)
+  // The body is signature-verified, but still untrusted shape — a misconfigured
+  // content type (form-urlencoded instead of JSON) or an unexpected event would
+  // otherwise throw and 500. Parse defensively and bail with a controlled 200.
+  let payload: any
+  try {
+    payload = JSON.parse(rawBody)
+  } catch {
+    return NextResponse.json({ ok: true, ignored: 'unparseable-body' })
+  }
+  if (typeof payload !== 'object' || payload === null) {
+    return NextResponse.json({ ok: true, ignored: 'invalid-payload' })
+  }
+
   const release = payload.release
 
   // Only announce real, published releases — skip drafts, prereleases, edits,
-  // and deletions.
-  if (payload.action !== 'published' || release?.draft || release?.prerelease) {
-    return NextResponse.json({ ok: true, ignored: `action=${payload.action}` })
+  // deletions, and anything without a well-formed release object.
+  if (
+    payload.action !== 'published' ||
+    typeof release !== 'object' ||
+    release === null ||
+    release.draft === true ||
+    release.prerelease === true
+  ) {
+    return NextResponse.json({ ok: true, ignored: `action=${String(payload.action)}` })
   }
 
   const channelId = process.env.DISCORD_PATCHNOTES_CHANNEL_ID
