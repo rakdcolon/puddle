@@ -6,15 +6,25 @@ updates:
     directory: "/app"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 5
+    # Batch all eligible bumps into a single weekly PR instead of one per package.
+    groups:
+      npm:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
     ignore:
-      # Stay on a stable Next.js line. Dependabot security updates will jump to a
+      # No major bumps — they tend to need manual migration (e.g. typescript 5->6,
+      # @types/node 20->25). Bump majors by hand when you're ready.
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+      # Stay on a stable Next.js line. A security update will otherwise jump to a
       # prerelease when it's the only version that resolves an advisory — that's
-      # how #34 proposed next 16.3.0-preview.0, which breaks `npm ci` (ERESOLVE),
-      # strips the @next/swc-* binaries, and fails the Vercel preview deploy.
-      # We patch such transitive advisories via package.json "overrides" instead
-      # (see the postcss override). This blocks the 16.3.0 preview/canary line;
-      # stable 16.3.0+ still comes through. Extend the range for new prerelease
-      # lines as the stable version advances.
+      # how #34 proposed next 16.3.0-preview.0, which broke the build / preview
+      # deploy. We patch such transitive advisories via package.json "overrides"
+      # instead (see the postcss override). This blocks the 16.3.0 preview/canary
+      # line; stable 16.3.0+ still comes through.
       - dependency-name: "next"
         versions: [">= 16.3.0-0 < 16.3.0"]
