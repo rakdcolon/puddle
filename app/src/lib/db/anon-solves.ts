@@ -27,3 +27,28 @@ export async function upsertAnonSolve(
   )
   if (error) throw error
 }
+
+// Record an anonymous give-up as a 'revealed' visit. Insert-if-absent so a
+// later refresh, or a prior 'solved', is never overwritten.
+export async function markAnonRevealed(
+  clientId: string,
+  puzzleId: string,
+  elapsedSeconds: number | null,
+  hintsUsed: number,
+  attempts: number,
+): Promise<void> {
+  const db = createServiceClient()
+  const { error } = await db.from('anon_solves').upsert(
+    {
+      client_id: clientId,
+      puzzle_id: puzzleId,
+      status: 'revealed',
+      elapsed_seconds: elapsedSeconds,
+      hints_used: hintsUsed,
+      attempts,
+      solved_at: new Date().toISOString(),
+    },
+    { onConflict: 'client_id,puzzle_id', ignoreDuplicates: true },
+  )
+  if (error) throw error
+}
