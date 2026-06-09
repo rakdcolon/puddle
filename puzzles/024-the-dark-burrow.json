@@ -1,0 +1,28 @@
+{
+  "issue_no": 24,
+  "vol": 2,
+  "date_active": "2026-06-22",
+  "title": "The Dark Burrow",
+  "genre": "logic",
+  "difficulty": 1,
+  "prompt": [
+    "Deep in a lightless burrow a frog keeps her lily bulbs of two kinds jumbled together: some that will open white, some that will open red, and plenty of each.",
+    "She reaches in and draws bulbs out one at a time, unable to see a single colour.",
+    "How many bulbs must she draw to be certain she is holding two of the same colour?"
+  ],
+  "answer": "3",
+  "answer_display": "3 bulbs",
+  "hints": [
+    "Imagine the unluckiest run of draws possible. What is the most she could pull out and still not hold a matching pair?",
+    "With only two colours in the burrow, the unluckiest start is one white and one red, a single bulb of each.",
+    "After two draws of different colours, the very next bulb has to match one of them. So three is enough, and two is not."
+  ],
+  "solution_lede": "The instinct is to worry about luck, but the question asks for certainty, so picture the worst possible luck and beat it.\n\nThere are only two colours. The most unlucky thing that can happen is to draw one white and one red, two bulbs that do not match. But there is no third colour to hide behind, so the third bulb she draws must be either white or red, and either way it pairs with one she already holds. Two draws can fail, three never can, so the answer is three.",
+  "solution_steps": [
+    { "body": "Certainty means planning for the worst draws, not the lucky ones." },
+    { "body": "With two colours, the worst case after two draws is one of each, with no pair yet." },
+    { "body": "The third bulb must repeat one of the two colours, so three bulbs guarantee a matching pair." }
+  ],
+  "input_type": "numeric",
+  "input_config": { "min": 1, "max": 10 }
+}

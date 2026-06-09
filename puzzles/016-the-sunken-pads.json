@@ -1,0 +1,28 @@
+{
+  "issue_no": 16,
+  "vol": 2,
+  "date_active": "2026-06-14",
+  "title": "The Sunken Pads",
+  "genre": "logic",
+  "difficulty": 4,
+  "prompt": [
+    "The mire holds a square raft of lily pads, eight across and eight down, sixty four in all, coloured like a checkerboard in alternating green and brown.",
+    "One stormy night the two brown pads at the far opposite corners of the raft sink, leaving sixty two pads afloat. A frog wants to lay down reed mats, each just long enough to cover two pads that share an edge.",
+    "If she covers as many pads as she possibly can, what is the smallest number of pads she must leave bare?"
+  ],
+  "answer": "2",
+  "answer_display": "2 pads",
+  "hints": [
+    "Every reed mat covers two pads that touch edge to edge. On a checkerboard, two pads that share an edge are always one green and one brown, so each mat covers exactly one of each colour.",
+    "Count the colours after the storm. The two corners that sank were the same colour. How many green pads and how many brown pads are left?",
+    "With thirty two pads of one colour and thirty of the other, every mat spends one of each, so only thirty mats can ever be laid. Count the pads those mats leave untouched."
+  ],
+  "solution_lede": "It looks like a fiddly tiling puzzle, but it is settled entirely by colour. On a checkerboard, any two pads sharing an edge are opposite colours, so every reed mat must cover exactly one green pad and one brown pad. That single fact decides everything.\n\nThe two opposite corners of the raft are the same colour, both brown, so when they sink the count becomes thirty two green pads and thirty brown. Since each mat needs one of each, the brown pads run out first. At most thirty mats can be placed, covering thirty green and thirty brown, which leaves two green pads with no brown partner anywhere to pair with. Two pads must stay bare.",
+  "solution_steps": [
+    { "body": "Each mat covers two edge sharing pads, which on a checkerboard are always one green and one brown." },
+    { "body": "The two sunken corners share a colour, leaving thirty two pads of one colour and thirty of the other." },
+    { "body": "Every mat spends one pad of each colour, so the thirty scarcer pads cap the mats at thirty. Sixty pads are covered, and two of the plentiful colour stay bare." }
+  ],
+  "input_type": "numeric",
+  "input_config": { "min": 0, "max": 10 }
+}

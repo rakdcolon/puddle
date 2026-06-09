@@ -1,0 +1,28 @@
+{
+  "issue_no": 19,
+  "vol": 2,
+  "date_active": "2026-06-17",
+  "title": "The Reed-Cut Pond",
+  "genre": "pattern",
+  "difficulty": 3,
+  "prompt": [
+    "A round pond lies still in the morning light. A frog begins laying straight reeds across it, each one stretching bank to bank in a perfectly straight line.",
+    "She wants to slice the water's surface into as many separate pieces as she can, choosing where each reed falls.",
+    "With six reeds laid as cleverly as possible, into how many pieces is the pond's surface divided?"
+  ],
+  "answer": "22",
+  "answer_display": "22 pieces",
+  "hints": [
+    "Start small. No reeds leave one piece, one reed makes two, two crossing reeds make four. Now lay a third reed crossing both. The answer is not eight.",
+    "Three reeds give seven, not eight. Each new reed adds as many pieces as the number of reeds it crosses, plus one, so a new reed should cross every earlier reed.",
+    "The kth reed, crossing all k minus one before it, adds k new pieces. The running totals go 1, 2, 4, 7, 11, 16, then 22."
+  ],
+  "solution_lede": "The instinct is to double: one reed two pieces, two reeds four, so six reeds must be sixty four. But the doubling breaks the moment a reed cannot cross enough of the others to split every region it passes through.\n\nThe honest rule is simple. When you add a new reed, it gains you one new piece for the region it starts in, plus one more each time it crosses an existing reed. So a reed crossing all of the earlier ones adds a number of pieces equal to how many reeds were already there, plus one. Starting from one piece, the additions are 1, 2, 3, 4, 5, 6, and the totals climb 1, 2, 4, 7, 11, 16, 22. Six well placed reeds cut the pond into twenty two pieces.",
+  "solution_steps": [
+    { "body": "With no reeds there is one piece. Each new reed adds one piece, plus one more for every earlier reed it crosses." },
+    { "body": "To gain the most, each new reed should cross all the reeds already laid, so the kth reed adds k pieces." },
+    { "body": "Totals run 1, then plus 1, 2, 3, 4, 5, 6, giving 1, 2, 4, 7, 11, 16, 22. Six reeds make twenty two pieces." }
+  ],
+  "input_type": "numeric",
+  "input_config": { "min": 1, "max": 64 }
+}

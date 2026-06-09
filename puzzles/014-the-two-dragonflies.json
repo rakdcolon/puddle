@@ -1,0 +1,28 @@
+{
+  "issue_no": 14,
+  "vol": 2,
+  "date_active": "2026-06-12",
+  "title": "The Two Dragonflies",
+  "genre": "quant",
+  "difficulty": 3,
+  "prompt": [
+    "At first light two dragonflies rest together on the same lily, one swift and one slow, then lift off to circle the pond.",
+    "The swift one loops the whole pond once every minute. The slow one needs twelve minutes for a single loop. They fly the same way around, both starting from that shared lily.",
+    "Over the next twelve minutes, counting the moment they reunite on the starting lily, how many times do the two dragonflies meet?"
+  ],
+  "answer": "11",
+  "answer_display": "11 times",
+  "hints": [
+    "Ignore the pond and watch only the gap between them. The swift dragonfly pulls ahead of the slow one at a steady rate. How much of a loop does it gain each minute?",
+    "They meet every time the swift one has gained exactly one full loop on the slow one. So count loops gained, not minutes.",
+    "In twelve minutes the swift dragonfly flies twelve loops and the slow one flies a single loop, so the swift one gains eleven loops. Each gained loop is one meeting."
+  ],
+  "solution_lede": "The tempting answer is twelve, one meeting a minute, but that is not how circling works. The dragonflies only meet when the swift one has pulled a whole loop ahead of the slow one, and gaining a full loop takes a touch longer than a minute.\n\nWatch the gap between them. The swift dragonfly gains at a rate of one loop minus one twelfth of a loop each minute, which is eleven twelfths of a loop every minute. A meeting happens each time that gap completes a whole loop. Over twelve minutes the swift one flies twelve loops while the slow one flies one, a gain of eleven loops in all. That is eleven meetings, the last arriving just as both settle back onto the lily.",
+  "solution_steps": [
+    { "body": "The swift dragonfly gains on the slow one at eleven twelfths of a loop per minute." },
+    { "body": "They meet once for every whole loop the swift one gains, so meetings are counted by gained loops, not by minutes." },
+    { "body": "In twelve minutes the swift flies twelve loops and the slow flies one, a gain of eleven loops, so they meet eleven times." }
+  ],
+  "input_type": "numeric",
+  "input_config": { "min": 0, "max": 24 }
+}

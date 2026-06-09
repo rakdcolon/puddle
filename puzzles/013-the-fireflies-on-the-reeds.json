@@ -1,0 +1,28 @@
+{
+  "issue_no": 13,
+  "vol": 2,
+  "date_active": "2026-06-11",
+  "title": "The Fireflies on the Reeds",
+  "genre": "pattern",
+  "difficulty": 3,
+  "prompt": [
+    "A hundred reeds stand in a row along the water, numbered 1 to 100, and on each one a single firefly sleeps in the dark.",
+    "A hundred dragonflies pass in turn. The first brushes every reed. The second brushes every second reed (2, 4, 6, and so on). The third brushes every third reed, and so on, down to the hundredth dragonfly, who brushes only reed 100. A brush wakes a sleeping firefly into a glow, or settles a glowing one back to sleep.",
+    "After the last dragonfly passes, how many fireflies are left glowing?"
+  ],
+  "answer": "10",
+  "answer_display": "10 fireflies",
+  "hints": [
+    "Whether a firefly ends up glowing depends only on how many dragonflies brushed its reed. Pick reed 12 and list exactly which dragonflies brush it.",
+    "Dragonfly number k brushes reed n precisely when k divides n evenly. So a reed is brushed once for each of its divisors, and its firefly glows at the end only if that count is odd.",
+    "Divisors come in pairs, d and n divided by d, which keeps the count even for almost every reed. The only exceptions are numbers where a divisor pairs with itself."
+  ],
+  "solution_lede": "A firefly's fate hangs on one number: how many dragonflies brushed its reed. Dragonfly k brushes reed n exactly when k is a divisor of n, so reed n is touched once for every divisor it has. Each firefly starts asleep, so it ends up glowing only when its reed has an odd number of divisors.\n\nHere is the lovely part. Divisors usually arrive in matched pairs, d and n divided by d, which keeps the total even. The pairing breaks only when a divisor is paired with itself, meaning d times d equals n. Those are the perfect squares. Between 1 and 100 they are 1, 4, 9, 16, 25, 36, 49, 64, 81, and 100. Ten reeds, ten glows.",
+  "solution_steps": [
+    { "body": "Dragonfly k brushes reed n exactly when k divides n, so reed n is brushed once for each divisor of n." },
+    { "body": "Each firefly starts asleep, so it glows at the end only if its reed was brushed an odd number of times, that is, only if n has an odd number of divisors." },
+    { "body": "Divisors pair as d and n divided by d, giving an even count, unless d equals n divided by d. That happens only for perfect squares, of which there are ten from 1 to 100." }
+  ],
+  "input_type": "numeric",
+  "input_config": { "min": 0, "max": 100 }
+}

@@ -1,0 +1,28 @@
+{
+  "issue_no": 25,
+  "vol": 2,
+  "date_active": "2026-06-23",
+  "title": "The Line of Frogs",
+  "genre": "deduction",
+  "difficulty": 5,
+  "prompt": [
+    "Ten frogs perch in a line along a fallen branch, all facing the same way. The heron sets a cap on each, green or brown at its whim, so that every frog can see the caps of all the frogs ahead of it, but never its own and never any behind it.",
+    "Starting from the very back, each frog in turn must croak a single word, green or brown, guessing the colour of its own cap. The heron eats any frog that guesses wrong, and every frog hears each croak as it is made.",
+    "The frogs may agree on a plan beforehand but may not signal in any other way. With the cleverest plan, how many of the ten frogs can be saved for certain?"
+  ],
+  "answer": "9",
+  "answer_display": "9 frogs",
+  "hints": [
+    "The frog at the very back can see all nine caps ahead but can learn nothing about its own. Let it spend its one croak carrying a message to everyone in front.",
+    "Agree in advance that the back frog croaks green if it counts an even number of green caps ahead, and brown if it counts an odd number. That single croak tells the whole line the parity of green among the front nine.",
+    "Each frog ahead can see the caps in front of it and has heard the croaks behind it. Comparing the announced parity with what it sees and hears lets it name its own cap exactly. Only the back frog is left to luck."
+  ],
+  "solution_lede": "The back frog is doomed to guess blindly about its own cap, so the plan should not waste its croak on a hopeless self guess. Instead, it spends that croak as a signal for everyone else.\n\nThe frogs agree beforehand on a parity code: the back frog croaks green if the number of green caps it sees ahead is even, and brown if that number is odd. Now consider any frog further up. It can see every cap in front of it and it has heard every croak behind it, so it knows the green caps ahead of it and the green caps already called out behind it. Subtracting both from the announced parity reveals exactly whether its own cap is green or brown, and it croaks correctly. Every frog from the second to the back is saved with certainty. Only the very back frog is gambling, with an even chance, so at least nine of the ten are always safe.",
+  "solution_steps": [
+    { "body": "The back frog cannot deduce its own cap, so it uses its croak to announce a parity: green for an even number of green caps ahead, brown for an odd number." },
+    { "body": "Each frog ahead knows the green caps it can see and the green caps already croaked behind it, both measured against the announced parity." },
+    { "body": "That comparison fixes its own cap colour with certainty, so all nine frogs ahead survive. Only the back frog is left to chance, giving nine guaranteed." }
+  ],
+  "input_type": "numeric",
+  "input_config": { "min": 0, "max": 10 }
+}

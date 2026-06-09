@@ -1,0 +1,28 @@
+{
+  "issue_no": 21,
+  "vol": 2,
+  "date_active": "2026-06-19",
+  "title": "The Foul Puddle",
+  "genre": "quant",
+  "difficulty": 4,
+  "prompt": [
+    "A thousand puddles dot the mire, numbered 1 to 1000, and exactly one of them has turned foul overnight.",
+    "A single taste of the foul water, even one drop blended in among many, leaves a newt looking ill by dawn. There is time for only one round of tasting before the sun comes up, but a newt may sip from as many puddles as you like, mixing the droplets together.",
+    "What is the fewest newts you need so that, by morning, you can name the foul puddle for certain?"
+  ],
+  "answer": "10",
+  "answer_display": "10 newts",
+  "hints": [
+    "By dawn each newt shows you a single fact: ill or well. Think of that as one yes or no answer. How many puddles can a small group of yes or no answers tell apart?",
+    "One newt sorts two cases apart. Each extra newt doubles how many you can distinguish. Where does that doubling first reach past one thousand?",
+    "Write each puddle's number in binary using ten digits. Let newt number i drink from every puddle whose i-th binary digit is a one. The exact set of ill newts spells out the foul puddle's number."
+  ],
+  "solution_lede": "Each newt, by dawn, carries exactly one bit of news: ill or well. So a team of newts can report only as many different outcomes as there are combinations of ill and well across them, and with ten newts that is two multiplied by itself ten times, which is one thousand and twenty four. Since that comfortably clears a thousand, ten newts can in principle pin down any single puddle.\n\nThe construction makes it real. Number the puddles in binary, each a string of ten digits. Assign newt one to the first digit, newt two to the second, and so on, and have each newt sip from precisely those puddles that carry a one in its digit. Come morning, read the ill newts as ones and the well newts as zeros, and the ten digit pattern is the number of the foul puddle. Nine newts would only separate five hundred and twelve cases, too few, so ten is the fewest.",
+  "solution_steps": [
+    { "body": "Each newt ends the night ill or well, one bit of information, so n newts yield two to the power n possible outcomes." },
+    { "body": "Two to the power nine is five hundred and twelve, fewer than a thousand, while two to the power ten is one thousand and twenty four, enough." },
+    { "body": "Label puddles in ten digit binary and let newt i drink wherever digit i is one. The pattern of ill newts is the foul puddle's number, so ten newts suffice and nine do not." }
+  ],
+  "input_type": "numeric",
+  "input_config": { "min": 1, "max": 100 }
+}

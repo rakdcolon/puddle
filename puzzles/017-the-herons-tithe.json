@@ -1,0 +1,28 @@
+{
+  "issue_no": 17,
+  "vol": 2,
+  "date_active": "2026-06-15",
+  "title": "The Heron's Tithe",
+  "genre": "logic",
+  "difficulty": 4,
+  "prompt": [
+    "Fifty frogs sit in a ring on the lily pads, numbered 1 to 50 around the circle, and a patient heron decides to take its tithe.",
+    "Beginning at frog 1, the heron spares that frog and eats the next. It spares the one after and eats the one after that, and so on, round and round, always sparing one living frog and eating the next, until a single frog remains.",
+    "If you could choose where to sit, which numbered pad would leave you the lone survivor?"
+  ],
+  "answer": "37",
+  "answer_display": "Pad 37",
+  "hints": [
+    "Try small rings first. With 2, 4, or 8 frogs the survivor is always frog 1. Powers of two behave very neatly here.",
+    "Take the largest power of two that does not exceed the number of frogs. For fifty that is thirty two. The frogs beyond that power are what matter.",
+    "Count how many frogs sit past that power of two: fifty minus thirty two is eighteen. The survivor is twice that overflow, plus one."
+  ],
+  "solution_lede": "The eating order looks chaotic, but it hides a clean rule built on powers of two. Whenever the ring holds exactly a power of two frogs, the very first spared frog survives, because the circle keeps halving perfectly and comes back to where it began.\n\nSo split fifty into the largest power of two it contains plus the rest: fifty is thirty two plus eighteen. The heron clears those eighteen extra frogs first, and the instant the eighteenth is taken, thirty two frogs remain with the heron poised to spare the next one. From there the perfect halving takes over and that next frog wins. Counting from frog 1, the survivor sits two times eighteen plus one pads along, which is pad thirty seven.",
+  "solution_steps": [
+    { "body": "When the ring holds a power of two, the first spared frog always survives, since the count halves cleanly each lap." },
+    { "body": "Write the count as a power of two plus an overflow: fifty equals thirty two plus eighteen." },
+    { "body": "Once the heron clears the eighteen overflow frogs, thirty two remain and the next spared frog wins. That frog is two times eighteen plus one from the start, pad thirty seven." }
+  ],
+  "input_type": "numeric",
+  "input_config": { "min": 1, "max": 50 }
+}

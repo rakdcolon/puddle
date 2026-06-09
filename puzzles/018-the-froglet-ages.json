@@ -1,0 +1,28 @@
+{
+  "issue_no": 18,
+  "vol": 2,
+  "date_active": "2026-06-16",
+  "title": "The Froglet Ages",
+  "genre": "deduction",
+  "difficulty": 4,
+  "prompt": [
+    "An old toad has three grandfroglets. To a passing visitor he says, \"The product of their three ages, counted in whole years, is thirty six.\"",
+    "The visitor thinks, then shakes her head. So the toad adds, \"The sum of their ages is exactly the number of pebbles in that little pile.\" The visitor counts the pebbles, thinks hard, and still cannot say.",
+    "The toad smiles. \"My eldest grandfroglet has a single golden spot on her back.\" At once the visitor knows. How old is the eldest?"
+  ],
+  "answer": "9",
+  "answer_display": "9 years",
+  "hints": [
+    "List every trio of whole ages whose product is thirty six, and work out the sum of each trio.",
+    "The visitor was told the exact sum yet still could not decide. That is only possible if two different trios share the very same sum. Find the repeated sum.",
+    "Two trios sum to thirteen: one is six, six, and one, the other is nine, two, and two. The clue that there is a single eldest rules one of them out."
+  ],
+  "solution_lede": "The visitor's failures are the real clues. First, knowing only that the ages multiply to thirty six leaves many possibilities, so that alone tells her nothing.\n\nThen she learns the exact sum and still cannot decide. That is the key. If the sum pointed to a single trio she would be done, so the sum must be one that two different trios share. Listing the trios whose product is thirty six, only one sum repeats: six plus six plus one and nine plus two plus two both total thirteen. Finally, the toad mentions his eldest grandfroglet, a single oldest one. The trio six, six, one has two equally old froglets and no single eldest, so it is ruled out. The ages are nine, two, and two, and the eldest is nine.",
+  "solution_steps": [
+    { "body": "Trios of whole ages with product thirty six and their sums include one, six, six (thirteen), two, two, nine (thirteen), two, three, six (eleven), three, three, four (ten), and so on." },
+    { "body": "Since the visitor knew the sum and still could not decide, the sum must be shared by two trios. Only thirteen is shared, by one, six, six and two, two, nine." },
+    { "body": "A single eldest exists only in two, two, nine, since one, six, six has two froglets tied for oldest. So the eldest is nine." }
+  ],
+  "input_type": "numeric",
+  "input_config": { "min": 1, "max": 36 }
+}
