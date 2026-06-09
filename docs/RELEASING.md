@@ -32,7 +32,10 @@ The current production baseline is **1.0.0**.
    git push origin v1.1.0
    ```
 6. **Create a GitHub Release** from the tag, pasting that version's changelog
-   section as the notes. This is the user-facing patch note.
+   section as the notes. This is the user-facing patch note. Publishing it
+   also auto-posts the notes to Discord `#patch-notes` (see the patch-notes
+   webhook in [app/docs/DISCORD_INTEGRATION.md](../app/docs/DISCORD_INTEGRATION.md)) —
+   no manual copy needed.
 
 ## Writing the notes
 

@@ -89,6 +89,32 @@ which grants or revokes the role via `addMemberRole`/`removeMemberRole` in
 > The Hobby plan runs crons once daily and may fire up to ~1h late — fine for a
 > morning post.
 
+## Patch notes auto-post
+
+When a **GitHub Release** is published, GitHub fires a `release` webhook at
+`/api/github/release`. The route verifies the HMAC signature
+(`X-Hub-Signature-256` vs `GITHUB_WEBHOOK_SECRET`,
+`src/lib/github/webhook.ts`), and on `action: "published"` (skipping drafts and
+prereleases) posts the release notes as an embed to `#patch-notes` via the bot.
+No more hand-copying changelog entries into the channel.
+
+This uses a **repo webhook**, not a GitHub Action — so it needs no workflow
+file (our token can't push `.github/workflows/*`).
+
+### One-time setup
+
+1. **GitHub** → repo **Settings → Webhooks → Add webhook**:
+   - Payload URL: `https://solvepuddle.com/api/github/release`
+   - Content type: `application/json`
+   - Secret: a random string (`openssl rand -hex 32`)
+   - "Which events?" → **Let me select** → **Releases** only.
+2. **Env** (local + Vercel): `GITHUB_WEBHOOK_SECRET` (same as the webhook
+   secret) and `DISCORD_PATCHNOTES_CHANNEL_ID`.
+3. **Bot perms** in `#patch-notes`: View Channel, Send Messages, Embed Links.
+
+After that, the GitHub Release step in [RELEASING.md](../../docs/RELEASING.md)
+is all it takes — the notes land in Discord on their own.
+
 ## How the pieces connect (code)
 
 - `src/lib/discord/sdk.ts` — `isInDiscordActivity()`, lazy SDK init, `patchSupabaseForActivity()`,
