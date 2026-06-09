@@ -1,0 +1,35 @@
+{
+  "issue_no": 36,
+  "vol": 2,
+  "date_active": "2026-07-08",
+  "title": "The Two Sentries",
+  "genre": "deduction",
+  "difficulty": 3,
+  "prompt": [
+    "Two herons guard two reed channels out of the mire. One channel leads safely home, the other into deep and hungry water, and both herons know exactly which is which.",
+    "One heron always speaks the truth and the other always lies, but they look identical and you cannot tell which is which. You may ask a single heron one yes or no question before you choose a channel.",
+    "Which plan is certain to send you down the safe channel?"
+  ],
+  "answer": "ask either heron whether the other heron would call the left channel safe, then take the left only if the answer is no.",
+  "answer_display": "Ask either heron whether the other heron would call the left channel safe, then take the left only if the answer is no.",
+  "hints": [
+    "You cannot trust either heron's plain answer, because you do not know which one lies. You want a question whose answer comes out the same whichever heron you happen to ask.",
+    "Try asking one heron what the other heron would say. A truthful heron honestly reports a lie, and a liar twists an honest answer, so either way the reply passes through exactly one lie.",
+    "Ask either heron whether the other would call the left channel safe. Because the reply is always flipped, a yes means the left is deadly and a no means the left is safe."
+  ],
+  "solution_lede": "The danger is that a single answer from a single heron seems worthless, since you do not know whether you are hearing truth or a lie. The escape is to build a question that launders out the difference, and you do that by routing it through both herons at once.\n\nAsk either one, \"Would the other heron call the left channel safe?\" If you happen to ask the truthful heron, it honestly reports the liar's answer, which is a lie. If you ask the liar, it dishonestly reports the truthful heron's answer, which it flips into a lie. Both paths run through exactly one falsehood, so the reply is always the reverse of the truth. A yes therefore means the left channel is deadly, and a no means it is safe. Take the left only on a no.",
+  "solution_steps": [
+    { "body": "A direct question fails, since you cannot tell a truthful answer from a lie." },
+    { "body": "Asking one heron what the other would say always passes through exactly one lie, whichever heron you ask, so the reply is always flipped from the truth." },
+    { "body": "Ask whether the other heron would call the left safe. A no means the left is genuinely safe, so take the left on a no and the right on a yes." }
+  ],
+  "input_type": "choice",
+  "input_config": {
+    "options": [
+      "Ask either heron whether the other heron would call the left channel safe, then take the left only if the answer is no.",
+      "Ask either heron whether the left channel is safe, and believe the answer.",
+      "Ask whichever heron looks more honest which channel is safe, and trust it.",
+      "Ask either heron whether it always tells the truth, then take the channel it faces."
+    ]
+  }
+}

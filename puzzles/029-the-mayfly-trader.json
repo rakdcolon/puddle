@@ -1,0 +1,28 @@
+{
+  "issue_no": 29,
+  "vol": 2,
+  "date_active": "2026-07-01",
+  "title": "The Mayfly Trader",
+  "genre": "quant",
+  "difficulty": 2,
+  "prompt": [
+    "A frog at the edge of the mire trades mayflies, and she keeps one strange rule: to every customer she hands exactly half of the mayflies she is holding, and then half a mayfly more.",
+    "Yet she is famous for never once tearing a mayfly in two. Every customer leaves with a whole number, and so does she.",
+    "After exactly three customers her cupped hands are empty. How many mayflies did she begin the morning with?"
+  ],
+  "answer": "7",
+  "answer_display": "7 mayflies",
+  "hints": [
+    "Work backwards from the empty hands. After the third customer she holds none. How many must she have held just before that trade?",
+    "If she holds h mayflies and gives away half of them plus half a mayfly, she is left with (h minus 1) divided by 2. Step back one customer at a time.",
+    "Before the third customer she held 1 mayfly. Before the second she held 3. Step back once more to reach the morning's start."
+  ],
+  "solution_lede": "The rule sounds impossible. How can you always give away half your mayflies plus half a mayfly and never split one? The secret is that her count is always odd at the moment of a trade, and half of an odd number plus a half lands exactly on a whole number.\n\nThe clean way in is to walk backwards. If she is left with L mayflies after a trade, then just before it she held a number h with (h minus 1) divided by 2 equal to L, which rearranges to h equals two L plus one, always odd. Start from empty: after the third customer she holds 0, so before that trade she held 1, before the second she held 3, and before the first she held 7. She began with seven mayflies.",
+  "solution_steps": [
+    { "body": "Giving half of h plus half a mayfly leaves (h minus 1) divided by 2. Calling that L gives h equals two L plus one, always odd, so no mayfly is ever split." },
+    { "body": "After the third customer she holds 0, so before that trade she held two times 0 plus 1, which is 1." },
+    { "body": "Before the second trade she held two times 1 plus 1, which is 3. Before the first, two times 3 plus 1, which is 7. Forwards: 7 leaves 3, then 1, then 0." }
+  ],
+  "input_type": "numeric",
+  "input_config": { "min": 1, "max": 100 }
+}

@@ -1,0 +1,28 @@
+{
+  "issue_no": 34,
+  "vol": 2,
+  "date_active": "2026-07-06",
+  "title": "The Mayfly's Errand",
+  "genre": "lateral",
+  "difficulty": 3,
+  "prompt": [
+    "A frog and a newt sit at opposite ends of a straight channel twelve pads long, then start toward each other along it. The frog hops one pad each second, the newt two pads each second.",
+    "The instant they set off, a mayfly springs from the frog's nose and darts to the newt, then straight back to the frog, then to the newt again, on and on at four pads each second, never resting.",
+    "When the frog and newt finally meet, how far has the mayfly flown in total?"
+  ],
+  "answer": "16",
+  "answer_display": "16 pads",
+  "hints": [
+    "You could try to add up the mayfly's endless shrinking trips, but there is a far gentler road. Ask instead how long the whole chase lasts.",
+    "The frog and newt close the twelve pad gap together at one plus two, which is three pads every second. So when do they meet?",
+    "They meet after four seconds. The mayfly flew four pads each second the entire time, and distance is simply speed multiplied by time."
+  ],
+  "solution_lede": "This puzzle dangles a trap: the mayfly's path is an endless series of shorter and shorter dashes, and summing them looks like hard work. The trick is to refuse the bait and look at time instead of distance.\n\nThe frog and newt approach each other at a combined three pads per second, so they erase the twelve pad gap in exactly four seconds. The mayfly, meanwhile, has been flying the whole of those four seconds without pause, at four pads per second. Its total distance is just four pads per second times four seconds, which is sixteen pads. The infinite zigzag never needed to be added up at all.",
+  "solution_steps": [
+    { "body": "The frog and newt close the gap at one plus two, three pads per second." },
+    { "body": "Twelve pads divided by three pads per second means they meet after four seconds." },
+    { "body": "The mayfly flies the entire four seconds at four pads per second, covering four times four, sixteen pads." }
+  ],
+  "input_type": "numeric",
+  "input_config": { "min": 0, "max": 100 }
+}

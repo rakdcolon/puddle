@@ -1,0 +1,28 @@
+{
+  "issue_no": 37,
+  "vol": 2,
+  "date_active": "2026-07-09",
+  "title": "The Toad's Marks",
+  "genre": "wordplay",
+  "difficulty": 3,
+  "prompt": [
+    "Each evening the old toad counts the fireflies as they wake, scratching a single mark into a flat stone for every new one, but he records only the first letter of each number's name.",
+    "Tonight the stone already reads, in order: O, T, T, F, F, S, S, E.",
+    "What letter does the toad scratch next?"
+  ],
+  "answer": "n",
+  "answer_display": "N",
+  "hints": [
+    "These are not random scratches. Try reading them aloud, in order, and listen for something familiar.",
+    "Remember what the toad is doing the whole time: counting upward, one firefly at a time.",
+    "O is for one, T for two, T for three, F for four, F for five, S for six, S for seven, E for eight. What letter begins the next number?"
+  ],
+  "solution_lede": "The marks look like a code, and they are, but a gentle one. The toad is simply counting, and writing down the first letter of each number's name as he goes.\n\nRead in order, O, T, T, F, F, S, S, E are the initials of one, two, three, four, five, six, seven, eight. The very next number is nine, so the next mark is the letter N.",
+  "solution_steps": [
+    { "body": "Match each letter to a counting number by its name: O is one, T is two, T is three, F is four, F is five, S is six, S is seven, E is eight." },
+    { "body": "The sequence is just the counting numbers in order, recorded by their first letter." },
+    { "body": "The number after eight is nine, whose name begins with N. The toad scratches N." }
+  ],
+  "input_type": "freetext",
+  "input_config": null
+}

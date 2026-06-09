@@ -15,7 +15,11 @@ merge. At release time it is renamed to the new version with a date. See
 
 ## [Unreleased]
 
-_Nothing yet._
+### Added
+- **Volume II: The Mire.** Fourteen new puzzles sharing a single swamp world
+  and a recurring cast, each a beautiful classic re-skinned into the mire. Runs
+  daily from June 28 to July 11 (Vol. II, No. 26 to 39). Release notes:
+  [docs/volumes/volume-2-the-mire.md](docs/volumes/volume-2-the-mire.md).
 
 ## [1.3.0] - 2026-06-08
 

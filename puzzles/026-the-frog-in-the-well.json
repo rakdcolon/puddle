@@ -1,0 +1,28 @@
+{
+  "issue_no": 26,
+  "vol": 2,
+  "date_active": "2026-06-28",
+  "title": "The Frog in the Well",
+  "genre": "quant",
+  "difficulty": 2,
+  "prompt": [
+    "A young frog has tumbled to the bottom of a dry stone well, thirty feet beneath the mire.",
+    "Each day she climbs three feet up the slick wall. Each night, as she sleeps, she slides two feet back down.",
+    "On which day does she finally reach the top and hop free?"
+  ],
+  "answer": "28",
+  "answer_display": "Day 28",
+  "hints": [
+    "Her real progress is only one foot a day once the nightly slide is counted. But the slide only matters on nights she is still trapped inside the well.",
+    "On the morning she can reach the rim, she climbs out before night falls, so that day has no slide. Work out the last height from which a three foot climb clears the top.",
+    "She needs to begin a day at twenty seven feet, since three more reaches thirty. Count how many one foot days it takes to first stand at twenty seven feet."
+  ],
+  "solution_lede": "The trap is to say thirty days, treating every day as a tidy net gain of one foot. That quietly assumes she slides on the final night too, but the moment she clears the rim she is gone, and there is no slide.\n\nSo separate the last climb from all the others. She nets one foot per full day and night, so at the start of each new day she stands at a height equal to the number of nights already passed. To begin a day at twenty seven feet she needs twenty seven full cycles, reaching that height at the dawn of day twenty eight. That morning she climbs from twenty seven to thirty and hops free before night can pull her back.",
+  "solution_steps": [
+    { "body": "Each full day and night nets a gain of one foot, so after n nights she begins the next day at height n feet." },
+    { "body": "She escapes on the first day she can climb three feet to the top, which means starting that day at twenty seven feet or higher." },
+    { "body": "She first stands at twenty seven feet at the dawn of day twenty eight. She climbs to thirty and is out, with no slide. The answer is day twenty eight." }
+  ],
+  "input_type": "numeric",
+  "input_config": { "min": 1, "max": 60 }
+}
