@@ -251,7 +251,7 @@ export async function getUserProfile(userId: string): Promise<UserProfile> {
   )
   const streak = streakLength(solvedDates, true)
 
-  // Calendar: last 52 weeks
+  // Calendar: last 365 days (52 weeks + 1 day)
   const solveByDate = new Map(allSolves.map(s => [(s.puzzles as any)?.date_active, s]))
   const calendar: CalendarEntry[] = []
   for (let i = 364; i >= 0; i--) {

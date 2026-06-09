@@ -35,7 +35,8 @@ export function nyDateDaysAgo(n: number): string {
 // yesterday (!includeToday). `solvedDates` holds 'YYYY-MM-DD' date_active
 // values. When includeToday is true and today is not yet solved, the run is
 // measured from yesterday rather than broken (so an unsolved today does not zero
-// the streak before the day is over).
+// the streak before the day is over). Looks back up to 365 days, so the maximum
+// reported streak is 365 (or 366 when includeToday is true).
 export function streakLength(solvedDates: Set<string>, includeToday: boolean): number {
   let streak = 0
   for (let i = includeToday ? 0 : 1; i <= 365; i++) {
