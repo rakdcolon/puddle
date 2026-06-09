@@ -1,6 +1,7 @@
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { createServiceClient } from '@/lib/supabase/server'
 import { totalXpToLevel } from '@/lib/utils/xp'
+import { nyDateDaysAgo, streakLength } from '@/lib/utils/dates'
 import type { User, UserProfile, CalendarEntry, AuthProvider, AuthIdentity } from '@/types'
 
 const SUB_COLUMN: Record<AuthProvider, 'google_sub' | 'discord_sub'> = {
@@ -38,19 +39,12 @@ export async function getCurrentStreak(userId: string): Promise<number> {
     .eq('user_id', userId)
     .eq('status', 'solved')
 
-  const solvedDates = new Set(
+  const solvedDates = new Set<string>(
     (solves ?? []).map(s => (s.puzzles as any)?.date_active).filter(Boolean),
   )
 
-  let streak = 0
-  const today = new Date()
-  for (let i = 1; i <= 365; i++) {
-    const d = new Date(today)
-    d.setUTCDate(d.getUTCDate() - i)
-    if (solvedDates.has(d.toISOString().slice(0, 10))) streak++
-    else break
-  }
-  return streak
+  // Streak strictly before today (the page adds +1 when today is solved).
+  return streakLength(solvedDates, false)
 }
 
 export async function getUserById(id: string): Promise<User | null> {
@@ -250,27 +244,18 @@ export async function getUserProfile(userId: string): Promise<UserProfile> {
 
   const { level, xpInLevel, xpForLevel } = totalXpToLevel(totalXp)
 
-  // Current streak (consecutive days solved, counting backwards from today)
-  const solvedDates = new Set(
+  // Current streak (consecutive days solved, counting backwards from today,
+  // including today when it has been solved).
+  const solvedDates = new Set<string>(
     solved.map(s => (s.puzzles as any)?.date_active).filter(Boolean),
   )
-  let streak = 0
-  const today = new Date()
-  for (let i = 0; i < 365; i++) {
-    const d = new Date(today)
-    d.setUTCDate(d.getUTCDate() - i)
-    const key = d.toISOString().slice(0, 10)
-    if (solvedDates.has(key)) streak++
-    else if (i > 0) break
-  }
+  const streak = streakLength(solvedDates, true)
 
   // Calendar: last 52 weeks
   const solveByDate = new Map(allSolves.map(s => [(s.puzzles as any)?.date_active, s]))
   const calendar: CalendarEntry[] = []
   for (let i = 364; i >= 0; i--) {
-    const d = new Date(today)
-    d.setUTCDate(d.getUTCDate() - i)
-    const dateStr = d.toISOString().slice(0, 10)
+    const dateStr = nyDateDaysAgo(i)
     const s = solveByDate.get(dateStr)
     calendar.push({
       date: dateStr,
