@@ -15,9 +15,28 @@ merge. At release time it is renamed to the new version with a date. See
 
 ## [Unreleased]
 
+_Nothing yet._
+
+## [1.4.0] - 2026-06-09
+
+A reliability-and-polish release: several shipped-but-broken features fixed, plus
+a Discord link and in-page announcements.
+
 ### Added
 - **Discord link in the footer.** A Discord icon in the site footer links to the
-  community server (set via `NEXT_PUBLIC_DISCORD_INVITE_URL`).
+  community server.
+- **In-page announcements.** A dismissible "what's new" bar at the top of the site
+  points to new things (currently a Volume II note with a link to the Discord).
+  Dismissals are remembered per device.
+
+### Fixed
+- **Give-ups are now recorded.** Choosing "Give up" reliably saves your reveal
+  (signed-in or not), and signed-in players who give up can always open the worked
+  solution.
+- **Streaks and the issue number now roll over at New York midnight**, matching when
+  the daily puzzle changes, so they no longer drift by a day in the evening.
+- **Settings actually apply.** Sound effects, hint pacing (instant or a five-second
+  pause), and the streak toggle now take effect during play.
 
 ## [1.3.1] - 2026-06-09
 
@@ -129,7 +148,8 @@ Baseline of the production application at `solvepuddle.com`.
   account (matched by verified email), so the nav and profile work after
   signing in with Discord.
 
-[Unreleased]: https://github.com/rakdcolon/puddle/compare/v1.3.1...HEAD
+[Unreleased]: https://github.com/rakdcolon/puddle/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/rakdcolon/puddle/compare/v1.3.1...v1.4.0
 [1.3.1]: https://github.com/rakdcolon/puddle/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/rakdcolon/puddle/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/rakdcolon/puddle/compare/v1.1.0...v1.2.0
