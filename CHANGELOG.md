@@ -20,6 +20,8 @@ merge. At release time it is renamed to the new version with a date. See
   and a recurring cast, each a beautiful classic re-skinned into the mire. Runs
   daily from June 10 to June 23 (Vol. II, No. 12 to 25). Release notes:
   [docs/volumes/volume-2-the-mire.md](docs/volumes/volume-2-the-mire.md).
+- **Discord link in the footer.** A Discord icon in the site footer links to the
+  community server (set via `NEXT_PUBLIC_DISCORD_INVITE_URL`).
 
 ## [1.3.0] - 2026-06-08
 
