@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { getPuzzleById } from '@/lib/db/puzzles'
-import { upsertSolve } from '@/lib/db/solves'
-import { upsertAnonSolve } from '@/lib/db/anon-solves'
+import { upsertSolve, markRevealed } from '@/lib/db/solves'
+import { upsertAnonSolve, markAnonRevealed } from '@/lib/db/anon-solves'
 import { getCurrentUser } from '@/lib/auth/current-user'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -34,13 +34,36 @@ export async function POST(
 
   const { id } = await params
   const body = await request.json().catch(() => null)
-  if (!body?.answer) {
-    return NextResponse.json({ error: 'Missing answer' }, { status: 400 })
+  if (!body) {
+    return NextResponse.json({ error: 'Missing body' }, { status: 400 })
   }
 
   const puzzle = await getPuzzleById(id)
   if (!puzzle) {
     return NextResponse.json({ error: 'Puzzle not found' }, { status: 404 })
+  }
+
+  // Give-up / reveal: persist a 'revealed' record for signed-in and anonymous
+  // players (no answer required). Insert-if-absent, so it never overwrites an
+  // existing solve. Without this, give-ups vanish and solve-rate is unknowable.
+  if (body.status === 'revealed') {
+    const user = await getCurrentUser()
+    if (user) {
+      await markRevealed(
+        user.id, puzzle.id,
+        body.elapsed_seconds ?? null, body.hints_used ?? 0, body.attempts ?? 0,
+      ).catch(() => {})
+    } else if (typeof body.client_id === 'string' && UUID_RE.test(body.client_id)) {
+      await markAnonRevealed(
+        body.client_id, puzzle.id,
+        body.elapsed_seconds ?? null, body.hints_used ?? 0, body.attempts ?? 0,
+      ).catch(() => {})
+    }
+    return NextResponse.json({ revealed: true })
+  }
+
+  if (!body.answer) {
+    return NextResponse.json({ error: 'Missing answer' }, { status: 400 })
   }
 
   const normalized = String(body.answer).trim().toLowerCase().replace(/[\s,.\-_]/g, '')

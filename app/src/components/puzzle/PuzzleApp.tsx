@@ -201,16 +201,16 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
     setStatus('revealed')
     chime('give-up')
     setPuddlePresence({ details: 'Saw the solution', state: 'Daily brain teaser' })
-    // Persist skip server-side
+    // Persist the give-up server-side (signed-in via session, anon via client_id)
     fetch(`/api/puzzle/${puzzle.id}/submit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        answer: '__skip__',
+        status: 'revealed',
         elapsed_seconds: elapsed,
         hints_used: hintLevel,
         attempts,
-        status: 'revealed',
+        client_id: getClientId(),
       }),
     }).catch(() => {})
     recordDaily({

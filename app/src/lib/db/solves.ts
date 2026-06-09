@@ -74,3 +74,29 @@ export async function updateSolveHints(
     .eq('puzzle_id', puzzleId)
     .lt('hints_used', hintsUsed)
 }
+
+// Record a give-up as a 'revealed' solve. Uses an insert-if-absent upsert
+// (ON CONFLICT DO NOTHING) so it never overwrites an existing record: not a
+// prior 'solved', nor a 'revealed' already created when the player opened a hint.
+export async function markRevealed(
+  userId: string,
+  puzzleId: string,
+  elapsedSeconds: number | null,
+  hintsUsed: number,
+  attempts: number,
+): Promise<void> {
+  const db = createServiceClient()
+  const { error } = await db.from('solves').upsert(
+    {
+      user_id: userId,
+      puzzle_id: puzzleId,
+      status: 'revealed',
+      elapsed_seconds: elapsedSeconds,
+      hints_used: hintsUsed,
+      attempts,
+      solved_at: new Date().toISOString(),
+    },
+    { onConflict: 'user_id,puzzle_id', ignoreDuplicates: true },
+  )
+  if (error) throw error
+}
