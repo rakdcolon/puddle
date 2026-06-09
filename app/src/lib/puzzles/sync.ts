@@ -11,6 +11,23 @@ export const REQUIRED_FIELDS = [
   'solution_steps', 'input_type',
 ] as const
 
+// Expected type of each required field, so a malformed value (e.g. a string
+// issue_no, which is also the upsert conflict key) is rejected up front rather
+// than corrupting the diff or the write.
+const FIELD_TYPES: Record<string, 'string' | 'number' | 'array'> = {
+  issue_no: 'number', vol: 'number', difficulty: 'number',
+  date_active: 'string', title: 'string', genre: 'string',
+  answer: 'string', answer_display: 'string', solution_lede: 'string',
+  input_type: 'string',
+  prompt: 'array', hints: 'array', solution_steps: 'array',
+}
+
+function typeOk(value: unknown, kind: 'string' | 'number' | 'array'): boolean {
+  if (kind === 'array') return Array.isArray(value)
+  if (kind === 'number') return typeof value === 'number' && Number.isFinite(value)
+  return typeof value === 'string'
+}
+
 export interface RawPuzzleFile {
   name: string
   content: string
@@ -49,6 +66,14 @@ export function parseAndValidate(files: RawPuzzleFile[]): {
     const missing = REQUIRED_FIELDS.filter(f => puzzle[f] === undefined)
     if (missing.length) {
       errors.push(`${name}: missing required fields: ${missing.join(', ')}`)
+      continue
+    }
+
+    const typeErrors = Object.entries(FIELD_TYPES)
+      .filter(([field, kind]) => !typeOk(puzzle[field], kind))
+      .map(([field, kind]) => `${field} must be a ${kind}`)
+    if (typeErrors.length) {
+      errors.push(`${name}: ${typeErrors.join('; ')}`)
       continue
     }
 

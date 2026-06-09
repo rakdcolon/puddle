@@ -19,6 +19,18 @@ function githubHeaders(accept: string): Record<string, string> {
   return headers
 }
 
+// A hung GitHub request would otherwise stall the whole cron invocation. Bound
+// every fetch so a slow/unresponsive upstream fails fast (AbortError) instead.
+async function fetchWithTimeout(url: string, init: RequestInit = {}, ms = 10000): Promise<Response> {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), ms)
+  try {
+    return await fetch(url, { ...init, signal: controller.signal })
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
 // Syncs puzzles/ → Supabase. Driven by a Vercel cron (see vercel.json) and also
 // hittable on demand with the cron bearer token for an instant sync. Aborts
 // before touching the DB if the listing is empty or any file fails to fetch or
@@ -32,10 +44,15 @@ export async function GET(request: NextRequest) {
   const dryRun = request.nextUrl.searchParams.get('dry-run') === '1'
 
   // 1. List puzzles/ — a single GitHub API call.
-  const listRes = await fetch(
-    `https://api.github.com/repos/${REPO}/contents/puzzles?ref=${BRANCH}`,
-    { headers: githubHeaders('application/vnd.github+json'), cache: 'no-store' },
-  )
+  let listRes: Response
+  try {
+    listRes = await fetchWithTimeout(
+      `https://api.github.com/repos/${REPO}/contents/puzzles?ref=${BRANCH}`,
+      { headers: githubHeaders('application/vnd.github+json'), cache: 'no-store' },
+    )
+  } catch {
+    return NextResponse.json({ ok: false, error: 'GitHub listing timed out' }, { status: 504 })
+  }
   if (!listRes.ok) {
     return NextResponse.json(
       { ok: false, error: `GitHub listing failed (${listRes.status})` },
@@ -56,18 +73,23 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ ok: false, error: 'no puzzle files found' }, { status: 502 })
   }
 
-  // 2. Fetch each file's raw contents (raw.githubusercontent.com — a CDN, not
-  //    subject to the API rate limit).
-  const files: RawPuzzleFile[] = []
-  for (const f of jsonFiles as { name: string; download_url: string }[]) {
-    const res = await fetch(f.download_url, { cache: 'no-store' })
-    if (!res.ok) {
-      return NextResponse.json(
-        { ok: false, error: `fetch ${f.name} failed (${res.status})` },
-        { status: 502 },
-      )
-    }
-    files.push({ name: f.name, content: await res.text() })
+  // 2. Fetch each file's raw contents in parallel (raw.githubusercontent.com —
+  //    a CDN, not subject to the API rate limit). Promise.all rejects on the
+  //    first failure, preserving the abort-on-any-error guarantee.
+  let files: RawPuzzleFile[]
+  try {
+    files = await Promise.all(
+      (jsonFiles as { name: string; download_url: string }[]).map(async f => {
+        const res = await fetchWithTimeout(f.download_url, { cache: 'no-store' })
+        if (!res.ok) throw new Error(`fetch ${f.name} failed (${res.status})`)
+        return { name: f.name, content: await res.text() }
+      }),
+    )
+  } catch (err) {
+    return NextResponse.json(
+      { ok: false, error: err instanceof Error ? err.message : 'fetch failed' },
+      { status: 502 },
+    )
   }
 
   // 3. Validate — refuse to touch the DB if anything is malformed.
