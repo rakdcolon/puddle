@@ -16,12 +16,18 @@ merge. At release time it is renamed to the new version with a date. See
 ## [Unreleased]
 
 ### Added
+- **Discord link in the footer.** A Discord icon in the site footer links to the
+  community server (set via `NEXT_PUBLIC_DISCORD_INVITE_URL`).
+
+## [1.3.1] - 2026-06-09
+
+Volume II of Puddle: the first themed collection, set in the mire.
+
+### Added
 - **Volume II: The Mire.** Fourteen new puzzles sharing a single swamp world
   and a recurring cast, each a beautiful classic re-skinned into the mire. Runs
   daily from June 10 to June 23 (Vol. II, No. 12 to 25). Release notes:
   [docs/volumes/volume-2-the-mire.md](docs/volumes/volume-2-the-mire.md).
-- **Discord link in the footer.** A Discord icon in the site footer links to the
-  community server (set via `NEXT_PUBLIC_DISCORD_INVITE_URL`).
 
 ## [1.3.0] - 2026-06-08
 
@@ -123,7 +129,8 @@ Baseline of the production application at `solvepuddle.com`.
   account (matched by verified email), so the nav and profile work after
   signing in with Discord.
 
-[Unreleased]: https://github.com/rakdcolon/puddle/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/rakdcolon/puddle/compare/v1.3.1...HEAD
+[1.3.1]: https://github.com/rakdcolon/puddle/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/rakdcolon/puddle/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/rakdcolon/puddle/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/rakdcolon/puddle/compare/v1.0.1...v1.1.0
