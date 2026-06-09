@@ -35,7 +35,7 @@ a Discord link and in-page announcements.
   solution.
 - **Streaks and the issue number now roll over at New York midnight**, matching when
   the daily puzzle changes, so they no longer drift by a day in the evening.
-- **Settings actually apply.** Sound effects, hint pacing (instant or a five second
+- **Settings actually apply.** Sound effects, hint pacing (instant or a five-second
   pause), and the streak toggle now take effect during play.
 
 ## [1.3.1] - 2026-06-09
