@@ -9,8 +9,8 @@ old toad who counts in riddles.
 
 Every puzzle is a beautiful classic re-skinned into that world, chosen so any
 curious mind can crack it with a nudge or two, and built around a single elegant
-turn. Two weeks of them, running daily from **June 28 to July 11** (Vol. II,
-No. 26 to 39).
+turn. Two weeks of them, running daily from **June 10 to June 23** (Vol. II,
+No. 12 to 25).
 
 A few to look forward to:
 
