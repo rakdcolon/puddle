@@ -40,7 +40,8 @@ export default async function PuzzlePage() {
     settings = {
       sound: s?.sound ?? true,
       show_streak: s?.show_streak ?? true,
-      hint_pacing: (s?.hint_pacing ?? 'instant') as PuzzleSettings['hint_pacing'],
+      // Validate at runtime rather than asserting the DB value's type.
+      hint_pacing: s?.hint_pacing === '5s-pause' ? '5s-pause' : 'instant',
     }
   }
 
