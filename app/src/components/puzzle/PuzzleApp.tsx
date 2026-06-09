@@ -24,13 +24,10 @@ const CHIME_SPECS: Record<ChimeKind, NoteSpec[]> = {
   notes:    [[523.25, 0, 0.06, 0.18], [659.25, 0.09, 0.05, 0.15]],
 }
 
-// Sound on/off mirrors the player's setting into this module flag, since chime()
-// is called from several nested components.
-let soundOn = true
-function setSoundOn(v: boolean) { soundOn = v }
-
-function chime(kind: ChimeKind = 'correct') {
-  if (!soundOn) return
+// The sound player. soundEnabled is passed per call so the on/off preference
+// stays scoped to the component instance, with no shared module state.
+function playChime(kind: ChimeKind = 'correct', soundEnabled = true) {
+  if (!soundEnabled) return
   try {
     if (!audioCtx.ctx) audioCtx.ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
     const ctx = audioCtx.ctx
@@ -132,8 +129,9 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
   const isFinished = status === 'correct' || status === 'revealed'
   const elapsed = useTimer(!isFinished && status !== 'wrong')
 
-  // Mirror the sound setting into the module-level chime gate.
-  useEffect(() => { setSoundOn(settings.sound) }, [settings.sound])
+  // Play a chime honoring the sound setting. Instance-scoped via useCallback, so
+  // two players on one page would never share each other's preference.
+  const chime = useCallback((kind: ChimeKind) => playChime(kind, settings.sound), [settings.sound])
 
   const submit = useCallback(async () => {
     if (!answer.toString().trim() || isFinished || submitting) return
@@ -195,7 +193,7 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
     } finally {
       setSubmitting(false)
     }
-  }, [answer, isFinished, submitting, puzzle.id, elapsed, hintLevel, attempts, issueNo, puzzle.title, streakBeforeToday])
+  }, [answer, isFinished, submitting, puzzle.id, elapsed, hintLevel, attempts, issueNo, puzzle.title, streakBeforeToday, chime])
 
   // Apply a hint reveal immediately: bump the level, chime, and track it.
   const revealNow = useCallback((next: number) => {
@@ -207,7 +205,7 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ hint_level: next }),
     }).catch(() => {})
-  }, [puzzle.id])
+  }, [puzzle.id, chime])
 
   const revealHint = useCallback(() => {
     if (hintLevel >= puzzle.hints.length || isFinished || hintCountdown > 0) return
@@ -249,7 +247,7 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
       issueNo,
       puzzleId: puzzle.id,
     })
-  }, [isFinished, puzzle.id, puzzle.title, elapsed, hintLevel, attempts, issueNo])
+  }, [isFinished, puzzle.id, puzzle.title, elapsed, hintLevel, attempts, issueNo, chime])
 
   const visibleHints = puzzle.hints.slice(0, hintLevel)
 
@@ -430,6 +428,7 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
                   min={inputConfig?.min ?? 0}
                   max={inputConfig?.max ?? 999}
                   compact={compact}
+                  sound={settings.sound}
                 />
               )}
 
@@ -687,6 +686,7 @@ function NumericStepper({
   min,
   max,
   compact,
+  sound,
 }: {
   value: string
   onChange: (v: string) => void
@@ -694,6 +694,7 @@ function NumericStepper({
   min: number
   max: number
   compact: boolean
+  sound: boolean
 }) {
   const num = value === '' ? 0 : parseInt(value, 10)
   const set = (n: number) => onChange(String(Math.max(min, Math.min(max, n))))
@@ -712,7 +713,7 @@ function NumericStepper({
     <div className="flex items-center gap-0" style={{ maxWidth: 200 }}>
       <button
         disabled={locked}
-        onClick={() => { set(num - 1); chime('step') }}
+        onClick={() => { set(num - 1); playChime('step', sound) }}
         className="active:scale-[0.93] transition-transform duration-[120ms]"
         style={{ ...btnStyle, borderRadius: '12px 0 0 12px', borderRight: 'none' }}
       >
@@ -742,7 +743,7 @@ function NumericStepper({
       />
       <button
         disabled={locked}
-        onClick={() => { set(num + 1); chime('step') }}
+        onClick={() => { set(num + 1); playChime('step', sound) }}
         className="active:scale-[0.93] transition-transform duration-[120ms]"
         style={{ ...btnStyle, borderRadius: '0 12px 12px 0', borderLeft: 'none' }}
       >
