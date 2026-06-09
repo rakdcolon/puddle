@@ -1,9 +1,10 @@
 import Link from 'next/link'
 import { getCurrentUser } from '@/lib/auth/current-user'
 
-// Public invite to the community server. Set in env so there is no hardcoded
-// URL; the link simply does not render when it is unset.
-const DISCORD_INVITE = process.env.NEXT_PUBLIC_DISCORD_INVITE_URL
+// Public invite to the community server, shown as the footer Discord icon.
+// Defaults to the live invite; NEXT_PUBLIC_DISCORD_INVITE_URL overrides it.
+const DISCORD_INVITE =
+  process.env.NEXT_PUBLIC_DISCORD_INVITE_URL ?? 'https://discord.gg/nH3dKXnN4u'
 
 export default async function Footer() {
   const user = await getCurrentUser()
