@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Community Discord
+    url: https://discord.gg/nH3dKXnN4u
+    about: Questions, puzzle discussion, and general chat — usually the fastest way to get help.
+  - name: 🧩 Play Puddle
+    url: https://solvepuddle.com
+    about: Today's puzzle is always live here.
+  - name: 🔒 Report a security issue
+    url: https://github.com/rakdcolon/puddle/security/advisories/new
+    about: Report vulnerabilities privately — never in a public issue.

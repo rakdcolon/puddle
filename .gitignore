@@ -29,6 +29,11 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local tooling / editor (not part of the repo)
+.claude/
+.vscode/
+.idea/
+
 # typescript
 *.tsbuildinfo
 app/next-env.d.ts
