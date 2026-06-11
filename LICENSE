@@ -1,0 +1,45 @@
+Puddle — Proprietary License
+Copyright (c) 2026 Rohan Karamel. All rights reserved.
+
+This source code is made publicly visible for the purposes of transparency,
+evaluation, and reference only. It is NOT open-source software. No license,
+whether express, implied, by estoppel, or otherwise, is granted to any person
+under any patent, copyright, trademark, or other intellectual-property right,
+except as explicitly stated below.
+
+1. PERMITTED
+   You may:
+   (a) view and read the source code; and
+   (b) fork this repository on GitHub solely to prepare and submit contributions
+       back to this project by pull request.
+
+2. NOT PERMITTED WITHOUT PRIOR WRITTEN PERMISSION
+   You may not, in whole or in part:
+   (a) use, copy, modify, merge, publish, distribute, sublicense, or sell the
+       software or any portion of it;
+   (b) deploy, host, operate, or otherwise make the software available as a
+       service or product, whether or not for a fee; or
+   (c) create derivative works for any purpose other than contributing back to
+       this project under Section 1(b).
+
+3. TRADEMARKS AND CONTENT
+   The "Puddle" name, logo, wordmark, visual design, and all puzzle content and
+   associated branding are the creative works and trademarks of the copyright
+   holder and are not licensed for any use under this license.
+
+4. CONTRIBUTIONS
+   By submitting a contribution (e.g., a pull request) you agree that your
+   contribution is licensed to the copyright holder under these same terms and
+   may be incorporated into the project at the copyright holder's discretion.
+
+5. NO WARRANTY
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHOR OR COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
+   OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+
+For licensing inquiries, contact the maintainers via the community Discord:
+https://discord.gg/nH3dKXnN4u
