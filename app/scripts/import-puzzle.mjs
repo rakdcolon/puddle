@@ -15,6 +15,7 @@
 import { readFileSync } from 'fs'
 import { resolve, join } from 'path'
 import { createClient } from '@supabase/supabase-js'
+import { assertEnvironment } from '../src/lib/environment.mjs'
 
 // ─── Load .env.local ──────────────────────────────────────────────────────────
 try {
@@ -33,6 +34,7 @@ try {
 }
 
 // ─── Validate env ─────────────────────────────────────────────────────────────
+assertEnvironment()
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY
 if (!url || !key) {

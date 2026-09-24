@@ -440,6 +440,7 @@ export default function PuzzleApp({ puzzle, initialSolve, issueNo = 1, vol = 1, 
                   onChange={e => setAnswer(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter') submit() }}
                   placeholder="Type your answer…"
+                  aria-label="Your answer"
                   style={{
                     width: '100%',
                     fontSize: compact ? 20 : 24,
@@ -722,6 +723,7 @@ function NumericStepper({
       <input
         type="text"
         inputMode="numeric"
+        aria-label="Your answer"
         value={value}
         disabled={locked}
         onChange={e => onChange(e.target.value.replace(/[^0-9]/g, ''))}

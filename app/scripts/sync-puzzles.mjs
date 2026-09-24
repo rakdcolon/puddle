@@ -18,6 +18,7 @@
 import { readFileSync, readdirSync } from 'fs'
 import { resolve, join, basename } from 'path'
 import { createClient } from '@supabase/supabase-js'
+import { assertEnvironment } from '../src/lib/environment.mjs'
 
 const DRY_RUN = process.argv.includes('--dry-run')
 const PUZZLES_DIR = resolve(process.cwd(), '..', 'puzzles')
@@ -38,6 +39,7 @@ try {
   // rely on env vars already set in shell / CI
 }
 
+assertEnvironment()
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY
 if (!url || !key) {
@@ -57,6 +59,7 @@ const files = readdirSync(PUZZLES_DIR)
   .sort()
 
 const puzzles = []
+if (files.length === 0) throw new Error('Refusing to sync an empty puzzle archive')
 const errors = []
 const seenIssueNos = new Map() // issue_no → filename, to catch duplicates
 

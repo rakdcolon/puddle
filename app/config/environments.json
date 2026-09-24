@@ -1,0 +1,5 @@
+{
+  "dev": { "supabaseHost": "127.0.0.1", "supabasePort": "54321" },
+  "qa": { "supabaseHost": "mzwzcdyteyrlnrwcetxq.supabase.co", "supabasePort": "" },
+  "prod": { "supabaseHost": "cfluksodliqrdymhnvbc.supabase.co", "supabasePort": "" }
+}

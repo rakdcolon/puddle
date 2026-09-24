@@ -2,6 +2,10 @@
 # The Next.js app (and its lockfile) lives in /app.
 version: 2
 updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
   - package-ecosystem: "npm"
     directory: "/app"
     schedule:
