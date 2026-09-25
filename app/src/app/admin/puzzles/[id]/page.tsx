@@ -21,8 +21,8 @@ export default async function EditPuzzlePage({ params }: Props) {
 
   const db = createServiceClient()
   const [{ data: prev }, { data: next }] = await Promise.all([
-    db.from('puzzles').select('id').lt('issue_no', puzzle.issue_no).order('issue_no', { ascending: false }).limit(1).maybeSingle(),
-    db.from('puzzles').select('id').gt('issue_no', puzzle.issue_no).order('issue_no', { ascending: true }).limit(1).maybeSingle(),
+    db.from('puzzles').select('id').lt('date_active', puzzle.date_active).order('date_active', { ascending: false }).limit(1).maybeSingle(),
+    db.from('puzzles').select('id').gt('date_active', puzzle.date_active).order('date_active', { ascending: true }).limit(1).maybeSingle(),
   ])
 
   return (

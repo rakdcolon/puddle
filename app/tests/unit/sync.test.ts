@@ -12,6 +12,12 @@ test('validates the entire committed puzzle archive', () => {
 test('normalizes answers and restores reintroduced puzzles', () => {
   expect(parseAndValidate([file({...puzzle,answer:'  FIVE  ',deleted_at:'yesterday'})]).puzzles[0]).toMatchObject({answer:'five',deleted_at:null})
 })
+
+test('allows annual number reuse but rejects labels that disagree with the date', () => {
+  expect(parseAndValidate([file(puzzle),file({...puzzle,date_active:'2021-01-01',vol:21},'next-year.json')]).errors).toEqual([])
+  expect(parseAndValidate([file({...puzzle,issue_no:2})]).errors[0]).toMatch(/requires Vol/)
+  expect(parseAndValidate([file({...puzzle,date_active:'2026-02-29'})]).errors[0]).toMatch(/Invalid publication date/)
+})
 test('ignores templates and collects parse, shape, field, type and duplicate errors', () => {
   expect(parseAndValidate([file({},'template.json'),file({},'notes.txt')])).toEqual({puzzles:[],errors:[]})
   for (const value of [null,[],3,{}, {...puzzle,issue_no:'1'}, {...puzzle,prompt:'text'}, {...puzzle,title:4}]) {

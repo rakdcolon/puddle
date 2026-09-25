@@ -9,13 +9,14 @@
  *   cd app && npm run import-puzzle -- ../puzzles/my-puzzle.json
  *
  * Reads credentials from .env.local automatically.
- * Uses issue_no as the upsert key — safe to re-run to update an existing puzzle.
+ * Uses date_active as the upsert key — safe to re-run to update an existing puzzle.
  */
 
 import { readFileSync } from 'fs'
 import { resolve, join } from 'path'
 import { createClient } from '@supabase/supabase-js'
 import { assertEnvironment } from '../src/lib/environment.mjs'
+import { assertCalendarEdition } from '../src/lib/puzzles/numbering.mjs'
 
 // ─── Load .env.local ──────────────────────────────────────────────────────────
 try {
@@ -64,6 +65,7 @@ const REQUIRED = [
   'prompt', 'answer', 'answer_display', 'hints', 'solution_lede',
   'solution_steps', 'input_type',
 ]
+assertCalendarEdition(puzzle)
 const missing = REQUIRED.filter(f => puzzle[f] === undefined)
 if (missing.length) {
   console.error('Missing required fields:', missing.join(', '))
@@ -76,7 +78,7 @@ puzzle.answer = puzzle.answer.trim().toLowerCase()
 const db = createClient(url, key)
 const { data, error } = await db
   .from('puzzles')
-  .upsert(puzzle, { onConflict: 'issue_no' })
+  .upsert(puzzle, { onConflict: 'date_active' })
   .select('id, issue_no, title')
   .single()
 

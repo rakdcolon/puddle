@@ -2,6 +2,7 @@
 import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { openStore, validatePuzzle } from './core.mjs';
+import { assertCalendarEdition } from '../app/src/lib/puzzles/numbering.mjs';
 
 const REPO = 'rakdcolon/puddle';
 const API = `https://api.github.com/repos/${REPO}`;
@@ -11,13 +12,14 @@ const todayNY = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_
 export function publicationFiles(draft, today = todayNY()) {
   if (!/^[a-f0-9]{24}$/.test(draft.id ?? '')) throw new Error('Invalid draft ID');
   const puzzle = validatePuzzle(structuredClone(draft.puzzle));
+  assertCalendarEdition(puzzle);
   const digest = createHash('sha256').update(JSON.stringify(puzzle)).digest('hex').slice(0, 24);
   if (digest !== draft.id) throw new Error('Draft content does not match its ID');
   if (puzzle.date_active <= today) throw new Error('Publication requires a future date');
   if (!draft.source || !draft.review?.solution_check || !draft.review?.adaptation_notes) throw new Error('Missing source or editorial review');
   const files = [
-    { path: `puzzles/${String(puzzle.issue_no).padStart(3, '0')}-agent.json`, content: json(puzzle) },
-    { path: `puzzles/provenance/${puzzle.issue_no}.json`, content: json({ draft_id: draft.id, review: draft.review, source: draft.source }) },
+    { path: `puzzles/${puzzle.date_active}-agent.json`, content: json(puzzle) },
+    { path: `puzzles/provenance/${puzzle.date_active}.json`, content: json({ draft_id: draft.id, review: draft.review, source: draft.source }) },
   ];
   if (files.some(file => Buffer.byteLength(file.content) > 256_000)) throw new Error('Publication payload too large');
   return { puzzle, files, branch: `puzzle/${puzzle.date_active}` };
@@ -50,7 +52,7 @@ export async function publishDraft(draft, { apply = false, reviewed = false, tok
   if (!puzzleFiles.length) throw new Error('Refusing empty remote archive');
   for (const file of puzzleFiles) {
     const existing = JSON.parse(await readFile(`puzzles/${file.name}`, base));
-    if (existing.issue_no === plan.puzzle.issue_no || existing.date_active === plan.puzzle.date_active || existing.title?.toLowerCase() === plan.puzzle.title.toLowerCase()) throw new Error('Issue, date or title conflicts with current main');
+    if (existing.date_active === plan.puzzle.date_active || existing.title?.toLowerCase() === plan.puzzle.title.toLowerCase()) throw new Error('Date or title conflicts with current main');
   }
   // A date-named branch is an atomic reservation: two operators cannot create it.
   // Retries resume only if both published files are byte-for-byte identical.

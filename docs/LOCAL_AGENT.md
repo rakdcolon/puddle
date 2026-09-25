@@ -124,8 +124,9 @@ credential or invokes the publisher.
 Publishing reserves `puzzle/YYYY-MM-DD` by creating a new ref. A conflicting
 date branch is never overwritten. Identical retries can recover a partially
 completed run and reuse a PR; additional branch changes are rejected. Different
-dates can still race for the same issue number: main's required, up-to-date CI
-check validates archive uniqueness before merge. Review the source attribution,
+years can share a day-of-year number: filenames and provenance are keyed by full
+publication date. Main's required, up-to-date CI checks validate dates and edition
+labels before merge. Review the source attribution,
 solution and issue/date again on the PR. API/schema checks do not prove correctness.
 
 The result is a **draft PR**, not a live puzzle. After explicit approval and merge,

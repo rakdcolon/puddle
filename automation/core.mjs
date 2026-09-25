@@ -3,6 +3,7 @@ import { readFileSync, readdirSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
+import { calendarEdition } from '../app/src/lib/puzzles/numbering.mjs';
 
 export const ROOT = fileURLToPath(new URL('../', import.meta.url));
 export const STATE = join(ROOT, '.puddle-agent');
@@ -16,7 +17,8 @@ export function validatePuzzle(p) {
   requireValue(p && typeof p === 'object' && !Array.isArray(p), 'Expected puzzle object');
   requireValue(Object.keys(p).every(k => fields.includes(k)), 'Unknown puzzle fields');
   requireValue(fields.every(k => Object.hasOwn(p, k)), 'Missing puzzle fields; use the archive template');
-  for (const k of ['issue_no','vol']) requireValue(Number.isSafeInteger(p[k]) && p[k] > 0, `${k}: expected positive integer`);
+  requireValue(Number.isSafeInteger(p.issue_no) && p.issue_no > 0, 'issue_no: expected positive integer');
+  requireValue(Number.isSafeInteger(p.vol) && p.vol >= 0, 'vol: expected nonnegative integer');
   requireValue(/^\d{4}-\d{2}-\d{2}$/.test(p.date_active) && Number.isFinite(Date.parse(p.date_active)) && new Date(p.date_active).toISOString().slice(0,10) === p.date_active, 'Invalid date_active');
   requireValue(GENRES.includes(p.genre), 'Invalid genre');
   requireValue(Number.isInteger(p.difficulty) && p.difficulty >= 1 && p.difficulty <= 5, 'difficulty must be 1–5');
@@ -48,25 +50,35 @@ export function validatePuzzle(p) {
 }
 export function archive(root = ROOT) {
   return readdirSync(join(root,'puzzles')).filter(f => f.endsWith('.json') && f !== 'template.json')
-    .map(f => JSON.parse(readFileSync(join(root,'puzzles',f), 'utf8'))).sort((a,b) => a.issue_no - b.issue_no);
+    .map(f => JSON.parse(readFileSync(join(root,'puzzles',f), 'utf8'))).sort((a,b) => a.date_active.localeCompare(b.date_active));
 }
 export function openStore(path = join(STATE,'drafts.sqlite')) {
   mkdirSync(dirname(path), { recursive: true });
   const db = new DatabaseSync(path);
   db.exec(`PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;
     CREATE TABLE IF NOT EXISTS sources (id INTEGER PRIMARY KEY, payload TEXT NOT NULL, fetched_at TEXT NOT NULL);
-    CREATE TABLE IF NOT EXISTS drafts (id TEXT PRIMARY KEY, issue_no INTEGER UNIQUE NOT NULL, date_active TEXT UNIQUE NOT NULL,
+    CREATE TABLE IF NOT EXISTS drafts (id TEXT PRIMARY KEY, issue_no INTEGER NOT NULL, date_active TEXT UNIQUE NOT NULL,
       source_id INTEGER UNIQUE NOT NULL, puzzle TEXT NOT NULL, review TEXT NOT NULL, created_at TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS api_cache (key TEXT PRIMARY KEY, payload TEXT NOT NULL, expires INTEGER NOT NULL);
     CREATE TABLE IF NOT EXISTS limits (key TEXT PRIMARY KEY, value INTEGER NOT NULL);`);
+  // The publication date is unique; a day-of-year number repeats in later years.
+  if (/issue_no INTEGER UNIQUE/.test(db.prepare("SELECT sql FROM sqlite_master WHERE name='drafts'").get().sql)) {
+    db.exec(`BEGIN IMMEDIATE;
+      CREATE TABLE drafts_calendar (id TEXT PRIMARY KEY, issue_no INTEGER NOT NULL, date_active TEXT UNIQUE NOT NULL,
+        source_id INTEGER UNIQUE NOT NULL, puzzle TEXT NOT NULL, review TEXT NOT NULL, created_at TEXT NOT NULL);
+      INSERT INTO drafts_calendar SELECT * FROM drafts;
+      DROP TABLE drafts;
+      ALTER TABLE drafts_calendar RENAME TO drafts;
+      COMMIT;`);
+  }
   return db;
 }
 export function saveDraft(db, { puzzle, source_id, solution_check, adaptation_notes }, existing = archive()) {
-  const p = validatePuzzle(puzzle);
+  const p = validatePuzzle({...puzzle, ...calendarEdition(puzzle?.date_active)});
   requireValue(Number.isSafeInteger(source_id) && source_id > 0, 'Invalid source_id');
   requireValue(db.prepare('SELECT id FROM sources WHERE id = ?').get(source_id), 'Retrieve source with puddle_read before saving');
   text(solution_check, 'solution_check'); text(adaptation_notes, 'adaptation_notes');
-  requireValue(!existing.some(x => x.issue_no === p.issue_no || x.date_active === p.date_active || x.title.toLowerCase() === p.title.toLowerCase()), 'Issue, date or title already exists in archive');
+  requireValue(!existing.some(x => x.date_active === p.date_active || x.title.toLowerCase() === p.title.toLowerCase()), 'Date or title already exists in archive');
   const today = new Intl.DateTimeFormat('en-CA', {timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
   requireValue(p.date_active > today, 'Schedule drafts after today (America/New_York)');
   const json = JSON.stringify(p);

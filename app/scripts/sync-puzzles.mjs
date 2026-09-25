@@ -3,8 +3,8 @@
  * Sync the puzzles/ directory to Supabase.
  *
  * Treats the JSON files in ../puzzles as the source of truth:
- *   - upserts every file on issue_no (clearing deleted_at if previously soft-deleted)
- *   - soft-deletes any DB row whose issue_no is no longer present locally
+ *   - upserts every file on date_active (clearing deleted_at if previously soft-deleted)
+ *   - soft-deletes any DB row whose date_active is no longer present locally
  *
  * Usage (from app/):
  *   node scripts/sync-puzzles.mjs            # apply
@@ -19,6 +19,7 @@ import { readFileSync, readdirSync } from 'fs'
 import { resolve, join, basename } from 'path'
 import { createClient } from '@supabase/supabase-js'
 import { assertEnvironment } from '../src/lib/environment.mjs'
+import { assertCalendarEdition } from '../src/lib/puzzles/numbering.mjs'
 
 const DRY_RUN = process.argv.includes('--dry-run')
 const PUZZLES_DIR = resolve(process.cwd(), '..', 'puzzles')
@@ -61,7 +62,7 @@ const files = readdirSync(PUZZLES_DIR)
 const puzzles = []
 if (files.length === 0) throw new Error('Refusing to sync an empty puzzle archive')
 const errors = []
-const seenIssueNos = new Map() // issue_no → filename, to catch duplicates
+const seenDates = new Map() // date_active → filename, to catch duplicates
 
 for (const file of files) {
   const path = join(PUZZLES_DIR, file)
@@ -72,17 +73,19 @@ for (const file of files) {
     errors.push(`${file}: invalid JSON — ${err.message}`)
     continue
   }
+  if (!puzzle || typeof puzzle !== 'object' || Array.isArray(puzzle)) { errors.push(`${file}: expected puzzle object`); continue }
+  try { assertCalendarEdition(puzzle) } catch (error) { errors.push(`${file}: ${error.message}`); continue }
   const missing = REQUIRED.filter(f => puzzle[f] === undefined)
   if (missing.length) {
     errors.push(`${file}: missing required fields: ${missing.join(', ')}`)
     continue
   }
-  const prior = seenIssueNos.get(puzzle.issue_no)
+  const prior = seenDates.get(puzzle.date_active)
   if (prior) {
-    errors.push(`${file}: duplicate issue_no ${puzzle.issue_no} (also in ${prior})`)
+    errors.push(`${file}: duplicate date_active ${puzzle.date_active} (also in ${prior})`)
     continue
   }
-  seenIssueNos.set(puzzle.issue_no, file)
+  seenDates.set(puzzle.date_active, file)
 
   puzzle.answer = puzzle.answer.trim().toLowerCase()
   puzzle.deleted_at = null // resurrect on re-add
@@ -95,34 +98,34 @@ if (errors.length) {
   process.exit(1)
 }
 
-const localIssueNos = new Set(puzzles.map(p => p.puzzle.issue_no))
+const localDates = new Set(puzzles.map(p => p.puzzle.date_active))
 
 // ─── Diff against DB ──────────────────────────────────────────────────────────
 const db = createClient(url, key)
 
 const { data: existing, error: fetchErr } = await db
   .from('puzzles')
-  .select('id, issue_no, title, deleted_at')
+  .select('id, issue_no, date_active, title, deleted_at')
 
 if (fetchErr) {
   console.error('Could not read puzzles table:', fetchErr.message)
   process.exit(1)
 }
 
-const existingByIssueNo = new Map(existing.map(r => [r.issue_no, r]))
+const existingByDate = new Map(existing.map(r => [r.date_active, r]))
 
 const toCreate = []
 const toUpdate = []
 const toRestore = []
 for (const { file, puzzle } of puzzles) {
-  const cur = existingByIssueNo.get(puzzle.issue_no)
+  const cur = existingByDate.get(puzzle.date_active)
   if (!cur) toCreate.push({ file, puzzle })
   else if (cur.deleted_at) toRestore.push({ file, puzzle, cur })
   else toUpdate.push({ file, puzzle, cur })
 }
 
 const toSoftDelete = existing.filter(
-  r => !r.deleted_at && !localIssueNos.has(r.issue_no),
+  r => !r.deleted_at && !localDates.has(r.date_active),
 )
 
 // ─── Summary ──────────────────────────────────────────────────────────────────
@@ -157,7 +160,7 @@ if (!toCreate.length && !toUpdate.length && !toRestore.length && !toSoftDelete.l
 if (puzzles.length) {
   const { error } = await db
     .from('puzzles')
-    .upsert(puzzles.map(p => p.puzzle), { onConflict: 'issue_no' })
+    .upsert(puzzles.map(p => p.puzzle), { onConflict: 'date_active' })
   if (error) {
     console.error('\nUpsert failed:', error.message)
     process.exit(1)
@@ -168,7 +171,7 @@ if (toSoftDelete.length) {
   const { error } = await db
     .from('puzzles')
     .update({ deleted_at: new Date().toISOString() })
-    .in('issue_no', toSoftDelete.map(r => r.issue_no))
+    .in('id', toSoftDelete.map(r => r.id))
   if (error) {
     console.error('\nSoft-delete failed:', error.message)
     process.exit(1)

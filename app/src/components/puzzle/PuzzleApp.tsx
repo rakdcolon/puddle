@@ -648,7 +648,7 @@ function PuzzleHeader({ issueNo, vol, compact }: { issueNo: number; vol: number;
         <div>
           <div style={{ fontSize: 18, fontWeight: 500, letterSpacing: '-0.3px', lineHeight: 1 }}>puddle</div>
           <div className="italic text-ink-muted" style={{ fontSize: 11.5, marginTop: 1 }}>
-            Vol. {toRoman(vol)} <span style={{ color: 'var(--color-accent)' }}>·</span> No. {issueNo}
+            Vol. {String(vol).padStart(2, '0')} <span style={{ color: 'var(--color-accent)' }}>·</span> No. {issueNo}
           </div>
         </div>
       </a>
@@ -981,14 +981,4 @@ function genreLabel(genre: string): string {
     deduction: 'Deduction',
   }
   return map[genre] ?? genre
-}
-
-function toRoman(n: number): string {
-  const vals = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
-  const syms = ['M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I']
-  let result = ''
-  for (let i = 0; i < vals.length; i++) {
-    while (n >= vals[i]) { result += syms[i]; n -= vals[i] }
-  }
-  return result
 }

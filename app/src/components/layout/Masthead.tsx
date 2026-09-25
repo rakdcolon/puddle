@@ -58,7 +58,7 @@ export default async function Masthead({ currentPage, issueNo, vol }: MastheadPr
         {/* Left: dateline */}
         <div>
           <span className="text-[13px] italic text-ink-muted tracking-[0.1px]">
-            Vol. {toRoman(displayVol)}{' '}
+            Vol. {String(displayVol).padStart(2, '0')}{' '}
             <span className="text-accent">·</span>{' '}
             No. {displayIssue}
           </span>
@@ -112,14 +112,4 @@ export default async function Masthead({ currentPage, issueNo, vol }: MastheadPr
       <div className="border-b border-hair" />
     </header>
   )
-}
-
-function toRoman(n: number): string {
-  const vals = [1000,900,500,400,100,90,50,40,10,9,5,4,1]
-  const syms = ['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I']
-  let result = ''
-  for (let i = 0; i < vals.length; i++) {
-    while (n >= vals[i]) { result += syms[i]; n -= vals[i] }
-  }
-  return result
 }

@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { publicationFiles, publishDraft } from '../publisher.mjs';
 
-const puzzle = {...JSON.parse(readFileSync(new URL('../../puzzles/025-the-line-of-frogs.json',import.meta.url),'utf8')),issue_no:1000,date_active:'2099-01-01',title:'New puzzle'};
+const puzzle = {...JSON.parse(readFileSync(new URL('../../puzzles/025-the-line-of-frogs.json',import.meta.url),'utf8')),issue_no:1,vol:99,date_active:'2099-01-01',title:'New puzzle'};
 const draft = {id:createHash('sha256').update(JSON.stringify(puzzle)).digest('hex').slice(0,24),puzzle,source:{id:123},review:{solution_check:'Independently checked',adaptation_notes:'Attribution reviewed'}};
 const blob = content => ({type:'file',encoding:'base64',size:Buffer.byteLength(content),content:Buffer.from(content).toString('base64')});
 function github({ collision=false, existing=false, extraFile=false, failRef=false }={}) {
@@ -19,7 +19,7 @@ function github({ collision=false, existing=false, extraFile=false, failRef=fals
     if(path==='/git/ref/heads/main')data={object:{sha:'base'}};
     else if(path==='/git/commits/base')data={tree:{sha:'base-tree'}};
     else if(path==='/contents/puzzles?ref=base')data=[{type:'file',name:'001.json'}];
-    else if(path==='/contents/puzzles/001.json?ref=base')data=blob(JSON.stringify({issue_no:collision?1000:1,date_active:'2020-01-01',title:'Old puzzle'}));
+    else if(path==='/contents/puzzles/001.json?ref=base')data=blob(JSON.stringify({issue_no:1,vol:collision?99:20,date_active:collision?'2099-01-01':'2020-01-01',title:'Old puzzle'}));
     else if(path.startsWith('/git/ref/heads/puzzle/')){status=existing?200:404;data={object:{sha:'reserved'}};}
     else if(path.startsWith('/contents/')){
       const file=plan.files.find(f=>path===`/contents/${f.path}?ref=reserved`);
@@ -46,7 +46,7 @@ test('publishing requires explicit review and credentials before network activit
 test('publisher only adds two fixed files on a date branch and opens a draft PR',async()=>{
   const g=github();await publishDraft(draft,{apply:true,reviewed:true,token:'test',fetcher:g.fetcher});
   const writes=g.calls.filter(c=>c.method!=='GET');assert.deepEqual(writes.map(c=>c.path),['/git/trees','/git/commits','/git/refs','/pulls']);
-  assert.equal(writes[0].body.base_tree,'base-tree');assert.deepEqual(writes[0].body.tree.map(f=>f.path),['puzzles/1000-agent.json','puzzles/provenance/1000.json']);
+  assert.equal(writes[0].body.base_tree,'base-tree');assert.deepEqual(writes[0].body.tree.map(f=>f.path),['puzzles/2099-01-01-agent.json','puzzles/provenance/2099-01-01.json']);
   assert.ok(writes[0].body.tree.every(f=>f.type==='blob'&&f.mode==='100644'&&typeof f.content==='string'));
   assert.equal(writes[2].body.ref,'refs/heads/puzzle/2099-01-01');assert.equal(writes[3].body.draft,true);
 });
