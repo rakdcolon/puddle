@@ -1,7 +1,9 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import { assertEnvironment } from '@/lib/environment.mjs'
 
 export async function createClient() {
+  assertEnvironment()
   const cookieStore = await cookies()
 
   return createServerClient(
@@ -28,6 +30,7 @@ export async function createClient() {
 
 // Service-role client: bypasses RLS. Only use in trusted server code.
 export function createServiceClient() {
+  assertEnvironment()
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,

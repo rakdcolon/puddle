@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
+import { scheduledJobsEnabled } from '@/lib/environment.mjs'
 import { createServiceClient } from '@/lib/supabase/server'
 import { parseAndValidate, applyPuzzleSync, type RawPuzzleFile } from '@/lib/puzzles/sync'
 
@@ -36,6 +37,7 @@ async function fetchWithTimeout(url: string, init: RequestInit = {}, ms = 10000)
 // before touching the DB if the listing is empty or any file fails to fetch or
 // validate, so a partial read can never trigger mass soft-deletes.
 export async function GET(request: NextRequest) {
+  if (!scheduledJobsEnabled()) return new NextResponse('Disabled outside production', { status: 404 })
   const secret = process.env.CRON_SECRET
   if (!secret || request.headers.get('authorization') !== `Bearer ${secret}`) {
     return new NextResponse('Unauthorized', { status: 401 })

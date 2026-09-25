@@ -32,3 +32,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 app/next-env.d.ts
+
+# Local puzzle agent queue, provenance cache and isolated Pi sessions
+.puddle-agent/
+
+# Test output
+app/coverage/
+app/playwright-report/
+app/test-results/
+app/.vitest/

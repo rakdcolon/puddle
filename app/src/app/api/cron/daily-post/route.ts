@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
+import { scheduledJobsEnabled } from '@/lib/environment.mjs'
 import { getPuzzleForDate } from '@/lib/db/puzzles'
 import { getTodayNY } from '@/lib/utils/dates'
 import { dailyPuzzleEmbed } from '@/lib/discord/embeds'
@@ -17,6 +18,7 @@ export const dynamic = 'force-dynamic'
 // when CRON_SECRET is set — we reject anything that doesn't match, so the route
 // can't be triggered by the public.
 export async function GET(request: NextRequest) {
+  if (!scheduledJobsEnabled()) return new NextResponse('Disabled outside production', { status: 404 })
   const secret = process.env.CRON_SECRET
   if (!secret || request.headers.get('authorization') !== `Bearer ${secret}`) {
     return new NextResponse('Unauthorized', { status: 401 })

@@ -1,0 +1,7 @@
+{
+  "name": "puddle-local-agent",
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "node --test test/*.test.mjs", "queue": "node operator.mjs list" },
+  "engines": { "node": ">=22.13.0" }
+}

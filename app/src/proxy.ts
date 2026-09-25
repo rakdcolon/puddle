@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { assertEnvironment } from '@/lib/environment.mjs'
 
 const PROTECTED_ROUTES = ['/profile', '/settings']
 
@@ -11,6 +12,7 @@ export async function proxy(request: NextRequest) {
     return supabaseResponse
   }
 
+  assertEnvironment()
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,

@@ -63,6 +63,10 @@ export function parseAndValidate(files: RawPuzzleFile[]): {
       continue
     }
 
+    if (!puzzle || typeof puzzle !== 'object' || Array.isArray(puzzle)) {
+      errors.push(`${name}: expected a puzzle object`)
+      continue
+    }
     const missing = REQUIRED_FIELDS.filter(f => puzzle[f] === undefined)
     if (missing.length) {
       errors.push(`${name}: missing required fields: ${missing.join(', ')}`)
@@ -101,6 +105,7 @@ export async function applyPuzzleSync(
   puzzles: Record<string, unknown>[],
   opts: { dryRun?: boolean } = {},
 ): Promise<SyncSummary> {
+  if (!puzzles.length) throw new Error('Refusing to reconcile an empty puzzle archive')
   const localIssueNos = new Set(puzzles.map(p => p.issue_no as number))
 
   const { data: existing, error: fetchErr } = await db

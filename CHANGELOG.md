@@ -15,7 +15,16 @@ merge. At release time it is renamed to the new version with a date. See
 
 ## [Unreleased]
 
-_Nothing yet._
+### Added
+- Testing pyramid and CI quality gate covering domain logic, components, API/database integration, and desktop/mobile browser flows.
+- Separate dev, QA and production configuration with database identity checks and read-only readiness/smoke checks.
+- Operator-only publisher that validates reviewed drafts and opens a draft PR containing only a new puzzle and provenance; no automatic merge or production writes.
+
+### Fixed
+- Puzzle sync rejects null payloads and refuses empty-archive reconciliation.
+- Admin-role migration blocks privilege escalation through INSERT as well as UPDATE.
+- Answer inputs have accessible names and light-theme captions/accent text meet contrast requirements; compatible dependency security updates are locked.
+- Preview sign-out supports a root-relative app URL so visitors remain on their Preview hostname.
 
 ## [1.4.0] - 2026-06-09
 

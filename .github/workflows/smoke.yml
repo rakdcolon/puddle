@@ -1,0 +1,27 @@
+name: Read-only environment smoke
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        options: [qa, prod]
+        required: true
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+      - run: node scripts/smoke.mjs
+        env:
+          SMOKE_URL: ${{ vars.APP_URL }}
+          SMOKE_ENV: ${{ inputs.environment }}

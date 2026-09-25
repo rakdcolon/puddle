@@ -3,9 +3,12 @@
 // revoke the self-assignable reminder role). No gateway connection required —
 // these are plain HTTPS calls, same as the slash-command handlers.
 
+import { scheduledJobsEnabled } from '@/lib/environment.mjs'
+
 const API = 'https://discord.com/api/v10'
 
 function botHeaders(): Record<string, string> {
+  if (!scheduledJobsEnabled()) throw new Error('Discord bot side effects are disabled outside production')
   const token = process.env.DISCORD_BOT_TOKEN
   if (!token) throw new Error('DISCORD_BOT_TOKEN is not set')
   return { Authorization: `Bot ${token}`, 'Content-Type': 'application/json' }

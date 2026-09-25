@@ -13,8 +13,8 @@ requests. Nothing is committed directly to `main`.
    git switch -c feat/streak-freeze
    ```
 2. **Make the change.** Run the checks locally (see below).
-3. **Open a pull request into `main`.** CI runs typecheck + build, and Vercel
-   posts a **preview deployment** — this is your staging environment for the
+3. **Open a pull request into `main`.** CI runs every testing-pyramid layer, and Vercel
+   posts a **preview deployment** — this is your QA environment for the
    change (see [docs/ENVIRONMENTS.md](docs/ENVIRONMENTS.md)).
 4. **Verify on the preview URL.** Confirm the change works and nothing obvious
    broke before merging.
@@ -48,14 +48,21 @@ clean Conventional Commit.
 
 ## Local checks
 
-Run before pushing — CI gates on the first two:
+Run before pushing. CI requires every testing-pyramid layer through `quality-gate`:
 
 ```bash
 cd app
-npx tsc --noEmit     # typecheck (must pass)
-npm run build        # production build (must pass)
-npm run dev          # manual smoke test at http://localhost:3000
+npm run typecheck
+npm run test:coverage
+npm run test:agent
+npm run test:live     # requires local Supabase or explicitly selected QA
+npm run build
+npm run test:e2e
 ```
+
+See [TESTING.md](docs/TESTING.md) for database setup, browser reports and release
+checks. Dev uses local Supabase; QA uses its own hosted project. Never use production
+credentials for development or write-capable tests.
 
 ## Changelog
 
@@ -66,7 +73,7 @@ Entries are bundled into the next release — see [docs/RELEASING.md](docs/RELEA
 
 ## Database migrations
 
-Migrations live in `app/supabase/migrations/00X_*.sql` and are **applied by hand
+Migrations live in `app/supabase/migrations/*.sql` and are **applied by hand
 in the Supabase SQL editor**, not via the CLI (the remote migration history is
 empty, so `db push` is unsafe).
 
@@ -74,7 +81,7 @@ empty, so `db push` is unsafe).
 not reach production before its migration has been applied to the production
 database. In practice:
 
-1. Apply the migration to the **staging** Supabase project; verify on the PR
+1. Apply the migration to the **QA** Supabase project; verify on the PR
    preview.
 2. Apply it to **production** as part of the release, *before or as* the code
    that needs it merges to `main`.
