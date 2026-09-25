@@ -7,6 +7,7 @@ test('validates the entire committed puzzle archive', () => {
   const files = readdirSync('../puzzles').filter(n=>n.endsWith('.json')).map(name=>({name,content:readFileSync(`../puzzles/${name}`,'utf8')}))
   const result = parseAndValidate(files)
   expect(result.errors).toEqual([]);expect(result.puzzles.length).toBeGreaterThan(0)
+  expect(new Set(result.puzzles.map(p=>p.date_active)).size).toBe(result.puzzles.length)
 })
 test('normalizes answers and restores reintroduced puzzles', () => {
   expect(parseAndValidate([file({...puzzle,answer:'  FIVE  ',deleted_at:'yesterday'})]).puzzles[0]).toMatchObject({answer:'five',deleted_at:null})

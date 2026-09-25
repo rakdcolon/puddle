@@ -100,13 +100,37 @@ Its schema and sample puzzles are installed; credentials stay in ignored operato
 configuration, outside the curator runtime. See [environments](ENVIRONMENTS.md).
 Production publication and unattended scheduling have not been enabled.
 
-For unattended publication, add a separate publisher with repository-scoped
-credentials and an enforced path/operation policy (new puzzle and provenance files
-only, no deletion or workflow changes). It should validate against the latest
-remote archive, reserve issue/date atomically, report sync results and verify the
-live issue. Keep those credentials outside the model runtime. Decide explicitly
-whether review is required before enabling that publisher or a Windows scheduled
-task. Do not give the curator a service-role key or generic Git/shell access.
+## Review-based publisher
+
+`publisher.mjs` is an operator command, never a curator tool. It validates the
+draft's content hash, future NY date, source/review record and current GitHub main
+archive. It can add exactly two files: the puzzle JSON and its provenance JSON.
+It cannot update main, overwrite existing files, merge, call Supabase or deploy.
+
+```powershell
+node automation/operator.mjs show <draft-id>
+node automation/publisher.mjs <draft-id>                  # read-only remote dry run
+node automation/publisher.mjs <draft-id> --apply --reviewed
+```
+
+The apply command requires `PUDDLE_PUBLISHER_TOKEN` in the **operator** process.
+Use a short-lived fine-grained token restricted to `rakdcolon/puddle`, Contents
+and Pull requests write permissions, with no Workflows or Administration access.
+Never put it in the curator's Pi configuration or a committed file. The curator
+launcher strips it from the child environment. No publisher credential or daily
+publication schedule has been installed as part of this setup.
+
+Publishing reserves `puzzle/YYYY-MM-DD` by creating a new ref. A conflicting
+date branch is never overwritten. Identical retries can recover a partially
+completed run and reuse a PR; additional branch changes are rejected. Different
+dates can still race for the same issue number: main's required, up-to-date CI
+check validates archive uniqueness before merge. Review the source attribution,
+solution and issue/date again on the PR. API/schema checks do not prove correctness.
+
+The result is a **draft PR**, not a live puzzle. After explicit approval and merge,
+the existing production sync process imports the archive. Production sync and
+live verification remain release/operator responsibilities. Unattended publishing
+and recurring execution stay disabled until explicitly chosen.
 
 ## Verify
 

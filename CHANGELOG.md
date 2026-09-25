@@ -18,6 +18,7 @@ merge. At release time it is renamed to the new version with a date. See
 ### Added
 - Testing pyramid and CI quality gate covering domain logic, components, API/database integration, and desktop/mobile browser flows.
 - Separate dev, QA and production configuration with database identity checks and read-only readiness/smoke checks.
+- Operator-only publisher that validates reviewed drafts and opens a draft PR containing only a new puzzle and provenance; no automatic merge or production writes.
 
 ### Fixed
 - Puzzle sync rejects null payloads and refuses empty-archive reconciliation.

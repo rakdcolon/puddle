@@ -56,6 +56,9 @@ node scripts/with-env.mjs qa node_modules/@playwright/test/cli.js test
 ```
 
 Set `E2E_BASE_URL` only to a QA deployment when testing an already-deployed app.
+For protected Vercel previews, authorize the browser first and set
+`E2E_STORAGE_STATE` to an ignored Playwright storage-state file. Keep temporary
+access cookies and hosted-test traces local; do not commit or upload them.
 The service key stays in the runner's Node process, never in browser context.
 Never promote a QA-built bundle to production: `NEXT_PUBLIC_*` values are compiled
 into it. Build production using production variables.
@@ -64,12 +67,18 @@ into it. Build production using production variables.
 
 `CI / quality-gate` joins fast tests/coverage/audit and a disposable Supabase stack
 with a production build and browser tests. No cloud secrets are needed on PRs.
-Artifacts include coverage and failure traces, not `.env`. Configure the GitHub
-main ruleset to require this check and PR review, blocking direct/force pushes.
-The workflow alone cannot enforce a ruleset.
+Artifacts include coverage and failure traces, not `.env`. Main's branch
+protection now requires the GitHub Actions `quality-gate`, an up-to-date PR and
+resolved review conversations, blocking direct/force pushes. This also applies
+to administrators. It does not require a second reviewer for this solo-owned repo.
 
-Create GitHub environments `qa` and `prod`, set `APP_URL`, and require a reviewer
-for prod. The manual smoke workflow needs no database credentials.
+GitHub environments `qa` and `prod` have `APP_URL` set. Prod jobs require the
+owner's approval and a protected branch. The manual smoke workflow needs no
+database credentials. This approval controls Actions jobs using that environment;
+it does not gate Vercel's independent main-branch Git auto-deployment.
+Protected QA deployments additionally need authorized access; use the hosted
+browser suite with temporary storage state until an automation credential is
+deliberately configured. Do not disable Vercel deployment protection for tests.
 
 OAuth and embedded Discord Activity still require manual QA with separate provider
 applications and a stable callback URL. Load/stress tests, visual pixel baselines

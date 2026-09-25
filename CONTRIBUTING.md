@@ -73,7 +73,7 @@ Entries are bundled into the next release — see [docs/RELEASING.md](docs/RELEA
 
 ## Database migrations
 
-Migrations live in `app/supabase/migrations/00X_*.sql` and are **applied by hand
+Migrations live in `app/supabase/migrations/*.sql` and are **applied by hand
 in the Supabase SQL editor**, not via the CLI (the remote migration history is
 empty, so `db push` is unsafe).
 
@@ -81,7 +81,7 @@ empty, so `db push` is unsafe).
 not reach production before its migration has been applied to the production
 database. In practice:
 
-1. Apply the migration to the **staging** Supabase project; verify on the PR
+1. Apply the migration to the **QA** Supabase project; verify on the PR
    preview.
 2. Apply it to **production** as part of the release, *before or as* the code
    that needs it merges to `main`.

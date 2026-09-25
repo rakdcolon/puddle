@@ -64,8 +64,12 @@ uses the existing database and https://solvepuddle.com. Preview uses puddle-qa a
 `NEXT_PUBLIC_APP_URL=/`; the updated sign-out route resolves this against the
 current request hostname. Deploy this code with those Preview settings.
 Existing deployments retain their settings until redeployed.
-The CI workflow is present but has not yet run on GitHub, and required checks
-have not yet been configured.
+GitHub CI has passed on PR #51, including the disposable full-stack job. The
+hosted Vercel Preview has passed all six desktop/mobile browser checks against QA.
+Main requires the GitHub Actions `quality-gate` check and an up-to-date PR,
+including for administrators; force pushes and branch deletion are blocked.
+PRs are required without a second-person review count, so the sole maintainer
+can approve releases without requiring another collaborator.
 
 Production and Preview must build separately with their own public environment
 values. Never promote a QA-built bundle to prod while it embeds QA credentials.
