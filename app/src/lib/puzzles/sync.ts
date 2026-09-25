@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { assertCalendarEdition } from './numbering.mjs'
 
 // The puzzle JSON files are the source of truth. This module holds the
 // source-agnostic core — validation, diff, and apply — shared shape with the
@@ -12,7 +13,7 @@ export const REQUIRED_FIELDS = [
 ] as const
 
 // Expected type of each required field, so a malformed value (e.g. a string
-// issue_no, which is also the upsert conflict key) is rejected up front rather
+// issue_no) is rejected up front rather
 // than corrupting the diff or the write.
 const FIELD_TYPES: Record<string, 'string' | 'number' | 'array'> = {
   issue_no: 'number', vol: 'number', difficulty: 'number',
@@ -50,7 +51,7 @@ export function parseAndValidate(files: RawPuzzleFile[]): {
 } {
   const puzzles: Record<string, unknown>[] = []
   const errors: string[] = []
-  const seenIssueNos = new Map<number, string>()
+  const seenDates = new Map<string, string>()
 
   for (const { name, content } of files) {
     if (!name.endsWith('.json') || name === 'template.json') continue
@@ -81,13 +82,15 @@ export function parseAndValidate(files: RawPuzzleFile[]): {
       continue
     }
 
-    const issueNo = puzzle.issue_no as number
-    const prior = seenIssueNos.get(issueNo)
+    try { assertCalendarEdition(puzzle as {date_active: string; vol: number; issue_no: number}) }
+    catch (error) { errors.push(`${name}: ${(error as Error).message}`); continue }
+    const date = puzzle.date_active as string
+    const prior = seenDates.get(date)
     if (prior) {
-      errors.push(`${name}: duplicate issue_no ${issueNo} (also in ${prior})`)
+      errors.push(`${name}: duplicate date_active ${date} (also in ${prior})`)
       continue
     }
-    seenIssueNos.set(issueNo, name)
+    seenDates.set(date, name)
 
     puzzle.answer = String(puzzle.answer).trim().toLowerCase()
     puzzle.deleted_at = null // resurrect on re-add
@@ -98,7 +101,7 @@ export function parseAndValidate(files: RawPuzzleFile[]): {
 }
 
 // Diff the validated puzzles against the DB and apply: upsert every puzzle on
-// issue_no (clearing deleted_at), and soft-delete any row whose issue_no is no
+// date_active (preserving UUIDs and clearing deleted_at), and soft-delete any row whose date is no
 // longer present. Pass dryRun to compute the summary without writing.
 export async function applyPuzzleSync(
   db: SupabaseClient,
@@ -106,27 +109,27 @@ export async function applyPuzzleSync(
   opts: { dryRun?: boolean } = {},
 ): Promise<SyncSummary> {
   if (!puzzles.length) throw new Error('Refusing to reconcile an empty puzzle archive')
-  const localIssueNos = new Set(puzzles.map(p => p.issue_no as number))
+  const localDates = new Set(puzzles.map(p => p.date_active as string))
 
   const { data: existing, error: fetchErr } = await db
     .from('puzzles')
-    .select('id, issue_no, deleted_at')
+    .select('id, date_active, deleted_at')
   if (fetchErr) throw new Error(`read puzzles: ${fetchErr.message}`)
 
   const rows = existing ?? []
-  const byIssueNo = new Map(rows.map(r => [r.issue_no, r]))
+  const byDate = new Map(rows.map(r => [r.date_active, r]))
 
   let created = 0
   let updated = 0
   let restored = 0
   for (const p of puzzles) {
-    const cur = byIssueNo.get(p.issue_no as number)
+    const cur = byDate.get(p.date_active as string)
     if (!cur) created++
     else if (cur.deleted_at) restored++
     else updated++
   }
   const toSoftDelete = rows.filter(
-    r => !r.deleted_at && !localIssueNos.has(r.issue_no),
+    r => !r.deleted_at && !localDates.has(r.date_active),
   )
 
   const summary: SyncSummary = {
@@ -140,14 +143,14 @@ export async function applyPuzzleSync(
   if (opts.dryRun) return summary
 
   if (puzzles.length) {
-    const { error } = await db.from('puzzles').upsert(puzzles, { onConflict: 'issue_no' })
+    const { error } = await db.from('puzzles').upsert(puzzles, { onConflict: 'date_active' })
     if (error) throw new Error(`upsert: ${error.message}`)
   }
   if (toSoftDelete.length) {
     const { error } = await db
       .from('puzzles')
       .update({ deleted_at: new Date().toISOString() })
-      .in('issue_no', toSoftDelete.map(r => r.issue_no))
+      .in('id', toSoftDelete.map(r => r.id))
     if (error) throw new Error(`soft-delete: ${error.message}`)
   }
 

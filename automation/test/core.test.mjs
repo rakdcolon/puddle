@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import { ROOT, openStore, saveDraft, validatePuzzle, sourceRequest, archive } from '../core.mjs';
 
 const base = JSON.parse(readFileSync(join(ROOT,'puzzles/025-the-line-of-frogs.json'),'utf8'));
-const candidate = () => ({...structuredClone(base),issue_no:1000,date_active:'2099-01-01',title:'Test candidate'});
+const candidate = () => ({...structuredClone(base),issue_no:1,vol:99,date_active:'2099-01-01',title:'Test candidate'});
 function store(t) {
   const directory = mkdtempSync(join(tmpdir(),'puddle-test-'));
   const db = openStore(join(directory,'queue.sqlite'));
@@ -28,12 +28,12 @@ test('insert is persistent and exact retries are idempotent',t=>{
   assert.equal(result.status,'pending_review');
   assert.equal(saveDraft(db,d,[]).already_saved,true);
   assert.equal(db.prepare('SELECT count(*) AS n FROM drafts').get().n,1);
-  assert.equal(JSON.parse(db.prepare('SELECT puzzle FROM drafts').get().puzzle).issue_no,1000);
+  assert.equal(JSON.parse(db.prepare('SELECT puzzle FROM drafts').get().puzzle).issue_no,1);
 });
 test('cannot overwrite drafts or existing issue/date/title, or save unfetched sources',t=>{
   const db = store(t); const d = draft();
   assert.throws(()=>saveDraft(db,{...d,source_id:42},[]),/Retrieve source/);
-  for (const collision of [{issue_no:25},{date_active:base.date_active},{title:base.title}]) {
+  for (const collision of [{date_active:base.date_active},{title:base.title}]) {
     assert.throws(()=>saveDraft(db,{...d,puzzle:{...d.puzzle,...collision}},archive()),/already exists/);
   }
   saveDraft(db,d,[]);
@@ -53,6 +53,18 @@ test('source gateway refuses arbitrary paths, caches results and obeys backoff',
   await sourceRequest(db,'search/advanced',{q:'frogs'},fetcher);
   await assert.rejects(sourceRequest(db,'search/advanced',{q:'other'},fetcher),/backoff/);
   assert.equal(requests,1);
+});
+
+test('derives edition from date and permits the same day number in different years',t=>{
+  const db=store(t);
+  db.prepare('INSERT INTO sources VALUES (2,?,?)').run('{}',new Date().toISOString());
+  const first=saveDraft(db,{...draft(),puzzle:{...candidate(),vol:2,issue_no:1000}},[]);
+  const second=saveDraft(db,{...draft(),source_id:2,puzzle:{...candidate(),date_active:'2098-01-01',title:'Another year'}},[]);
+  const saved=db.prepare('SELECT puzzle FROM drafts WHERE id=?').get(first.id);
+  assert.equal(JSON.parse(saved.puzzle).vol,99);
+  assert.equal(JSON.parse(saved.puzzle).issue_no,1);
+  assert.notEqual(first.id,second.id);
+  assert.equal(db.prepare('SELECT count(*) AS n FROM drafts WHERE issue_no=1').get().n,2);
 });
 test('source gateway limits response size and daily request count',async t=>{
   const db = store(t);

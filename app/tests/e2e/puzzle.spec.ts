@@ -18,6 +18,7 @@ test('visitor opens puzzle, uses a hint, solves, and persists one anonymous solv
   expect(error).toBeNull()
   await page.goto('/');await page.getByRole('link',{name:/Begin today's puzzle/}).click()
   await expect(page.getByRole('heading',{name:puzzle.title,exact:true})).toBeVisible()
+  await expect(page.getByText(`Vol. ${String(puzzle.vol).padStart(2,'0')} · No. ${puzzle.issue_no}`,{exact:true})).toBeVisible()
   await page.getByRole('button',{name:/Hint 0\//}).click()
   await expect(page.getByText(puzzle.hints[0])).toBeVisible()
   if(answer!.input_type==='choice') {

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { calendarEdition } from '@/lib/puzzles/numbering.mjs'
 import { createServiceClient } from '@/lib/supabase/server'
 import { getCurrentUser } from '@/lib/auth/current-user'
 
@@ -14,12 +15,15 @@ export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => null)
   if (!body) return NextResponse.json({ error: 'Invalid body' }, { status: 400 })
 
+  let edition
+  try { edition = calendarEdition(body.date_active) }
+  catch { return NextResponse.json({ error: 'Invalid publication date' }, { status: 400 }) }
   const db = createServiceClient()
   const { data, error } = await db
     .from('puzzles')
     .insert({
-      issue_no: body.issue_no,
-      vol: body.vol,
+      issue_no: edition.issue_no,
+      vol: edition.vol,
       date_active: body.date_active,
       title: body.title,
       genre: body.genre,

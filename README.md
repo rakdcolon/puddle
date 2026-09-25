@@ -49,7 +49,7 @@ cd app
 npm run import-puzzle -- ../puzzles/your-puzzle.json
 ```
 
-The script uses `issue_no` as the upsert key, so it's safe to re-run to update an existing puzzle. See `puzzles/template.json` for the schema.
+The script uses `date_active` as the upsert key, preserving puzzle IDs when edition labels change. Volume is the publication year's last two digits; issue number is its day of year (1–365, or 366 in leap years). See `puzzles/template.json` for the schema.
 
 ## Project layout
 

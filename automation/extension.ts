@@ -11,7 +11,7 @@ export default function(pi: ExtensionAPI) {
   pi.registerTool({name:'puddle_archive', label:'Puddle archive', description:'Read existing issue summaries, latest three examples, template and pending queue. Use first to avoid repeats and scheduling collisions.',
     parameters:Type.Object({}), async execute() {
       const all = archive();
-      return respond({issues:all.map(({issue_no,date_active,title,genre})=>({issue_no,date_active,title,genre})), examples:all.slice(-3),
+      return respond({issues:all.map(({issue_no,vol,date_active,title,genre})=>({issue_no,vol,date_active,title,genre})), examples:all.slice(-3),
         template:JSON.parse(readFileSync(join(ROOT,'puzzles/template.json'),'utf8')),
         pending:db.prepare('SELECT id,issue_no,date_active,source_id FROM drafts ORDER BY date_active').all()});
     }});
@@ -27,7 +27,7 @@ export default function(pi: ExtensionAPI) {
       if (++reads > 4) throw new Error('Run retrieval limit reached (4). Use an already retrieved candidate or stop.');
       return respond(await readSource(db,source_id));
     }});
-  pi.registerTool({name:'puddle_save_draft',label:'Save draft',description:'Validate and insert a puzzle into the local SQLite review queue. Supply puzzle_json matching archive template, an independent solution check and adaptation notes. Cannot publish or overwrite existing issues.',
+  pi.registerTool({name:'puddle_save_draft',label:'Save draft',description:'Validate and insert a puzzle into the local SQLite review queue. Supply puzzle_json matching archive template, an independent solution check and adaptation notes. Volume and issue number are derived automatically from date_active. Cannot publish or overwrite existing drafts.',
     parameters:Type.Object({puzzle_json:Type.String({maxLength:40000}),source_id:Type.Integer({minimum:1}),solution_check:Type.String({maxLength:6000}),adaptation_notes:Type.String({maxLength:6000})}),
     async execute(_id,{puzzle_json,...rest}) {
       if (saved) throw new Error('A draft has already been saved in this run. Stop and report its ID.');

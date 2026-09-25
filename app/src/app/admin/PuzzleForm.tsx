@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { calendarEdition } from '@/lib/puzzles/numbering.mjs'
 import { useRouter } from 'next/navigation'
 import type { Puzzle, Genre, InputType, SolutionStep } from '@/types'
 
@@ -22,9 +23,10 @@ export default function PuzzleForm({ initialData }: PuzzleFormProps) {
   const router = useRouter()
   const isEdit = !!initialData
 
-  const [issueNo, setIssueNo] = useState(initialData?.issue_no?.toString() ?? '')
-  const [vol, setVol] = useState(initialData?.vol?.toString() ?? '1')
   const [dateActive, setDateActive] = useState(initialData?.date_active ?? '')
+  const edition = dateActive ? calendarEdition(dateActive) : null
+  const issueNo = edition?.issue_no ?? ''
+  const vol = edition?.vol ?? ''
   const [title, setTitle] = useState(initialData?.title ?? '')
   const [genre, setGenre] = useState<Genre>(initialData?.genre ?? 'logic')
   const [difficulty, setDifficulty] = useState(initialData?.difficulty ?? 3)
@@ -70,8 +72,8 @@ export default function PuzzleForm({ initialData }: PuzzleFormProps) {
         : null
 
     const payload = {
-      issue_no: parseInt(issueNo),
-      vol: parseInt(vol),
+      issue_no: Number(issueNo),
+      vol: Number(vol),
       date_active: dateActive,
       title: title.trim(),
       genre,
@@ -125,14 +127,14 @@ export default function PuzzleForm({ initialData }: PuzzleFormProps) {
           <Field label="Issue no.">
             <input
               type="number" required value={issueNo}
-              onChange={e => setIssueNo(e.target.value)}
+              readOnly aria-label="Day of year (from publication date)"
               style={inputStyle}
             />
           </Field>
           <Field label="Vol.">
             <input
               type="number" required value={vol}
-              onChange={e => setVol(e.target.value)}
+              readOnly aria-label="Year (from publication date)"
               style={inputStyle}
             />
           </Field>
