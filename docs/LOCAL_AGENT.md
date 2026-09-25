@@ -98,7 +98,8 @@ The production target remains the **existing Puddle database**. Supabase access
 now works, and a separate `puddle-qa` project has been provisioned for testing.
 Its schema and sample puzzles are installed; credentials stay in ignored operator
 configuration, outside the curator runtime. See [environments](ENVIRONMENTS.md).
-Production publication and unattended scheduling have not been enabled.
+Production publication remains review-driven. Windows scheduling can be installed
+with the steps below; it runs only the draft curator.
 
 ## Review-based publisher
 
@@ -117,8 +118,8 @@ The apply command requires `PUDDLE_PUBLISHER_TOKEN` in the **operator** process.
 Use a short-lived fine-grained token restricted to `rakdcolon/puddle`, Contents
 and Pull requests write permissions, with no Workflows or Administration access.
 Never put it in the curator's Pi configuration or a committed file. The curator
-launcher strips it from the child environment. No publisher credential or daily
-publication schedule has been installed as part of this setup.
+launcher strips it from the child environment. The daily task never loads this
+credential or invokes the publisher.
 
 Publishing reserves `puzzle/YYYY-MM-DD` by creating a new ref. A conflicting
 date branch is never overwritten. Identical retries can recover a partially
@@ -130,7 +131,95 @@ solution and issue/date again on the PR. API/schema checks do not prove correctn
 The result is a **draft PR**, not a live puzzle. After explicit approval and merge,
 the existing production sync process imports the archive. Production sync and
 live verification remain release/operator responsibilities. Unattended publishing
-and recurring execution stay disabled until explicitly chosen.
+is disabled; recurring draft preparation is a separate Windows task.
+
+## Windows daily schedule
+
+In PowerShell 7, from the repository root:
+
+```powershell
+pwsh -NoProfile -File automation/install-schedule.ps1
+```
+
+This installs or updates `Puddle Daily Draft` at 19:00 in the PC's local timezone
+(Eastern on the configured PC). To change the time, rerun with `-At '18:30'`.
+It uses your signed-in Windows session, without administrator rights or a saved
+Windows password. The PC must be on and you must remain signed in; locking it is
+fine. Missed starts run when available. It does not wake a sleeping PC. Concurrent
+scheduled instances are skipped, and there are no automatic failure retries.
+
+The installer records absolute runtime locations in ignored
+`.puddle-agent/scheduler.json`; rerun it if the checkout or runtimes move. The runner
+checks Ollama and starts its local server hidden if necessary, then runs the
+curator with a five-minute limit. It requests a puzzle at least three days ahead.
+Logs are in `.puddle-agent/logs/`; `.puddle-agent/last-run.json` records the latest
+exit status and whether the draft count increased. Logs remain local and are not
+automatically pruned. A successful
+process exit does not guarantee a draft was saved: inspect the queue and log.
+
+```powershell
+Get-ScheduledTaskInfo -TaskName 'Puddle Daily Draft'
+Start-ScheduledTask -TaskName 'Puddle Daily Draft' # generate one draft now
+Disable-ScheduledTask -TaskName 'Puddle Daily Draft' # pause future runs
+Enable-ScheduledTask -TaskName 'Puddle Daily Draft' # resume
+node automation/operator.mjs list
+```
+
+## Set up the publisher credential
+
+1. Open https://github.com/settings/personal-access-tokens/new (phone or PC).
+2. Name it `Puddle publisher`, choose resource owner `rakdcolon`, and set a
+   30-day expiration initially.
+3. Choose **Only select repositories**, then **puddle**.
+4. Under repository permissions, set **Contents: Read and write** and
+   **Pull requests: Read and write**. Leave other permissions at their defaults;
+   Metadata read access is automatic. Do not grant Workflows or Administration.
+5. Generate the token and keep it in your password manager. Do not send it in chat.
+6. On this Windows PC, double-click `automation/setup-publisher.cmd` in File
+   Explorer (after installing the schedule). It opens the private token prompt
+   using the installed PowerShell 7. Alternatively, run in PowerShell 7:
+
+   ```powershell
+   pwsh -NoProfile -File automation/publisher-credential.ps1 -Action Set
+   ```
+
+7. Paste the token into the hidden prompt and press Enter. The script saves a
+   Windows DPAPI-encrypted credential at
+   `%LOCALAPPDATA%\Puddle\publisher.credential.xml`, outside the repository. This
+   ties decryption to your Windows account and PC, but is not isolation from other
+   programs running as your Windows user. The script never prints the token.
+8. Check the saved credential with:
+
+   ```powershell
+   pwsh -NoProfile -File automation/publisher-credential.ps1 -Action Status
+   ```
+
+This status checks local storage, not GitHub permissions. Validate GitHub access
+using the dry run below once a real draft exists. The first apply verifies write
+access by opening its reviewed draft PR. Rotate the token by repeating Set, then
+revoke the old token on GitHub. `-Action Remove` deletes only the local copy.
+
+## Review a draft and open its PR
+
+Run these commands from the repository root, substituting the ID from `list`:
+
+```powershell
+node automation/operator.mjs list
+node automation/operator.mjs show <draft-id>
+pwsh -NoProfile -File automation/publish.ps1 -DraftId <draft-id>
+# Only after reviewing the puzzle, solution, date and source attribution:
+pwsh -NoProfile -File automation/publish.ps1 -DraftId <draft-id> -Apply -Reviewed
+```
+
+The wrapper loads the credential only into the publisher child process. The first
+publisher command is a read-only dry run; the second opens a draft PR. Review the
+PR on GitHub, mark it ready, wait for required checks and merge. The production
+sync runs at 05:00 UTC daily, so merge future puzzles ahead of their active date.
+The token's repository permissions are broader than the script's two-file policy;
+branch protection and keeping the token outside the model's tools remain essential.
+
+References: [GitHub fine-grained tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens),
+[Windows encrypted credential storage](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/export-clixml).
 
 ## Verify
 
