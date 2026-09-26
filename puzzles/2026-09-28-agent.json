@@ -1,0 +1,37 @@
+{
+  "issue_no": 271,
+  "vol": 26,
+  "date_active": "2026-09-28",
+  "title": "One-Way Routes",
+  "genre": "quant",
+  "difficulty": 3,
+  "prompt": [
+    "A 4 × 4 grid contains 16 points. You start at the top-left point and want to reach the bottom-right point.",
+    "Each move goes right along a row or down along a column. You may move any positive number of spaces, skipping points, but must land on a point in the grid. You cannot move left, up, or diagonally.",
+    "How many different routes are possible? Routes are different if their sequences of landing points differ."
+  ],
+  "answer": "106",
+  "answer_display": "106 ways",
+  "hints": [
+    "Start with a smaller question: how many routes reach each point in the top row?",
+    "Every route into a point has a final move from somewhere to its left or above it. Add the route counts at those possible starting points.",
+    "Count one route at the starting point. The top row is 1, 1, 2, 4, and the second row is 1, 2, 5, 12. Continue the same way for the last two rows."
+  ],
+  "solution_lede": "There are 106 routes. Count the routes reaching each point, rather than listing complete routes. Every route has a unique final move, from a point to the left or above. Adapted from “Crossing Frog Lake” by JMP (https://puzzling.stackexchange.com/questions/30126), with the counting approach described by f'' (https://puzzling.stackexchange.com/a/30128). Sources and this adaptation: CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/). This version uses a 4 × 4 grid and new wording; its answer was calculated for that grid.",
+  "solution_steps": [
+    {
+      "body": "Assign 1 to the starting point. For every other point, add the counts at all points to its left in the same row and all points above it in the same column."
+    },
+    {
+      "body": "Working across each row gives: 1, 1, 2, 4; then 1, 2, 5, 12; then 2, 5, 14, 37; then 4, 12, 37, 106."
+    },
+    {
+      "body": "The final point can be reached from three points to its left and three above it: (4 + 12 + 37) + (4 + 12 + 37) = 106."
+    }
+  ],
+  "input_type": "numeric",
+  "input_config": {
+    "min": 1,
+    "max": 1000
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "draft_id": "48052ac95e119c3bce465d24",
+  "review": {
+    "solution_check": "Exhaustively enumerated all sequences of rightward/downward positive-length moves on a 4x4 grid: 106. Independently checked the row-sum/column-sum recurrence with table [1,1,2,4], [1,2,5,12], [2,5,14,37], [4,12,37,106].",
+    "adaptation_notes": "Revised after user feedback: plain language, no forced water/animal story, new wording and a text-defined 4x4 grid. Source diagram was not inspected; no claim about its layout is required. Credit both question and accepted solution, link the recorded CC BY-SA 3.0 license, and identify changed grid/wording. Third hint no longer reveals the answer. Calendar numbering derives from publication date. Awaiting review of this revised wording.",
+    "previous_draft_id": "1a51fadafdd04252898d1302"
+  },
+  "source": {
+    "untrusted_source_content": true,
+    "question": {
+      "id": 30126,
+      "title": "Crossing Frog Lake",
+      "url": "https://puzzling.stackexchange.com/questions/30126/crossing-frog-lake",
+      "author": "JMP",
+      "author_url": "https://puzzling.stackexchange.com/users/11497/jmp",
+      "license": "CC BY-SA 3.0",
+      "score": 5,
+      "tags": [
+        "mathematics",
+        "graph-theory",
+        "combinatorics"
+      ],
+      "body_html": "<p>Our Red Frog wants to get to the Orange Frog, but he can only jump right and down, but over multiple lilies if he chooses, although he can't stay still.</p>\n\n<p><a href=\"https://i.sstatic.net/FnrpC.png\" rel=\"nofollow noreferrer\"><img src=\"https://i.sstatic.net/FnrpC.png\" alt=\"froglake\"></a></p>\n\n<p>How many ways can he do it?</p>\n",
+      "truncated": false
+    },
+    "answers": [
+      {
+        "id": 30128,
+        "answer_id": 30128,
+        "url": "https://puzzling.stackexchange.com/a/30128",
+        "author": "f&#39;&#39;",
+        "author_url": "https://puzzling.stackexchange.com/users/12408/f",
+        "license": "CC BY-SA 3.0",
+        "score": 12,
+        "accepted": true,
+        "body_html": "<blockquote class=\"spoiler\">\n  <p><img src=\"https://i.sstatic.net/AvF56.png\" alt=\"1\"><br>\nEach number represents the number of ways to get to that pad. Except for the first 1, each number is the sum of all the numbers above and to the left of it. The final answer is 74.</p>\n</blockquote>\n",
+        "truncated": false
+      },
+      {
+        "id": 30132,
+        "answer_id": 30132,
+        "url": "https://puzzling.stackexchange.com/a/30132",
+        "author": "Raystafarian",
+        "author_url": "https://puzzling.stackexchange.com/users/51/raystafarian",
+        "license": "CC BY-SA 3.0",
+        "score": 1,
+        "accepted": false,
+        "body_html": "<p>I got a different answer, but it should be easy to point out what I'm missing</p>\n\n<blockquote class=\"spoiler\">\n  <p>70</p>\n</blockquote>\n\n<p><a href=\"https://i.sstatic.net/cnsEG.png\" rel=\"nofollow noreferrer\"><img src=\"https://i.sstatic.net/cnsEG.png\" alt=\"enter image description here\"></a></p>\n\n<blockquote class=\"spoiler\">\n  <p> <a href=\"https://i.sstatic.net/32ND4.png\" rel=\"nofollow noreferrer\"><img src=\"https://i.sstatic.net/32ND4.png\" alt=\"enter image description here\"></a></p>\n</blockquote>\n",
+        "truncated": false
+      },
+      {
+        "id": 30155,
+        "answer_id": 30155,
+        "url": "https://puzzling.stackexchange.com/a/30155",
+        "author": "AwkwardBowman",
+        "author_url": "https://puzzling.stackexchange.com/users/19565/awkwardbowman",
+        "license": "CC BY-SA 3.0",
+        "score": 1,
+        "accepted": false,
+        "body_html": "<p><a href=\"https://i.sstatic.net/o2uxQ.png\" rel=\"nofollow noreferrer\"><img src=\"https://i.sstatic.net/o2uxQ.png\" alt=\"Format Picture\"></a></p>\n\n<p>I completed mine similar to Raystafarian. I determined how many paths you can take to get to each pad. I started with A and found 1 path. The B, with another 1 path. THen when I look at something like D, I see it can be reached from A or B. Add those together, you have 2 paths to reach D. Continue down the chain until you find the final value for L. </p>\n\n<p>My picture also includes the assumed jumps I can make. I assumed that jumps were not possible unless the middle is clearly down and right. So jumps C-D and B-H were not possible.</p>\n\n<blockquote class=\"spoiler\">\n  <p> <a href=\"https://i.sstatic.net/AYGRH.png\" rel=\"nofollow noreferrer\"><img src=\"https://i.sstatic.net/AYGRH.png\" alt=\"enter image description here\"></a> 74 Total possibilities</p>\n</blockquote>\n\n<p>The program does the calculations for me. So if I HAD allowed the the other jumps, I would have gotten these values.</p>\n\n<blockquote class=\"spoiler\">\n  <p> CD allowed yields 82, BH allowed yields 79, CD and BH yields 87.</p>\n</blockquote>\n\n<p>It matches f\"s answer, but I wanted to include the alternates and have a spreadsheet to show that it can be reduced to spreadsheet with set equations. Give me any number of lily-pads and define the limits and this will solve it.</p>\n",
+        "truncated": false
+      }
+    ]
+  }
+}
